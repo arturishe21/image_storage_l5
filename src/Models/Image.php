@@ -139,9 +139,22 @@ class Image extends AbstractClass
         }
     }
 
+    public function optimizeImage($size)
+    {
+        if($size == 'all'){
+            $sizes = $this->getConfigSizes();
+        }else{
+            $sizes = array($size => "");
+        }
+
+        foreach ($sizes as $sizeName => $sizeInfo) {
+            $imagePath = $this->getSource($sizeName);
+            $this->doOptimizeImage($imagePath);
+        }
+    }
+
     private function doOptimizeImage($imagePath)
     {
-        //fixme update this function
         if ($this->getConfigOptimization()) {
             OptmizationImg::run("/" . $imagePath);
         }

@@ -73,6 +73,13 @@ Route::group (['middleware' => ['web']], function () {
                 )
             );
 
+            Route::post(
+                'images/optimize_image', array(
+                    'as' => 'optimize_image',
+                    'uses' => 'Vis\ImageStorage\ImagesController@doOptimizeImage'
+                )
+            );
+
 
             Route::post(
                 'galleries/search_galleries', array(

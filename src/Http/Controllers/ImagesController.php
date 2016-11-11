@@ -62,8 +62,9 @@ class ImagesController extends Controller
 
     public function doLoadMoreImages()
     {
-        $page = Input::get('page');
         $model = new $this->model;
+        $page = Input::get('page');
+
         $perPage = $model->getConfigPerPage();
         $images = $model::filterSearch()->orderBy('id', 'desc')->skip($perPage * $page)->limit($perPage)->get();
         $html = '';
@@ -115,12 +116,13 @@ class ImagesController extends Controller
 
     public function doReplaceSingleImage()
     {
-        $model = $this->model;
+        $model = new $this->model;
 
         $file = Input::file('image');
         $size = Input::get('type');
+        $id   = Input::get('id');
 
-        $entity = $model::find(Input::get('id'));
+        $entity = $model::find($id);
 
         $entity->setSourceFile($file);
 
@@ -142,7 +144,9 @@ class ImagesController extends Controller
     public function getImageForm()
     {
         $model = new $this->model;
-        $entity = $model::find(Input::get('id'));
+        $id   = Input::get('id');
+
+        $entity = $model::find($id);
 
         $sizes = $model->getConfigSizes();
 
@@ -176,9 +180,10 @@ class ImagesController extends Controller
 
     public function doDeleteImage()
     {
+        $id    = Input::get('id');
         $model = new $this->model;
 
-        $image = $model::find(Input::get('id'));
+        $image = $model::find($id);
 
         $image->doDeleteImageFiles();
 
@@ -194,7 +199,6 @@ class ImagesController extends Controller
     public function doSaveImageInfo()
     {
         $model = new $this->model;
-
         $fields = Input::except('relations');
 
         $image = $model::find($fields['id']);
@@ -211,6 +215,24 @@ class ImagesController extends Controller
             'status' => true,
         ));
     } // end doSaveImageInfo
+
+    public function doOptimizeImage()
+    {
+
+        $model = new $this->model;
+        $id   = Input::get('id');
+        $size = Input::get('type');
+
+        $image = $model::find($id);
+
+        $image->optimizeImage($size);
+
+        $model::flushCache();
+
+        return Response::json(array(
+            'status' => true,
+        ));
+    }
 
 
 }

@@ -147,7 +147,6 @@ var ImageStorage = {
                     imgCount = imgCount + 1;
 
                     if (response.status) {
-                        ImageStorage.sendOptimizeImageRequest(response.id);
                         $('.superbox').prepend(response.html);
                         ImageStorage.initEditClickEvent();
                         imgSuccessCount = imgSuccessCount + 1;
@@ -156,6 +155,9 @@ var ImageStorage = {
                         $fog.find('.image-storage-upload-upload').text(imgCount);
                         $fog.find('.image-storage-upload-success').text(imgSuccessCount);
                         $fog.find('.image-storage-progress-success').css('width', successPercentage +'%');
+
+                        ImageStorage.sendOptimizeImageRequest(response.id);
+
                     } else {
                         imgFailCount = imgFailCount + 1;
                         failPercentage = successPercentage + failPercentage;
@@ -261,6 +263,7 @@ var ImageStorage = {
             success: function(response) {
                 if (response.status) {
                     $(context).parents(".tab-pane.active").find('.superbox-current-img').prop('src', response.src);
+                    ImageStorage.sendOptimizeImageRequest(idImage, type);
                 } else {
                     TableBuilder.showErrorNotification("Ошибка при загрузке изображения");
                 }
@@ -385,7 +388,6 @@ var ImageStorage = {
 
         var imagesArray = ImageStorage.getSelectedImages();
 
-        //fixme make route&controller
         jQuery.ajax({
             type: "POST",
             url: "/admin/image_storage/images/create_gallery_with_images",
@@ -417,6 +419,13 @@ var ImageStorage = {
                 type:  type,
             },
             dataType: 'json',
+/*            success: function(response) {
+                if (response.status) {
+                    TableBuilder.showSuccessNotification('Изображение успешно оптимизированно');
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так при оптимизации изображения');
+                }
+            }*/
         });
     },
 
@@ -469,7 +478,7 @@ var ImageStorage = {
                     success: function(response) {
                         if (response.status) {
                             $('.tr_'+id).remove();
-                            //fixme костылёк
+                            //fixme hide modal gallery popup
                             if($(".modal-body.row").length){
                                 $("button.close").click();
                             }
