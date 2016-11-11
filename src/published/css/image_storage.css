@@ -69,30 +69,23 @@
     height: auto !important;
 }
 
-.selected{
+.superbox-list.selected{
     border: 1px solid #0091d9!important;
     position: relative;
 }
 
-.selected:before {
-    display: block;
-    position: absolute;
-    content: "\f00c";
+.superbox-list.selected:after {
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    font-size: 14px;
     color: #fff;
-    right: 4px;
-    top: 3px;
-    font-family: FontAwesome;
-    z-index: 2;
-}
-.selected:after {
-    width: 0;
-    height: 0;
-    border-top: 35px solid #0091d9;
-    border-left: 35px solid rgba(0, 0, 0, 0);
+    background:#0091d9;
     position: absolute;
     display: block;
     right: 0;
-    content: "";
+    content: "\f00c";
+    font-family: FontAwesome;
     top: 0;
     z-index: 1;
 }
@@ -169,7 +162,6 @@
 
 .image-storage-image-operations{
     display:none;
-    min-height:150px;
     margin:10px;
     text-align:center;
 }

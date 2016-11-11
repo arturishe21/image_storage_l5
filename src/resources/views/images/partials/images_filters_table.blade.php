@@ -1,3 +1,4 @@
+<form id="image-storage-search-form">
 <table class="table  table-hover table-bordered " id="sort_t">
     <thead>
     <tr>
@@ -20,7 +21,6 @@
             </form>
         </th>
     </tr>
-    <form id="image-storage-search-form">
     <tr class="filters-row">
         <td>
             <div class="relative">
@@ -78,6 +78,6 @@
             </button>
         </td>
     </tr>
-    </form>
     </thead>
 </table>
+</form>
