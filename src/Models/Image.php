@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\File;
 use Vis\Builder\OptmizationImg;
 
 
-class Image extends AbstractClass
+class Image extends AbstractImageStorage
 {
     protected $table = 'vis_images';
     protected $configPrefix = 'image';

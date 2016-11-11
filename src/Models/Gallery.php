@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 
 
-class Gallery extends AbstractClass
+class Gallery extends AbstractImageStorage
 {
     protected $table = 'vis_galleries';
     protected $configPrefix = 'gallery';

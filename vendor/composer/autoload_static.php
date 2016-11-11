@@ -21,7 +21,7 @@ class ComposerStaticInitb53a329f2de6d2fb9c017a4f182eef61
     );
 
     public static $classMap = array (
-        'Vis\\ImageStorage\\AbstractClass' => __DIR__ . '/../..' . '/src/Models/AbstractClass.php',
+        'Vis\\ImageStorage\\AbstractImageStorage' => __DIR__ . '/../..' . '/src/Models/AbstractImageStorage.php',
         'Vis\\ImageStorage\\GalleriesController' => __DIR__ . '/../..' . '/src/Http/Controllers/GalleriesController.php',
         'Vis\\ImageStorage\\Gallery' => __DIR__ . '/../..' . '/src/Models/Gallery.php',
         'Vis\\ImageStorage\\Image' => __DIR__ . '/../..' . '/src/Models/Image.php',

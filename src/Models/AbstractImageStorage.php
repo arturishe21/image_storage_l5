@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Schema;
 
 
 
-abstract class AbstractClass extends Model
+abstract class AbstractImageStorage extends Model
 {
 
     protected $configPrefix = '';
@@ -45,7 +45,7 @@ abstract class AbstractClass extends Model
             return $query;
         }
 
-        //fixme ���������� ��� ������
+        //fixme переписать под модель
         $relatedImagesIds = \DB::table('vis_images2tags')->whereIn('id_tag', $tags)->lists('id_image');
 
         return $query->whereIn('id', $relatedImagesIds);
@@ -56,7 +56,7 @@ abstract class AbstractClass extends Model
         if (!$galleries) {
             return $query;
         }
-        //fixme ���������� ��� ������
+        //fixme переписать под модель
         $relatedImagesIds = \DB::table('vis_images2galleries')->whereIn('id_gallery', $galleries)->lists('id_image');
 
         return $query->whereIn('id', $relatedImagesIds);

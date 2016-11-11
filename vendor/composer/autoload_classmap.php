@@ -6,7 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Vis\\ImageStorage\\AbstractClass' => $baseDir . '/src/Models/AbstractClass.php',
+    'Vis\\ImageStorage\\AbstractImageStorage' => $baseDir . '/src/Models/AbstractImageStorage.php',
     'Vis\\ImageStorage\\GalleriesController' => $baseDir . '/src/Http/Controllers/GalleriesController.php',
     'Vis\\ImageStorage\\Gallery' => $baseDir . '/src/Models/Gallery.php',
     'Vis\\ImageStorage\\Image' => $baseDir . '/src/Models/Image.php',
