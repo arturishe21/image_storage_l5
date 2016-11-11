@@ -1,0 +1,19 @@
+{
+  "name": "vis/image_storage_l5",
+  "description": "Image storage for L5",
+  "authors": [
+    {
+      "name": "vis",
+      "email": "k.gluschenko@vis-design.com"
+    }
+  ],
+  "autoload": {
+    "classmap": [
+      "src/Models",
+      "src/Http/Controllers"
+    ],
+    "psr-4": {
+      "Vis\\ImageStorage\\": "src/"
+    }
+  }
+}
