@@ -45,6 +45,7 @@
 </div>
 
     <div id="imgInfoBox" class="superbox-imageinfo inline-block">
+        <div></div>
         <div class="imgInfoBox-container">
             <div class="imgInfoBox-title"># {{ $entity->id }}: {{ $entity->title }} ({{ $entity->created_at }})</div>
             <form class="smart-form" id="imgInfoBox-form">
@@ -68,17 +69,17 @@
                 <section><label>{{__cms('Галереи')}}</label>
                     <select name="relations[image-storage-galleries][]" multiple class="imgInfoBox-select image-storage-select">
                         @foreach ($galleries as $gallery)
-                            <option {{in_array($gallery->id, $relatedGalleries) ? 'selected="selected"' : ''}} value="{{$gallery->id}}">{{$gallery->title}}</option>
+                            <option {{$entity->galleries->contains($gallery->id) ? 'selected="selected"' : ''}} value="{{$gallery->id}}">{{$gallery->title}}</option>
                         @endforeach
                  </select>
                 </section>
-{{--                <section><label>{{__cms('Теги')}}</label>
+                <section><label>{{__cms('Теги')}}</label>
                     <select name="relations[image-storage-tags][]" multiple class="imgInfoBox-select image-storage-select">
                         @foreach ($tags as $tag)
-                            <option {{in_array($tag->id, $relatedTags) ? 'selected="selected"' : ''}} value="{{$tag->id}}">{{$tag->title}}</option>
+                            <option {{$entity->tags->contains($tag->id) ? 'selected="selected"' : ''}} value="{{$tag->id}}">{{$tag->title}}</option>
                         @endforeach
                     </select>
-                </section>--}}
+                </section>
             </fieldset>
 
             <div class="well action-buttons-row">

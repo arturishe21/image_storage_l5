@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Schema;
 
-
-
-
 abstract class AbstractImageStorage extends Model
 {
 

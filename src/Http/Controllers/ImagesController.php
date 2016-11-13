@@ -150,10 +150,6 @@ class ImagesController extends Controller
         $galleries = Gallery::active()->get();
         $tags = Tag::active()->get();
 
-        //fixme переписать под модель
-        $relatedGalleries = \DB::table('vis_images2galleries')->where('id_image', $entity->id)->lists('id_gallery') ? : array();
-        $relatedTags = \DB::table('vis_images2tags')->where('id_image', $entity->id)->lists('id_tag') ? : array();
-        
         $html = View::make(
             'image-storage::images.partials.image_form',
             compact(
@@ -161,8 +157,6 @@ class ImagesController extends Controller
                 'sizes',
                 'galleries',
                 'tags',
-                'relatedGalleries',
-                'relatedTags',
                 'fields'
             )
         )->render();

@@ -512,15 +512,13 @@ var ImageStorage = {
             data: { id: id },
             success: function(response) {
                 if (response.status) {
-
                     $("#modal_form").modal('show');
                     $("#modal_form .modal-content").html(response.html);
                     TableBuilder.hidePreloader();
                     ImageStorage.initSortable();
-
+                    ImageStorage.initSelectBoxes();
                 } else {
                     TableBuilder.hidePreloader();
-
                     TableBuilder.showErrorNotification('Что-то пошло не так');
                 }
             }
@@ -582,14 +580,10 @@ var ImageStorage = {
         //fixme hidden input? find better decision
         var idGallery = $('[name=gallery_id]').val();
 
-        var data = new FormData();
-        data.append("images", images);
-        data.append('idGallery', idGallery);
-
-            jQuery.ajax({
+        jQuery.ajax({
             type: "POST",
             url: "/admin/image_storage/galleries/change_image_order",
-            data: data,
+            data: { images: images, idGallery:idGallery  },
             dataType: 'json',
             success: function(response) {
                 if (response.status) {
@@ -609,14 +603,10 @@ var ImageStorage = {
             buttons : '[Нет][Да]'
         }, function(ButtonPressed) {
             if (ButtonPressed === "Да") {
-                var data = new FormData();
-                data.append("idImage", idImage);
-                data.append('idGallery', idGallery);
-
                 jQuery.ajax({
                     type: "POST",
                     url: "/admin/image_storage/galleries/delete_image_relation",
-                    data: data,
+                    data: { idImage: idImage, idGallery:idGallery  },
                     dataType: 'json',
                     success: function(response) {
                         if (response.status) {

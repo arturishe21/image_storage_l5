@@ -18,7 +18,7 @@ class Gallery extends AbstractImageStorage
 
     public function images()
     {
-        return $this->belongsToMany('Vis\ImageStorage\Image', 'vis_images2galleries', 'id_gallery', 'id_image')->orderBy('priority');
+        return $this->belongsToMany('Vis\ImageStorage\Image', 'vis_images2galleries', 'id_gallery', 'id_image')->orderBy('priority', 'desc');
     } // end images
 
     public function tags()
@@ -29,17 +29,13 @@ class Gallery extends AbstractImageStorage
 
     public function changeGalleryImageOrder($images)
     {
-        $priority = 1;
+        $priority = count($images);
 
-        //fixme переписать под модель
+        $this->images()->detach();
+
         foreach ($images as $idImage) {
-            \DB::table('vis_images2galleries')
-                ->where('id_image', $idImage)
-                ->where('id_gallery', $this->id)
-                ->update(array(
-                'priority' => $priority
-            ));
-            $priority++;
+            $this->images()->attach($idImage, ['priority' => $priority]);
+            $priority--;
         }
 
         self::flushCache();
@@ -48,11 +44,7 @@ class Gallery extends AbstractImageStorage
 
     public function deleteImageGalleryRelation($idImage)
     {
-        //fixme переписать под модель
-            \DB::table('vis_images2galleries')
-                ->where('id_image', $idImage)
-                ->where('id_gallery', $this->id)
-                ->delete();
+        $this->images()->detach($idImage);
 
         self::flushCache();
         Image::flushCache();

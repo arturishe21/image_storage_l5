@@ -15,7 +15,7 @@ class GalleriesController extends Controller
         $model = new $this->model;
 
         $perPage = $model->getConfigPerPage();
-        $title = $model->getConfigTitle();
+        $title   = $model->getConfigTitle();
 
         $data = $model::filterSearch()->orderBy('id', 'DESC')->with('tags')->paginate($perPage);
 
@@ -70,15 +70,11 @@ class GalleriesController extends Controller
 
         $tags = Tag::active()->get();
 
-        //fixme переписать под модель
-        $relatedTags = \DB::table('vis_images2galleries')->where('id_gallery', $entity->id)->lists('id_image') ? : array();
-
         $html = View::make(
             'image-storage::galleries.partials.gallery_form',
             compact(
                 'entity',
                 'tags',
-                'relatedTags',
                 'fields'
             )
         )->render();

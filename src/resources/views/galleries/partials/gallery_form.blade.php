@@ -45,15 +45,15 @@
                     </div>
                 </fieldset>
 
-{{--                <fieldset>
+                <fieldset>
                  <section><label>{{__cms('Теги')}}</label>
                         <select name="relations[image-storage-tags][]" multiple class="imgInfoBox-select image-storage-select">
                             @foreach ($tags as $tag)
-                                <option {{in_array($tag->id, $relatedTags) ? 'selected="selected"' : ''}} value="{{$tag->id}}">{{$tag->title}}</option>
+                                <option {{$entity->tags->contains($tag->id) ? 'selected="selected"' : ''}} value="{{$tag->id}}">{{$tag->title}}</option>
                             @endforeach
                         </select>
                     </section>
-                </fieldset>--}}
+                </fieldset>
 
                 <div class="well action-buttons-row">
                     <a onclick="ImageStorage.saveGalleryInfo({{ $entity->id }});" href="javascript:void(0);"

@@ -130,6 +130,10 @@
     color: #fff;
     padding: 0 25px 0 0;
 }
+.superbox-imageinfo>:first-child{
+    display:none;
+}
+
 .imgInfoBox-container{
     display:inline;
     margin:0;

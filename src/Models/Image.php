@@ -32,11 +32,15 @@ class Image extends AbstractImageStorage
         Cache::tags('image_storage-images')->flush();
     } // end flushCache
 
-    public function scopePriority($query, $direction = 'asc')
+    public function galleries()
     {
-        return $query->orderBy('priority', $direction);
-    } // end priority
+        return $this->belongsToMany('Vis\ImageStorage\Gallery', 'vis_images2galleries', 'id_image', 'id_gallery');
+    } // end images
 
+    public function tags()
+    {
+        return $this->belongsToMany('Vis\ImageStorage\Tag', 'vis_images2tags', 'id_image', 'id_tag');
+    } // end tags
 
     public function getSource($size = 'source')
     {
@@ -283,20 +287,10 @@ class Image extends AbstractImageStorage
 
     private function makeImageTagsRelations()
     {
-        $data = array();
 
-        foreach (Input::get('relations.image-storage-tags', array()) as $idTag) {
-            $data[] = array(
-                'id_image' => $this->id,
-                'id_tag'   => $idTag
-            );
-        }
-        //fixme переписать под модель
-        \DB::table('vis_images2tags')->where('id_image', $this->id)->delete();
+       $tags = Input::get('relations.image-storage-tags', array());
 
-        if ($data) {
-            \DB::table('vis_images2tags')->insert($data);
-        }
+       $this->tags()->sync($tags);
 
         self::flushCache();
         Tag::flushCache();
@@ -304,32 +298,9 @@ class Image extends AbstractImageStorage
 
     private function makeImageGalleriesRelations()
     {
-        $data = array();
+        $galleries = Input::get('relations.image-storage-galleries', array());
 
-        foreach (Input::get('relations.image-storage-galleries', array()) as $idGallery) {
-            $data[] = array(
-                'id_image'     => $this->id,
-                'id_gallery'   => $idGallery
-            );
-        }
-
-        //fixme переписать под модель
-        $existingRelations = \DB::table('vis_images2galleries')->where('id_image', $this->id)->get();
-
-        foreach($existingRelations as $key=>$galleryRelation){
-            if(!in_array($galleryRelation['id_gallery'],$data)) {
-                \DB::table('vis_images2galleries')
-                    ->where('id_image', $this->id)
-                    ->where('id_gallery', $galleryRelation['id_gallery'])
-                    ->delete();
-            }
-        }
-
-        foreach($data as $key=>$value){
-            if(!in_array($value['id_gallery'],$existingRelations)){
-                \DB::table('vis_images2galleries')->insert($value);
-            }
-        }
+        $this->galleries()->sync($galleries);
 
         self::flushCache();
         Gallery::flushCache();
