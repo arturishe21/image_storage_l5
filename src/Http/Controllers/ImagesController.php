@@ -188,15 +188,16 @@ class ImagesController extends Controller
     public function doSaveImageInfo()
     {
         $model = new $this->model;
+
         $fields = Input::except('relations');
 
         $image = $model::find($fields['id']);
 
-        $image->makeImageRelations();
-
         $image->setFields($fields);
 
         $image->save();
+
+        $image->makeImageRelations();
 
         $model::flushCache();
 

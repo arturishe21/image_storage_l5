@@ -77,6 +77,7 @@ var ImageStorage = {
         $('.datepicker').datepicker();
     },
 
+    //images
     resetUploadPreloader: function(button)
     {
         $(button).hide().parent().parent().hide();
@@ -409,7 +410,6 @@ var ImageStorage = {
         });
     },
 
-
     //galleries
     doSearchGalleries: function()
     {
@@ -495,7 +495,6 @@ var ImageStorage = {
             }
         });
     },
-
 
     initSortable: function()
     {
@@ -681,10 +680,6 @@ var ImageStorage = {
             }
         });
     }, // end saveImagesTagsRelations
-
-
-
-
 
 };
 $(document).ready(function(){

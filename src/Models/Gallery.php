@@ -3,6 +3,8 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Input;
+
 
 
 class Gallery extends AbstractImageStorage
@@ -25,6 +27,21 @@ class Gallery extends AbstractImageStorage
     {
         return $this->belongsToMany('Vis\ImageStorage\Tag', 'vis_galleries2tags', 'id_gallery', 'id_tag');
     } // end tags
+
+    public function makeGalleryRelations()
+    {
+        $this->makeGalleryTagsRelations();
+    }
+
+    private function makeGalleryTagsRelations()
+    {
+        $tags = Input::get('relations.image-storage-tags', array());
+
+        $this->tags()->sync($tags);
+
+        self::flushCache();
+        Tag::flushCache();
+    }
 
     public function relateImagesToGallery($images)
     {

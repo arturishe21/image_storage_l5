@@ -98,6 +98,8 @@ class GalleriesController extends Controller
 
         $image->save();
 
+        $image->makeGalleryRelations();
+
         $model::flushCache();
 
         return Response::json(array(
