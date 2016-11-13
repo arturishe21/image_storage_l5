@@ -1,6 +1,12 @@
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times; </button>
-    <h4 class="modal-title" id="modal_form_label"># {{$entity->id}}: {{$entity->title}} ({{$entity->created_at}}) </h4>
+    <h4 class="modal-title" id="modal_form_label">
+        @if($entity->id)
+            {{__cms('Редактирование галереи')}} # {{$entity->id}}: {{$entity->title}} ({{$entity->created_at}})
+        @else
+            {{__cms('Создание галереи')}}
+        @endif
+    </h4>
 </div>
 <div class="modal-body row">
     <input type="hidden" name="gallery_id" value="{{$entity->id}}">
@@ -58,8 +64,10 @@
                 <div class="well action-buttons-row">
                     <a onclick="ImageStorage.saveGalleryInfo({{ $entity->id }});" href="javascript:void(0);"
                        class="btn btn-success btn-sm pull-right j-btn-save">{{__cms('Сохранить')}}</a>
+                    @if($entity->id)
                     <a onclick="ImageStorage.deleteGallery({{ $entity->id }});" href="javascript:void(0);"
                        class="btn btn-danger btn-sm pull-left j-btn-del">{{__cms('Удалить')}}</a>
+                    @endif
                 </div>
             </form>
     </div>

@@ -9,7 +9,7 @@
 --}}
         <th width="10%">{{__cms("Галерея активна")}}</th>
         <th width="8%">
-            <a class="btn btn-sm btn-success" onclick="ImageStorage.getCreateForm();">
+            <a class="btn btn-sm btn-success" onclick="ImageStorage.getGalleryEditForm(null);">
                 <i class="fa fa-plus"></i> {{__cms('Создать')}}
             </a>
         </th>

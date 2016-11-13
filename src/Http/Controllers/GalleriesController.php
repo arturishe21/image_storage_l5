@@ -63,9 +63,16 @@ class GalleriesController extends Controller
     {
         $model = new $this->model;
 
-        $entity = $model::find(Input::get('id'));
+        $id = Input::get('id');
 
-        $fields = $model->getConfigFields();
+        //fixme should be optimized
+        if($id){
+            $entity = $model::find($id);
+        }else{
+            $entity = new $model;
+        }
+
+        $fields = $entity->getConfigFields();
 
         $tags = Tag::active()->get();
 
@@ -87,13 +94,18 @@ class GalleriesController extends Controller
 
         $fields = Input::except('relations');
 
-        $image = $model::find($fields['id']);
+        //fixme should be optimized
+        if($fields['id']){
+            $entity = $model::find($fields['id']);
+        }else{
+            $entity = new $model;
+        }
 
-        $image->setFields($fields);
+        $entity->setFields($fields);
 
-        $image->save();
+        $entity->save();
 
-        $image->makeGalleryRelations();
+        $entity->makeGalleryRelations();
 
         $model::flushCache();
 

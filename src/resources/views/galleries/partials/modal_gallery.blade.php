@@ -4,7 +4,6 @@
         <div class="modal-dialog" style="width: 100%">
             <div class="form-preloader smoke_lol"><i class="fa fa-gear fa-4x fa-spin"></i></div>
             <div class="modal-content">
-
             </div>
             <!-- /.modal-content -->
         </div>
