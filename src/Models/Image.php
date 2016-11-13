@@ -20,6 +20,9 @@ class Image extends AbstractImageStorage
     protected $imageSizePrefix = 'file_';
     protected $prefixPath = '/storage/image-storage/';
 
+    protected $uploadedImage;
+    protected $errorMessage;
+
     protected $sourceImage;
     protected $imageData;
 
@@ -48,42 +51,72 @@ class Image extends AbstractImageStorage
         return $this->getConfigValue('sizes');
     }
 
-    public function getConfigSizesModifiable()
+    private function getConfigSizesModifiable()
     {
         $allSizes = $this->getConfigSizes();
         unset($allSizes['source']);
         return $allSizes;
     }
 
-    public function getConfigSizeInfo($size)
+    private function getConfigSizeInfo($size)
     {
         $allSizes = $this->getConfigSizes();
         return $allSizes[$size];
     }
 
-    public function getConfigOptimization()
+    private function getConfigOptimization()
     {
         return $this->getConfigValue('optimization');
     }
 
-    public function getConfigQuality()
+    private function getConfigQuality()
     {
         return $this->getConfigValue('quality');
     }
 
-    public function getConfigUseSourceTitle()
+    private function getConfigUseSourceTitle()
     {
         return $this->getConfigValue('source_title');
     }
 
-    public function getConfigStoreEXIF()
+    private function getConfigStoreEXIF()
     {
         return $this->getConfigValue('store_exif');
     }
 
-    public function getConfigDeleteFiles()
+    private function getConfigDeleteFiles()
     {
         return $this->getConfigValue('delete_files');
+    }
+
+    private function getConfigImageSizeValidation()
+    {
+        return $this->getConfigValue('image_size_validation.enabled');
+    }
+
+    private function getConfigImageSizeMax()
+    {
+        return $this->getConfigValue('image_size_validation.max_image_size');
+    }
+
+    private function getConfigImageSizeMaxErrorMessage()
+    {
+        return $this->getConfigValue('image_size_validation.error_message');
+    }
+
+    private function getConfigImageExtensionValidation()
+    {
+        return $this->getConfigValue('image_extension_validation.enabled');
+    }
+
+    private function getConfigAllowedImageExtensions()
+    {
+        return $this->getConfigValue('image_extension_validation.allowed_image_extensions');
+    }
+
+    private function getConfigImageExtensionsErrorMessage()
+    {
+        return $this->getConfigValue('image_extension_validation.error_message');
     }
 
     private function getPathByID()
@@ -103,9 +136,22 @@ class Image extends AbstractImageStorage
         return $fileName;
     }
 
+    public function getUploadErrorMessage()
+    {
+        return $this->errorMessage;
+    }
+
     public function setSourceFile($file)
     {
-        $this->sourceImage = $file;
+        $this->uploadedImage = $file;
+
+        if($this->failsToValidateImage()){
+            return false;
+        }
+
+        $this->sourceImage = $this->uploadedImage;
+        unset($this->uploadedImage);
+        return true;
     }
 
     public function setImageTitle()
@@ -139,6 +185,57 @@ class Image extends AbstractImageStorage
         }
     }
 
+    private function failsToValidateImage()
+    {
+        if($this->failsToValidateImageSize()){
+            return true;
+        }
+
+        if($this->failsToValidateImageExtension()){
+            return true;
+        }
+
+        return false;
+    }
+
+    private function failsToValidateImageSize()
+    {
+        if(!$this->getConfigImageSizeValidation()){
+            return false;
+        }
+
+        $maxImageSize = $this->getConfigImageSizeMax();
+        $uploadImageSize = $this->uploadedImage->getClientSize();
+
+        if($uploadImageSize > $maxImageSize){
+            $maxImageSizeInMB = $maxImageSize/1000000;
+            $message  =  $this->getConfigImageSizeMaxErrorMessage();
+            $this->errorMessage =  str_replace("[size]", $maxImageSizeInMB, $message);
+            return true;
+        }
+
+        return false;
+    }
+
+    private function failsToValidateImageExtension()
+    {
+        if(!$this->getConfigImageExtensionValidation()){
+            return false;
+        }
+
+        $allowedExtensions = $this->getConfigAllowedImageExtensions();
+        $uploadImageExtension = $this->uploadedImage->getClientOriginalExtension();
+
+        if(!in_array($uploadImageExtension,$allowedExtensions)){
+            $allowedExtensionsList = implode(",", $allowedExtensions);
+            $message  =  $this->getConfigImageExtensionsErrorMessage();
+            $this->errorMessage =  str_replace("[extension_list]", $allowedExtensionsList, $message);
+            return true;
+        }
+
+        return false;
+    }
+
     public function optimizeImage($size)
     {
         if($size == 'all'){
@@ -160,7 +257,7 @@ class Image extends AbstractImageStorage
         }
     }
 
-    protected function doCheckSchemeSizes()
+    private function doCheckSchemeSizes()
     {
         $sizes = $this->getConfigSizes();
 
@@ -177,7 +274,6 @@ class Image extends AbstractImageStorage
             }
         }
     }
-
 
     public function makeImageRelations()
     {

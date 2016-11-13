@@ -102,16 +102,20 @@ abstract class AbstractImageStorage extends Model
     {
         $this->doCheckSchemeFields();
 
-        foreach($fields as $key=>$value){
+        $configFields = $this->getConfigFields();
+
+        foreach($configFields as $key=>$value){
+            $value = isset($fields[$key]) ? $fields[$key] : false ;
             $this->$key = $value;
         }
+
     }
 
     protected function doCheckSchemeFields()
     {
-        $sizes = $this->getConfigFields();
+        $fields = $this->getConfigFields();
 
-        foreach ($sizes as $field => $fieldInfo) {
+        foreach ($fields as $field => $fieldInfo) {
             $columnNames = [];
 
             if(isset($fieldInfo['tabs'])){

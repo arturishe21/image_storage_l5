@@ -1,13 +1,10 @@
 <?php namespace Vis\ImageStorage;
 
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Session;
 
 
 class ImagesController extends Controller
@@ -81,34 +78,30 @@ class ImagesController extends Controller
     {
         $model = $this->model;
 
-        $id = null;
-        $html = '';
-        $files = Input::file('images');
+        $file = Input::file('image');
 
-        foreach($files as $file) {
-            $entity = new $model;
+        $entity = new $model;
 
-            $entity->setSourceFile($file);
-            $entity->setImageData();
-            $entity->setImageTitle();
-            $entity->save();
-
-            $entity->doMakeSourceFile();
-            $entity->doImageVariations();
-            $entity->save();
-
-            $id = $entity->id;
-            $html .= View::make('image-storage::images.partials.list_image')->with('image', $entity)->render();
-
-
+        if(!$entity->setSourceFile($file)){
+            return Response::json( array( 'status' => false, 'message'   => $entity->getUploadErrorMessage() ));
         }
+
+        $entity->setImageData();
+        $entity->setImageTitle();
+        $entity->save();
+
+        $entity->doMakeSourceFile();
+        $entity->doImageVariations();
+        $entity->save();
+
+        $html = View::make('image-storage::images.partials.list_image')->with('image', $entity)->render();
 
         $model::flushCache();
 
         $data = array(
             'status' => true,
             'html'   => $html,
-            'id'     => $id
+            'id'     => $entity->id
         );
 
         return Response::json($data);
@@ -124,7 +117,9 @@ class ImagesController extends Controller
 
         $entity = $model::find($id);
 
-        $entity->setSourceFile($file);
+        if(!$entity->setSourceFile($file)){
+            return Response::json( array( 'status' => false, 'message'   => $entity->getUploadErrorMessage() ));
+        }
 
         $entity->replaceSingleImage($size);
 

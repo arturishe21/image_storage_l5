@@ -9,7 +9,7 @@ return array(
 
         'per_page' => 10,
 
-        //Only text and textarea fields are supported for now
+        //Only text\textarea\checkbox\datetime fields are supported for now
         'fields' => array(
             'title' => array(
                 'caption' => 'Название',
@@ -45,6 +45,22 @@ return array(
                     ),
                 )
             ),
+            'event_date' => array(
+                'caption' => 'Дата события',
+                'type' => 'datetime',
+                'is_sorting' => true,
+                'months' => 2,
+                'field' => 'timestamp',
+            ),
+            'is_active' => array(
+                'caption' => 'Галерея активна',
+                'type' => 'checkbox',
+                'options' => array(
+                    1 => 'Активные',
+                    0 => 'He aктивные',
+                ),
+                'field' => 'tinyInteger',
+            ),
         ),
     ),
 
@@ -53,6 +69,18 @@ return array(
         'title' => "Изображения",
 
         'per_page' => 40,
+
+        'image_size_validation' => array(
+            'enabled' => true,
+            'max_image_size' => '1500000',
+            'error_message' => "Превышен максимальный размер файла в [size] MB"
+        ),
+
+        'image_extension_validation' => array(
+            'enabled' => true,
+            'allowed_image_extensions' => array('png', 'jpg', 'jpeg'),
+            'error_message' => "Допустимы только изображения форматов: [extension_list]"
+        ),
 
         /* Quality is only applied if you're encoding JPG format since PNG compression. Value range is 0-100.*/
         'quality' => 85,
@@ -69,7 +97,7 @@ return array(
         /* delete files upon deleting entry from database */
         'delete_files' => true,
 
-        //Only text and textarea fields are supported for now
+        //Only text\textarea\checkbox\datetime fields are supported for now
         'fields' => array(
             'title' => array(
                 'caption' => 'Название',

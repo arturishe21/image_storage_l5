@@ -68,6 +68,9 @@
     width: 160px;
     height: auto !important;
 }
+.superbox-list{
+    margin-bottom:5px;
+}
 
 .superbox-list.selected{
     border: 1px solid #0091d9!important;

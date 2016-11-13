@@ -1,5 +1,5 @@
 <ul class="nav nav-tabs tabs-pull-right">
-    <label class="label pull-left">{{$field['caption']}}</label>
+    <label class="label pull-left">{{__cms($field['caption'])}}</label>
     @foreach($field['tabs'] as $lang => $tab)
         <li class="{{$loop->first ? 'active' : ''}}">
             <a style="color: #000000 !important;" href="#e-{{$fieldName}}-{{$tab['postfix']}}-{{$loop->index}}" data-toggle="tab">{{$tab['caption']}}</a>

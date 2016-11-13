@@ -3,8 +3,8 @@
 var ImageStorage = {
 
     images_page: 1,
+    is_last_page: false,
     is_images_loading: false,
-
 
     init: function()
     {
@@ -134,7 +134,7 @@ var ImageStorage = {
 
         for (var x = 0; x < imgTotal; x++) {
             var data = new FormData();
-            data.append("images[]", context.files[x]);
+            data.append("image", context.files[x]);
 
             jQuery.ajax({
                 data: data,
@@ -164,7 +164,12 @@ var ImageStorage = {
                         var failWidth  = successPercentage + failPercentage;
                         $fog.find('.image-storage-progress-fail').css('width', failWidth +'%');
                         $fog.find('.image-storage-upload-fail').text(imgFailCount);
-                        TableBuilder.showErrorNotification("Ошибка при загрузке изображения");
+
+                        if (response.message){
+                            TableBuilder.showErrorNotification(response.message);
+                        }else{
+                            TableBuilder.showErrorNotification("Ошибка при загрузке изображения");
+                        }
                     }
 
                     if (imgCount == imgTotal) {
@@ -265,7 +270,11 @@ var ImageStorage = {
                     $(context).parents(".tab-pane.active").find('.superbox-current-img').prop('src', response.src);
                     ImageStorage.sendOptimizeImageRequest(idImage, type);
                 } else {
-                    TableBuilder.showErrorNotification("Ошибка при загрузке изображения");
+                    if (response.message){
+                        TableBuilder.showErrorNotification(response.message);
+                    }else{
+                        TableBuilder.showErrorNotification("Ошибка при загрузке изображения");
+                    }
                 }
             }
         });
@@ -554,6 +563,10 @@ var ImageStorage = {
             success: function(response) {
                 if (response.status) {
                     TableBuilder.showSuccessNotification('Сохранено');
+                    //fixme hide modal gallery popup
+                    if($(".modal-body.row").length){
+                        $("button.close").click();
+                    }
                 } else {
                     TableBuilder.showErrorNotification('Что-то пошло не так');
                 }
