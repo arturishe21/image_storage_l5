@@ -42,7 +42,7 @@ class ImageStorageServiceProvider extends ServiceProvider
     public function setupRoutes(Router $router)
     {
         if (!$this->app->routesAreCached()) {
-            require __DIR__ . '/Http/routers.php';
+            require __DIR__ . '/Http/Routers/routers.php';
         }
     }
 

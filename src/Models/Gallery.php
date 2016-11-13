@@ -26,6 +26,13 @@ class Gallery extends AbstractImageStorage
         return $this->belongsToMany('Vis\ImageStorage\Tag', 'vis_galleries2tags', 'id_gallery', 'id_tag');
     } // end tags
 
+    public function relateImagesToGallery($images)
+    {
+        $this->images()->syncWithoutDetaching($images);
+
+        self::flushCache();
+        Image::flushCache();
+    }
 
     public function changeGalleryImageOrder($images)
     {

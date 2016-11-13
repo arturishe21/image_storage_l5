@@ -382,39 +382,9 @@ var ImageStorage = {
             $('.image-storage-image-operations').show();
         } else {
             $('.image-storage-image-operations').hide();
+            $('form[name=image-storage-image-operations-form]')[0].reset();
         }
     }, // end checkSelectedImages
-
-    createGalleryWithImages: function ()
-    {
-
-        var galleryName = $('form[name="image-storage-image-operations-form"] input[name="gallery_name"]').val().trim();
-
-        if (!galleryName) {
-            TableBuilder.showErrorNotification('Введите название галереи для создания');
-            return false;
-        }
-
-        var imagesArray = ImageStorage.getSelectedImages();
-
-        jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/images/create_gallery_with_images",
-            data: {
-                images_ids:     imagesArray,
-                gallery_name:   galleryName
-            },
-            dataType: 'json',
-            success: function(response) {
-                if (response.status) {
-                    TableBuilder.showSuccessNotification('Галерея с изображениями успешно создана');
-                } else {
-                    TableBuilder.showErrorNotification('Что-то пошло не так');
-                }
-            }
-        });
-
-    },
 
     sendOptimizeImageRequest: function (id, type)
     {
@@ -434,7 +404,8 @@ var ImageStorage = {
                 } else {
                     TableBuilder.showErrorNotification('Что-то пошло не так при оптимизации изображения');
                 }
-            }*/
+            }
+*/
         });
     },
 
@@ -621,6 +592,97 @@ var ImageStorage = {
             }
         });
     }, // end deleteGalleryImageRelation
+
+    createGalleryWithImages: function ()
+    {
+
+        var galleryName = $('form[name="image-storage-image-operations-form"] input[name="gallery_name"]').val().trim();
+
+        if (!galleryName) {
+            TableBuilder.showErrorNotification('Введите название галереи для создания');
+            return false;
+        }
+
+        var imagesArray = ImageStorage.getSelectedImages();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/galleries/create_gallery_with_images",
+            data: {
+                images:     imagesArray,
+                galleryName:   galleryName
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status) {
+                    TableBuilder.showSuccessNotification('Галерея с изображениями успешно создана');
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+
+    },
+
+    saveImagesGalleriesRelations: function ()
+    {
+        var  galleriesArray = $('form[name="image-storage-image-operations-form"] select[name="relations[image-storage-galleries][]"]').val();
+
+        if (!galleriesArray) {
+            TableBuilder.showErrorNotification('Выберите галереи для добавления изображений');
+            return false;
+        }
+
+        var imagesArray = ImageStorage.getSelectedImages();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/galleries/add_images_to_galleries",
+            data: {
+                images:     imagesArray,
+                galleries:  galleriesArray
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status) {
+                    TableBuilder.showSuccessNotification('Изображения успешно добавлены к галереям');
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+    },
+
+    saveImagesTagsRelations: function()
+    {
+        var  tagsArray = $('form[name="image-storage-image-operations-form"] select[name="relations[image-storage-tags][]"]').val();
+
+        if (!tagsArray) {
+            TableBuilder.showErrorNotification('Выберите теги для добавления изображений');
+            return false;
+        }
+
+        var imagesArray = ImageStorage.getSelectedImages();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/tags/add_images_to_tags",
+            data: {
+                images:     imagesArray,
+                tags:       tagsArray
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status) {
+                    TableBuilder.showSuccessNotification('Изображения добавлены к тегу');
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+    }, // end saveImagesTagsRelations
+
+
 
 
 

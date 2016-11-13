@@ -8,10 +8,10 @@
             </div>
         </div>
         <div class="col-md-2">
-            <a onclick="ImageStorage.createGalleryWithImages(this);" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-image-operations-button">{{__cms('Создать')}}</a>
+            <a onclick="ImageStorage.createGalleryWithImages();" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-image-operations-button">{{__cms('Создать')}}</a>
         </div>
     </div>
-{{--    <div class="col-md-12 image-storage-image-operations-row">
+    <div class="col-md-12 image-storage-image-operations-row">
         <div class="col-md-2">{{__cms('Добавить в галереи')}}</div>
         <div class="col-md-8">
             <div class="input-group">
@@ -24,7 +24,7 @@
         </div>
         <div class="col-md-2">
             <!--fixme сделать  -->
-            <a onclick="ImageStorage.saveImagesGalleriesRelations();" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-image-operations-button">{{__cms('Сохранить')}}</a>
+            <a onclick="ImageStorage.saveImagesGalleriesRelations();" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-image-operations-button">{{__cms('Добавить')}}</a>
         </div>
     </div>
     <div class="col-md-12 image-storage-image-operations-row">
@@ -40,9 +40,9 @@
         </div>
         <div class="col-md-2">
             <!--fixme сделать  -->
-            <a onclick="ImageStorage.saveImagesTagsRelations();" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-image-operations-button">{{__cms('Сохранить')}}</a>
+            <a onclick="ImageStorage.saveImagesTagsRelations();" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-image-operations-button">{{__cms('Добавить')}}</a>
         </div>
-    </div>--}}
+    </div>
     </form>
 </div>
 

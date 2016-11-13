@@ -12,4 +12,5 @@ return array(
     'Vis\\ImageStorage\\Image' => $baseDir . '/src/Models/Image.php',
     'Vis\\ImageStorage\\ImagesController' => $baseDir . '/src/Http/Controllers/ImagesController.php',
     'Vis\\ImageStorage\\Tag' => $baseDir . '/src/Models/Tag.php',
+    'Vis\\ImageStorage\\TagsController' => $baseDir . '/src/Http/Controllers/TagsController.php',
 );

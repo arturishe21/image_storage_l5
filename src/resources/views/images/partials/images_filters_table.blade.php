@@ -5,9 +5,7 @@
         <th width="10%">{{__cms("Создана (от)")}}</th>
         <th width="10%">{{__cms("Создана (до)")}}</th>
         <th width="10%">{{__cms("Связанные галереи")}}</th>
-{{--
         <th width="10%">{{__cms("Связанные теги")}}</th>
---}}
         <th width="1%">
             <form class="smart-form pull-right" id="upload-image-storage-form">
                 <div class="input input-file image-storage-images">
@@ -58,13 +56,13 @@
                 @endforeach
             </select>
         </td>
-{{--        <td>
+        <td>
             <select name="image_storage_filter[filterByTags][]" multiple="multiple" class="image-storage-select">
                 @foreach($tags as $tag)
                     <option value="{{$tag->id}}">{{$tag->title}}</option>
                 @endforeach
             </select>
-        </td>--}}
+        </td>
         <td>
             <button class="btn btn-default btn-sm image-storage-button"
                     type="button"

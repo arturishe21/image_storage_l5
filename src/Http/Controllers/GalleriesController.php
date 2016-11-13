@@ -15,7 +15,7 @@ class GalleriesController extends Controller
         $model = new $this->model;
 
         $perPage = $model->getConfigPerPage();
-        $title   = $model->getConfigTitle();
+        $title = $model->getConfigTitle();
 
         $data = $model::filterSearch()->orderBy('id', 'DESC')->with('tags')->paginate($perPage);
 
@@ -40,9 +40,9 @@ class GalleriesController extends Controller
     {
         $html = $this->fetchIndex()->render();
 
-         return Response::json(array(
+        return Response::json(array(
             'status' => true,
-            'html'   => $html
+            'html' => $html
         ));
     }
 
@@ -81,7 +81,7 @@ class GalleriesController extends Controller
 
         return Response::json(array(
             'status' => true,
-            'html'   => $html,
+            'html' => $html,
         ));
     } // end getImageForm
 
@@ -124,9 +124,10 @@ class GalleriesController extends Controller
     {
         $model = new $this->model;
 
-        $entity = $model::find(Input::get('idGallery'));
-
+        $id    = Input::get('idGallery');
         $image = Input::get('idImage');
+
+        $entity = $model::find($id);
 
         $entity->deleteImageGalleryRelation($image);
 
@@ -134,6 +135,43 @@ class GalleriesController extends Controller
             'status' => true
         ));
     }
+
+    public function doCreateGalleryWithImages()
+    {
+        $entity = new $this->model;
+
+        $galleryName = Input::get('galleryName');
+        $images      = Input::get('images', array());
+
+        $entity->title = $galleryName;
+        $entity->save();
+
+        $entity->relateImagesToGallery($images);
+
+        return Response::json(array(
+            'status' => true
+        ));
+
+    }
+
+    public function doAddImagesToGalleries()
+    {
+        $model = $this->model;
+
+        $galleries = Input::get('galleries', array());
+        $images = Input::get('images', array());
+
+        foreach ($galleries as $key => $id){
+            $entity = $model::find($id);
+            $entity->relateImagesToGallery($images);
+        }
+
+        return Response::json(array(
+            'status' => true
+        ));
+
+    }
+
 
 
 
