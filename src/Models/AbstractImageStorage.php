@@ -74,8 +74,8 @@ abstract class AbstractImageStorage extends Model
             return $query;
         }
 
-        $date['to'] = $date['to'] ?: '12/12/2222';
-        $date['from'] = $date['from'] ?: '12/12/1971';
+        $date['from'] = $date['from'] ?: '12-12-1971';
+        $date['to'] = $date['to'] ?: '12-12-2222';
 
         $from = date('Y-m-d 00:00:00', strtotime($date['from']));
         $to = date('Y-m-d 23:59:59', strtotime($date['to']));
@@ -102,7 +102,7 @@ abstract class AbstractImageStorage extends Model
         $configFields = $this->getConfigFields();
 
         foreach($configFields as $key=>$value){
-            $value = isset($fields[$key]) ? $fields[$key] : false ;
+            $value = isset($fields[$key]) ? $fields[$key] : false;
             $this->$key = $value;
         }
 

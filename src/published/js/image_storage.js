@@ -74,7 +74,15 @@ var ImageStorage = {
 
     initDatePickers: function()
     {
-        $('.datepicker').datepicker();
+        $('.datepicker').datepicker({
+            changeMonth: true,
+            prevText: '<i class="fa fa-chevron-left"></i>',
+            nextText: '<i class="fa fa-chevron-right"></i>',
+            dateFormat: "dd-mm-yy",
+            //showButtonPanel: true,
+            regional: ["ru"],
+            onClose: function (selectedDate) {}
+        });
     },
 
     //images

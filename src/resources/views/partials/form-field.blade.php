@@ -17,7 +17,7 @@
                             numberOfMonths: {{ $field['months'] ? : '1' }},
                             prevText: '<i class="fa fa-chevron-left"></i>',
                             nextText: '<i class="fa fa-chevron-right"></i>',
-                            dateFormat: "dd/mm/yy",
+                            dateFormat: "yy-mm-dd",
                             timeFormat: 'HH:mm:ss',
                             //showButtonPanel: true,
                             regional: ["ru"],

@@ -50,7 +50,6 @@ class GalleriesController extends Controller
     {
         $model = new $this->model;
 
-
         $model::destroy(Input::get('id'));
 
         $model::flushCache();
@@ -72,11 +71,7 @@ class GalleriesController extends Controller
 
         $html = View::make(
             'image-storage::galleries.partials.gallery_form',
-            compact(
-                'entity',
-                'tags',
-                'fields'
-            )
+            compact('entity','tags','fields')
         )->render();
 
         return Response::json(array(
