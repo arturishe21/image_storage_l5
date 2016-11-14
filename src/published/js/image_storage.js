@@ -510,19 +510,19 @@ var ImageStorage = {
         $sortable.sortable(
             {
                 items: "> li",
+                context: this,
                 update: function() {
                     ImageStorage.onChangeGalleryImagesOrder();
-                } // end update
+                },
+                create: function(event, ui) {
+                    $('.image-storage-sortable-item').click(function(e) {
+                        if (e.ctrlKey) {
+                            ImageStorage.setGalleryPreviewImage(this);
+                        }
+                    });
+                },
             }
         );
-
-        //fixme click in gallery
-/*        create: function(event, ui) {
-            $('.j-image-dblclk').dblclick(function() {
-                Superbox.showImageFormFromGalleryView(this);
-            });
-        },*/
-
         $sortable.disableSelection();
     },
 
@@ -596,6 +596,29 @@ var ImageStorage = {
                         }
                     }
                 });
+            }
+        });
+    }, // end deleteGalleryImageRelation
+
+    setGalleryPreviewImage: function(image)
+    {
+        var idImage = $(image).attr('id');
+        //fixme hidden input? find better decision
+        var idGallery = $('[name=gallery_id]').val();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/galleries/set_gallery_image_preview",
+            data: { idImage: idImage, idGallery:idGallery  },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status) {
+                    $(".image-storage-sortable-item").removeClass('preview');
+                    $(image).addClass('preview');
+                    TableBuilder.showSuccessNotification('Превью галереи успешно установлено');
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
             }
         });
     }, // end deleteGalleryImageRelation
@@ -688,6 +711,8 @@ var ImageStorage = {
             }
         });
     }, // end saveImagesTagsRelations
+
+
 
 };
 $(document).ready(function(){

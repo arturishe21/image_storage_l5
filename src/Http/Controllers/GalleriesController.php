@@ -118,7 +118,9 @@ class GalleriesController extends Controller
     {
         $model = new $this->model;
 
-        $entity = $model::find(Input::get('idGallery'));
+        $id = Input::get('idGallery');
+
+        $entity = $model::find($id);
 
         $images = Input::get('images', array());
 
@@ -181,7 +183,21 @@ class GalleriesController extends Controller
 
     }
 
+    public function doSetGalleryImagePreview()
+    {
+        $model = new $this->model;
 
+        $id    = Input::get('idGallery');
+        $image = Input::get('idImage');
 
+        $entity = $model::find($id);
+
+        $entity->setPreviewImage($image);
+
+        return Response::json(array(
+            'status' => true
+        ));
+
+    }
 
 }

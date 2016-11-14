@@ -13,7 +13,7 @@
     <div class="tb-uploaded-image-container col-xs-8">
             <ul class="dop_foto image-storage-sortable">
                 @forelse ($entity->images as $key => $image)
-                    <li id="{{$image->id}}">
+                    <li id="{{$image->id}}" class="image-storage-sortable-item {{ $image->pivot->is_preview ? "preview" : ""}}">
                         @include('image-storage::images.partials.single_image')
                         <div class="tb-btn-delete-wrap">
                             <!-- fixme inline styles -->
@@ -22,10 +22,11 @@
                                     onclick="ImageStorage.deleteGalleryImageRelation({{ $image->id }},{{ $entity->id }});">
                                 <i class="fa fa-times"></i>
                             </button>
+
                         </div>
                     </li>
                 @empty
-                    <div class="no_photo" style="text-align: center; ">
+                    <div class="image-storage-sortable-no_photo">
                         {{__cms('Нет изображений')}}
                     </div>
                  @endforelse

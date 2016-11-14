@@ -63,6 +63,13 @@
                     'uses' => 'Vis\ImageStorage\GalleriesController@doAddImagesToGalleries'
                 )
             );
+
+            Route::post(
+                'galleries/set_gallery_image_preview', array(
+                    'as' => 'set_gallery_image_preview',
+                    'uses' => 'Vis\ImageStorage\GalleriesController@doSetGalleryImagePreview'
+                )
+            );
     }
 
 

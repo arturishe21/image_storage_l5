@@ -20,7 +20,10 @@ class Gallery extends AbstractImageStorage
 
     public function images()
     {
-        return $this->belongsToMany('Vis\ImageStorage\Image', 'vis_images2galleries', 'id_gallery', 'id_image')->orderBy('priority', 'desc');
+        return $this
+            ->belongsToMany('Vis\ImageStorage\Image', 'vis_images2galleries', 'id_gallery', 'id_image')
+            ->orderBy('priority', 'desc')
+            ->withPivot('is_preview');
     } // end images
 
     public function tags()
@@ -51,14 +54,17 @@ class Gallery extends AbstractImageStorage
         Image::flushCache();
     }
 
+    public function getGalleryPreview(){
+
+        return $this->images()->wherePivot("is_preview", "1")->first();
+    }
+
     public function changeGalleryImageOrder($images)
     {
         $priority = count($images);
 
-        $this->images()->detach();
-
         foreach ($images as $idImage) {
-            $this->images()->attach($idImage, ['priority' => $priority]);
+            $this->images()->updateExistingPivot($idImage, ['priority' => $priority]);
             $priority--;
         }
 
@@ -74,4 +80,19 @@ class Gallery extends AbstractImageStorage
         Image::flushCache();
     } // end tags
 
+
+
+    public function setPreviewImage($image)
+    {
+        $currentPreview = $this->getGalleryPreview();
+
+        if($currentPreview){
+            $this->images()->updateExistingPivot($currentPreview->id, ["is_preview" => 0]);
+        }
+
+        $this->images()->updateExistingPivot($image, ["is_preview" => 1]);
+
+        self::flushCache();
+        Image::flushCache();
+    }
 }

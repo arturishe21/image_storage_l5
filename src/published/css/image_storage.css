@@ -201,3 +201,23 @@
     font-family: "Open Sans",Arial,Helvetica,Sans-Serif;
     font-weight: 300;
 }
+
+.image-storage-sortable-item.preview:after {
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    font-size: 14px;
+    color: #fff;
+    background:#5b835b;
+    position: absolute;
+    display: block;
+    left: 0;
+    content: "\f06e";
+    font-family: FontAwesome;
+    top: 0;
+    z-index: 1;
+}
+
+.image-storage-sortable-no_photo{
+    text-align: center;
+}
