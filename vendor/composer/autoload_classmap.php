@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'ImageStorageMigration' => $baseDir . '/src/Migrations/2016_11_14_124120_image_storage_migration.php',
     'Vis\\ImageStorage\\AbstractImageStorage' => $baseDir . '/src/Models/AbstractImageStorage.php',
     'Vis\\ImageStorage\\GalleriesController' => $baseDir . '/src/Http/Controllers/GalleriesController.php',
     'Vis\\ImageStorage\\Gallery' => $baseDir . '/src/Models/Gallery.php',

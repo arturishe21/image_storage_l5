@@ -10,7 +10,8 @@
   "autoload": {
     "classmap": [
       "src/Models",
-      "src/Http/Controllers"
+      "src/Http/Controllers",
+      "src/Migrations"
     ],
     "psr-4": {
       "Vis\\ImageStorage\\": "src/"

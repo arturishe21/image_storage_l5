@@ -18,7 +18,6 @@ class ImageStorageServiceProvider extends ServiceProvider
         require __DIR__ . '/../vendor/autoload.php';
 
         $this->setupRoutes($this->app->router);
-
         $this->loadViewsFrom(realpath(__DIR__ . '/resources/views'), 'image-storage');
 
         $this->publishes([
@@ -26,10 +25,9 @@ class ImageStorageServiceProvider extends ServiceProvider
             __DIR__ . '/config' => config_path('image-storage/')
         ], 'image-storage');
 
-/*        $this->publishes([
+        $this->publishes([
             realpath(__DIR__.'/Migrations') => $this->app->databasePath().'/migrations',
         ]);
-*/
     }
 
     /**
