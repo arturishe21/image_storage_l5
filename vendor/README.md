@@ -16,7 +16,7 @@ composer update
 
 Выполняем миграцию таблиц
 ```json
-   php artisan migrate --path=vendor/vis/image-storage/src/Migrations
+   php artisan migrate --path=vendor/vis/image_storage_l5/src/Migrations
 ```
 
 Публикуем js и конфиги файлы

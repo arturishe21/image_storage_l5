@@ -59,7 +59,7 @@ class ImageStorageMigration extends Migration
             $table->tinyInteger('priority');
 
 
-            $table->foreign('id_image')->references('id')->on('vis_image')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('id_image')->references('id')->on('vis_images')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('id_gallery')->references('id')->on('vis_galleries')->onDelete('cascade')->onUpdate('cascade');
 
         });
@@ -70,7 +70,7 @@ class ImageStorageMigration extends Migration
             $table->integer('id_image')->unsigned();
             $table->integer('id_tag')->unsigned();
 
-            $table->foreign('id_image')->references('id')->on('vis_image')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('id_image')->references('id')->on('vis_images')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('id_tag')->references('id')->on('vis_tags')->onDelete('cascade')->onUpdate('cascade');
         });
 
