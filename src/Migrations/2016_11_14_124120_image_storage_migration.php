@@ -19,7 +19,7 @@ class ImageStorageMigration extends Migration
             $table->text('file_source');
             $table->string('title',255);
             $table->text('exif_data');
-            $table->dateTime('date_time_source');
+            $table->timestamp('date_time_source');
             $table->timestamps();
         });
 
@@ -27,7 +27,7 @@ class ImageStorageMigration extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('title',255);
-            $table->dateTime('event_date');
+            $table->timestamp('event_date');
             $table->tinyInteger('is_active');
             $table->timestamps();
         });
