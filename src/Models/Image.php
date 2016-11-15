@@ -134,7 +134,7 @@ class Image extends AbstractImageStorage
         );
     } // end getPathByID
 
-    private function getFileName()
+    public function getSlug()
     {
         $fileName = \Jarboe::urlify($this->title);
         return $fileName;
@@ -370,7 +370,7 @@ class Image extends AbstractImageStorage
             }
         }
 
-        $fileName = $this->getFileName() . "_" . time(). "." . $extension;
+        $fileName = $this->getSlug() . "_" . time(). "." . $extension;
 
         $destinationPath = $this->makeFoldersAndReturnPath($size);
 

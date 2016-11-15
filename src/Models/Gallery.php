@@ -64,9 +64,24 @@ class Gallery extends AbstractImageStorage
         Image::flushCache();
     }
 
-    public function getGalleryPreview(){
+    private function getGalleryCurrentPreview(){
 
-        return $this->images()->wherePivot("is_preview", "1")->first();
+        $preview = $this->images()->wherePivot("is_preview", "1")->first();
+
+        return $preview;
+    }
+
+    public function getGalleryPreviewImage(){
+
+        $preview = $this->getGalleryCurrentPreview() ?: $this->images()->first();
+
+        if($preview){
+            $image = $preview->getSource("cms_preview");
+        }else{
+            $image = '/packages/vis/image-storage/img/no_image.png';
+        }
+
+        return $image;
     }
 
     public function changeGalleryImageOrder($images)
@@ -91,10 +106,9 @@ class Gallery extends AbstractImageStorage
     } // end tags
 
 
-
     public function setPreviewImage($image)
     {
-        $currentPreview = $this->getGalleryPreview();
+        $currentPreview = $this->getGalleryCurrentPreview();
 
         if($currentPreview){
             $this->images()->updateExistingPivot($currentPreview->id, ["is_preview" => 0]);
