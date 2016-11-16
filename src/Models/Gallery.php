@@ -31,6 +31,7 @@ class Gallery extends AbstractImageStorage
         return $this->belongsToMany('Vis\ImageStorage\Tag', 'vis_galleries2tags', 'id_gallery', 'id_tag');
     } // end tags
 
+
     public function getUrl(){
 
         return route("vis_galleries_show_single", [$this->getSlug(), $this->id]);
@@ -41,29 +42,6 @@ class Gallery extends AbstractImageStorage
         return $slug;
     }
 
-    public function makeGalleryRelations()
-    {
-        $this->makeGalleryTagsRelations();
-    }
-
-    private function makeGalleryTagsRelations()
-    {
-        $tags = Input::get('relations.image-storage-tags', array());
-
-        $this->tags()->sync($tags);
-
-        self::flushCache();
-        Tag::flushCache();
-    }
-
-    public function relateImagesToGallery($images)
-    {
-        $this->images()->syncWithoutDetaching($images);
-
-        self::flushCache();
-        Image::flushCache();
-    }
-
     private function getGalleryCurrentPreview(){
 
         $preview = $this->images()->wherePivot("is_preview", "1")->first();
@@ -71,17 +49,31 @@ class Gallery extends AbstractImageStorage
         return $preview;
     }
 
-    public function getGalleryPreviewImage(){
+    public function getGalleryPreviewImage($size = 'cms_preview'){
 
         $preview = $this->getGalleryCurrentPreview() ?: $this->images()->first();
 
         if($preview){
-            $image = $preview->getSource("cms_preview");
+            $image = $preview->getSource($size);
         }else{
             $image = '/packages/vis/image-storage/img/no_image.png';
         }
 
         return $image;
+    }
+
+    public function setPreviewImage($image)
+    {
+        $currentPreview = $this->getGalleryCurrentPreview();
+
+        if($currentPreview){
+            $this->images()->updateExistingPivot($currentPreview->id, ["is_preview" => 0]);
+        }
+
+        $this->images()->updateExistingPivot($image, ["is_preview" => 1]);
+
+        self::flushCache();
+        Image::flushCache();
     }
 
     public function changeGalleryImageOrder($images)
@@ -105,18 +97,28 @@ class Gallery extends AbstractImageStorage
         Image::flushCache();
     } // end tags
 
-
-    public function setPreviewImage($image)
+    public function makeRelations()
     {
-        $currentPreview = $this->getGalleryCurrentPreview();
+        $this->makeGalleryTagsRelations();
+    }
 
-        if($currentPreview){
-            $this->images()->updateExistingPivot($currentPreview->id, ["is_preview" => 0]);
-        }
+    private function makeGalleryTagsRelations()
+    {
+        $tags = Input::get('relations.image-storage-tags', array());
 
-        $this->images()->updateExistingPivot($image, ["is_preview" => 1]);
+        $this->tags()->sync($tags);
+
+        self::flushCache();
+        Tag::flushCache();
+    }
+
+    public function relateImagesToGallery($images)
+    {
+        $this->images()->syncWithoutDetaching($images);
 
         self::flushCache();
         Image::flushCache();
     }
+
+
 }

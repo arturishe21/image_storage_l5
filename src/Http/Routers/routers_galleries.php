@@ -17,14 +17,14 @@
 
             Route::post(
                 'galleries/delete_gallery', array(
-                    'as' => 'delete_image',
+                    'as' => 'delete_gallery',
                     'uses' => 'Vis\ImageStorage\GalleriesController@doDeleteGallery'
                 )
             );
 
             Route::post(
                 'galleries/get_gallery_form', array(
-                    'as' => 'get_gallery_form',
+                    'as' => 'get_gallery_edit_form',
                     'uses' => 'Vis\ImageStorage\GalleriesController@getGalleryForm'
                 )
             );

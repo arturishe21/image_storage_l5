@@ -17,7 +17,7 @@ class GalleriesController extends Controller
         $perPage = $model->getConfigPerPage();
         $title = $model->getConfigTitle();
 
-        $data = $model::filterSearch()->orderBy('id', 'DESC')->with('tags')->paginate($perPage);
+        $data = $model::filterSearch()->orderBy('id', 'DESC')->paginate($perPage);
 
         $galleries = Gallery::active()->get();
         $tags = Tag::active()->get();
@@ -77,7 +77,7 @@ class GalleriesController extends Controller
         $tags = Tag::active()->get();
 
         $html = View::make(
-            'image-storage::galleries.partials.gallery_form',
+            'image-storage::galleries.partials.edit_form',
             compact('entity','tags','fields')
         )->render();
 
@@ -105,7 +105,7 @@ class GalleriesController extends Controller
 
         $entity->save();
 
-        $entity->makeGalleryRelations();
+        $entity->makeRelations();
 
         $model::flushCache();
 

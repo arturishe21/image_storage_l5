@@ -279,7 +279,7 @@ class Image extends AbstractImageStorage
         }
     }
 
-    public function makeImageRelations()
+    public function makeRelations()
     {
         $this->makeImageTagsRelations();
         $this->makeImageGalleriesRelations();

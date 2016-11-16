@@ -108,6 +108,11 @@ abstract class AbstractImageStorage extends Model
 
     }
 
+    public function makeRelations()
+    {
+
+    }
+
     protected function doCheckSchemeFields()
     {
         $fields = $this->getConfigFields();

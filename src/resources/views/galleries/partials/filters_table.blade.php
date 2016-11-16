@@ -4,9 +4,7 @@
         <th width="25%">{{__cms("Название")}}</th>
         <th width="10%">{{__cms("Создана (от)")}}</th>
         <th width="10%">{{__cms("Создана (до)")}}</th>
-{{--
         <th width="10%">{{__cms("Связанные теги")}}</th>
---}}
         <th width="10%">{{__cms("Галерея активна")}}</th>
         <th width="8%">
             <a class="btn btn-sm btn-success" onclick="ImageStorage.getGalleryEditForm(null);">

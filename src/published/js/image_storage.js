@@ -48,11 +48,8 @@ var ImageStorage = {
 
             if (e.ctrlKey) {
                 //fixme close popup if opened
-                if ($(this).hasClass('selected')) {
-                    $(this).removeClass('selected');
-                } else {
-                    $(this).addClass('selected');
-                }
+                $(this).toggleClass('selected')
+
                 ImageStorage.checkSelectedImages();
             }else{
                 //fixme remove popup on second click
@@ -450,10 +447,36 @@ var ImageStorage = {
         ImageStorage.doSearchGalleries();
     },
 
+    getGalleryEditForm: function(id)
+    {
+        id =   id || null;
+
+        TableBuilder.showPreloader();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/galleries/get_gallery_form",
+            dataType: 'json',
+            data: { id: id },
+            success: function(response) {
+                if (response.status) {
+                    $("#modal_form").modal('show');
+                    $("#modal_form .modal-content").html(response.html);
+                    TableBuilder.hidePreloader();
+                    ImageStorage.initSortable();
+                    ImageStorage.initSelectBoxes();
+                } else {
+                    TableBuilder.hidePreloader();
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+    },
+
     deleteGallery: function(id)
     {
         jQuery.SmartMessageBox({
-            title : "Удалить изображение?",
+            title : "Удалить галерею?",
             content : "Эту операцию нельзя будет отменить.",
             buttons : '[Нет][Да]'
         }, function(ButtonPressed) {
@@ -479,30 +502,6 @@ var ImageStorage = {
             }
         });
     }, // end deleteImage
-
-    getGalleryEditForm: function(id)
-    {
-        TableBuilder.showPreloader();
-
-        jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/galleries/get_gallery_form",
-            dataType: 'json',
-            data: { id: id },
-            success: function(response) {
-                if (response.status) {
-                    $("#modal_form").modal('show');
-                    $("#modal_form .modal-content").html(response.html);
-                    TableBuilder.hidePreloader();
-                    ImageStorage.initSortable();
-                    ImageStorage.initSelectBoxes();
-                } else {
-                    TableBuilder.hidePreloader();
-                    TableBuilder.showErrorNotification('Что-то пошло не так');
-                }
-            }
-        });
-    },
 
     initSortable: function()
     {
@@ -712,7 +711,85 @@ var ImageStorage = {
         });
     }, // end saveImagesTagsRelations
 
+    //tags
+    getTagEditForm: function(id)
+    {
+        id =   id || null;
 
+        TableBuilder.showPreloader();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/tags/get_edit_form",
+            dataType: 'json',
+            data: { id: id },
+            success: function(response) {
+                if (response.status) {
+                    $("#modal_form").modal('show');
+                    $("#modal_form .modal-content").html(response.html);
+                    TableBuilder.hidePreloader();
+                } else {
+                    TableBuilder.hidePreloader();
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+    },
+    deleteTag: function(id)
+    {
+        jQuery.SmartMessageBox({
+            title : "Удалить тэг?",
+            content : "Эту операцию нельзя будет отменить.",
+            buttons : '[Нет][Да]'
+        }, function(ButtonPressed) {
+            if (ButtonPressed === "Да") {
+                jQuery.ajax({
+                    type: "POST",
+                    url: "/admin/image_storage/tags/delete_tag",
+                    data: { id: id },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status) {
+                            $('.tr_'+id).remove();
+                            //fixme hide modal gallery popup
+                            if($(".modal-body.row").length){
+                                $("button.close").click();
+                            }
+                            TableBuilder.showSuccessNotification('Тэг удалена');
+                        } else {
+                            TableBuilder.showErrorNotification('Что-то пошло не так');
+                        }
+                    }
+                });
+            }
+        });
+    }, // end deleteImage
+
+    saveTagInfo: function(id)
+    {
+        var data = $('#imgInfoBox-form-tag').serializeArray();
+        data.push({ name: 'id', value: id });
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/tags/save_tag_info",
+            data: data,
+            dataType: 'json',
+            success: function(response) {
+                if (response.status) {
+                    TableBuilder.showSuccessNotification('Сохранено');
+                    //fixme hide modal gallery popup
+                    if($(".modal-body.row").length){
+                        $("button.close").click();
+                    }
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+
+
+    }, // end saveImageInfo
 
 };
 $(document).ready(function(){

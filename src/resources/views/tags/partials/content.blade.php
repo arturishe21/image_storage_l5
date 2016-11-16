@@ -12,16 +12,22 @@
                 <span class="widget-icon"> <i class="fa  fa-file-text"></i> </span>
                 <h2> {{__cms($title)}} </h2>
             </header>
+
             <div class="table_center no-padding">
-                @include('image-storage::images.partials.filters_table')
-                @include('image-storage::images.partials.operations')
-                @include('image-storage::images.partials.content_table')
+                <table class="table  table-hover table-bordered " id="sort_t">
+                @include('image-storage::tags.partials.filters_table')
+                @include('image-storage::tags.partials.content_table')
+                </table>
+                @include('image-storage::partials.pagination')
             </div>
         </div>
     </div>
 </div>
 <!-- END MAIN CONTENT -->
 
-@include('image-storage::images.partials.upload_preloader')
+
+@include('image-storage::partials.modal_wrapper', ["width" => "600px"])
+
+
 <link rel="stylesheet" href="{{asset('packages/vis/image-storage/css/image_storage.css')}}">
 <script src="{{asset('packages/vis/image-storage/js/image_storage.js')}}"></script>

@@ -151,7 +151,7 @@ class ImagesController extends Controller
         $tags = Tag::active()->get();
 
         $html = View::make(
-            'image-storage::images.partials.image_form',
+            'image-storage::images.partials.edit_form',
             compact(
                 'entity',
                 'sizes',
@@ -197,7 +197,7 @@ class ImagesController extends Controller
 
         $image->save();
 
-        $image->makeImageRelations();
+        $image->makeRelations();
 
         $model::flushCache();
 

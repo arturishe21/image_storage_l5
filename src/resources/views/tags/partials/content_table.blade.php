@@ -8,13 +8,6 @@
             {{$el->title}}
         </td>
         <td colspan="2">{{$el->created_at}}</td>
-{{--        <td>
-            @forelse($el->tags as $key=>$tag)
-                <span>{{$tag->title}} </span>
-            @empty
-                <span class="glyphicon glyphicon-minus"></span>
-            @endforelse
-        </td>--}}
         <td>
         <span>
             @if ($el->is_active)
@@ -29,10 +22,10 @@
                 <a class="btn dropdown-toggle btn-xs btn-default"  data-toggle="dropdown"><i class="fa fa-cog"></i> <i class="fa fa-caret-down"></i></a>
                 <ul class="dropdown-menu pull-right" id_rec ="{{$el->id}}">
                     <li>
-                        <a class="edit_record" onclick="ImageStorage.getGalleryEditForm({{$el->id}})"><i class="fa fa-pencil"></i> {{__cms('Редактировать')}}</a>
+                        <a class="edit_record" onclick="ImageStorage.getTagEditForm({{$el->id}})"><i class="fa fa-pencil"></i> {{__cms('Редактировать')}}</a>
                     </li>
                     <li>
-                        <a onclick="ImageStorage.deleteGallery({{$el->id}});"><i class="fa red fa-times"></i> {{__cms("Удалить")}}</a>
+                        <a onclick="ImageStorage.deleteTag({{$el->id}});"><i class="fa red fa-times"></i> {{__cms("Удалить")}}</a>
                     </li>
                 </ul>
             </div>

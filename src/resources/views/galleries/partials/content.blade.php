@@ -15,19 +15,17 @@
 
             <div class="table_center no-padding">
                 <table class="table  table-hover table-bordered " id="sort_t">
-                @include('image-storage::galleries.partials.gallery_filters_table')
-                @include('image-storage::galleries.partials.gallery_content_table')
+                @include('image-storage::galleries.partials.filters_table')
+                @include('image-storage::galleries.partials.content_table')
                 </table>
-                @include('image-storage::galleries.partials.pagination')
+                @include('image-storage::partials.pagination')
             </div>
         </div>
     </div>
 </div>
 <!-- END MAIN CONTENT -->
 
-
-@include('image-storage::galleries.partials.modal_gallery')
-
+@include('image-storage::partials.modal_wrapper', ["width" => "100%"])
 
 <link rel="stylesheet" href="{{asset('packages/vis/image-storage/css/image_storage.css')}}">
 <script src="{{asset('packages/vis/image-storage/js/image_storage.js')}}"></script>
