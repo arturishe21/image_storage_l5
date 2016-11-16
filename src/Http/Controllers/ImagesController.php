@@ -18,10 +18,10 @@ class ImagesController extends Controller
         $perPage = $model->getConfigPerPage();
         $title = $model->getConfigTitle();
 
-        $data = $model::filterSearch()->orderBy('id', 'DESC')->limit($perPage)->get();
+        $data = $model::filterSearch()->byId()->limit($perPage)->get();
 
-        $galleries = Gallery::active()->get();
-        $tags = Tag::active()->get();
+        $galleries = Gallery::active()->byId()->get();
+        $tags = Tag::active()->byId()->get();
 
         if (Request::ajax()) {
             $view = "image-storage::images.partials.content";
@@ -147,8 +147,8 @@ class ImagesController extends Controller
 
         $fields = $model->getConfigFields();
 
-        $galleries = Gallery::active()->get();
-        $tags = Tag::active()->get();
+        $galleries = Gallery::active()->byId()->get();
+        $tags = Tag::active()->byId()->get();
 
         $html = View::make(
             'image-storage::images.partials.edit_form',

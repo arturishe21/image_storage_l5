@@ -36,6 +36,11 @@ abstract class AbstractImageStorage extends Model
         return $query->where('is_active', '1');
     }
 
+    public function scopeById($query, $order = "desc")
+    {
+        return $query->orderBy('id', $order);
+    }
+
     public function scopeFilterByTags($query, $tags = array())
     {
         if (!$tags) {
