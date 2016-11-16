@@ -19,9 +19,14 @@ composer update
    php artisan migrate --path=vendor/vis/image_storage_l5/src/Migrations
 ```
 
-Публикуем js и конфиги файлы
+Публикуем js, css, images
 ```json
-   php artisan vendor:publish --tag=image-storage --force
+   php artisan vendor:publish --tag=image-storage-public --force
+```
+
+Публикуем конфиги файлы
+```json
+   php artisan vendor:publish --tag=image-storage-config --force
 ```
 
 В файле config/builder/admin.php в массив menu в настройки добавляем
@@ -47,21 +52,22 @@ composer update
                         return true;
                     }
                 ),
-/*                array(
+                array(
                     'title' => "Теги",
                     'link'  => '/image_storage/tags',
                     'check' => function() {
                         return true;
                     }
-                ),*/
+                ),
             )
         ),
 ```
 
-Использование
-сверху
+Использование сверху (В зависимости того какой класс нужен)
 ```php
     use Vis\ImageStorage\Gallery;
+    use Vis\ImageStorage\Image;
+    use Vis\ImageStorage\Tag;
 ```
 
 вызов
