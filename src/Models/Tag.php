@@ -8,6 +8,7 @@ class Tag extends AbstractImageStorage
 {
     protected $table = 'vis_tags';
     protected $configPrefix = 'tag';
+    
 
     //fixme optimize flushCache
     public static function flushCache()
