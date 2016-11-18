@@ -13,7 +13,6 @@ class GalleriesController extends Controller
 
     public function fetchIndex()
     {
-
         $this->setSearchInput();
 
         $model = new $this->model;

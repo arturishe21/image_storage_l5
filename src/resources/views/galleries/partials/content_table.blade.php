@@ -6,7 +6,7 @@
         @include('image-storage::galleries.partials.row_table')
     @empty
         <tr>
-            <td colspan="5"  class="text-align-center">
+            <td colspan="6"  class="text-align-center">
                 {{__cms('Пусто')}}
             </td>
         </tr>
