@@ -12,7 +12,7 @@
         </th>
     </tr>
 {{--    <form id="image-storage-search-form">
-    <tr class="filters-row">
+    <tr class="image-storage-filters-row">
         <td>
         </td>
         <td>

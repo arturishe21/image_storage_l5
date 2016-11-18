@@ -1,18 +1,18 @@
-.filters-row div{
+.image-storage-filters-row div{
     position:relative
 }
 
-.filters-row td{
+.image-storage-filters-row td{
    text-align:center;
 }
 
-.filters-row .image-storage-button{
+.image-storage-filters-row .image-storage-button{
     width: 66px;
     margin:auto;
     display:inline-block;
 }
 
-.filters-row .image-storage-select{
+.image-storage-filters-row .image-storage-select{
     width: 190px;
 }
 
