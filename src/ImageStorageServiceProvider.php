@@ -22,7 +22,7 @@ class ImageStorageServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__ . '/published' => public_path('packages/vis/image-storage'),
-        ], 'image-storage-public');
+        ], 'public');
 
         $this->publishes([
             __DIR__ . '/config' => config_path('image-storage/')

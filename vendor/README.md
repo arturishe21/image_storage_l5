@@ -21,7 +21,7 @@ composer update
 
 Публикуем js, css, images
 ```json
-   php artisan vendor:publish --tag=image-storage-public --force
+   php artisan vendor:publish --tag=public --force
 ```
 
 Публикуем конфиги файлы

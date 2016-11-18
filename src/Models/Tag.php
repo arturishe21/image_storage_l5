@@ -3,7 +3,6 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
-
 class Tag extends AbstractImageStorage
 {
     protected $table = 'vis_tags';
