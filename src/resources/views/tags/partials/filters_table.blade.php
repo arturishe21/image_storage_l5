@@ -11,20 +11,22 @@
             </a>
         </th>
     </tr>
-{{--    <form id="image-storage-search-form">
     <tr class="image-storage-filters-row">
         <td>
         </td>
         <td>
             <div class="relative">
-                <input type="text" value="" name="image_storage_filter[filterByTitle]" class="form-control input-small">
+                <input type="text"
+                       value="{{Session::get('image_storage_filter.tag.filterByTitle')}}"
+                       name="image_storage_filter[filterByTitle]"
+                       class="form-control input-small">
             </div>
         </td>
         <td>
             <div>
                 <input type="text"
                        id="f-datepicker-from"
-                       value=""
+                       value="{{Session::get('image_storage_filter.tag.filterByDate.from')}}"
                        name="image_storage_filter[filterByDate][from]"
                        class="form-control input-small datepicker" >
                 <span class="input-group-addon form-input-icon form-input-filter-icon">
@@ -36,7 +38,7 @@
             <div>
                 <input type="text"
                        id="f-datepicker-to"
-                       value=""
+                       value="{{Session::get('image_storage_filter.tag.filterByDate.to')}}"
                        name="image_storage_filter[filterByDate][to]"
                        class="form-control input-small datepicker" >
                 <span class="input-group-addon form-input-icon form-input-filter-icon">
@@ -45,30 +47,26 @@
             </div>
         </td>
         <td>
-            <select name="image_storage_filter[filterByTags][]" multiple="multiple" class="image-storage-select">
-                @foreach($tags as $tag)
-                    <option value="{{$tag->id}}">{{$tag->title}}</option>
-                @endforeach
-            </select>
-        </td>
-        <td>
             <select name="image_storage_filter[filterByActivity][]" multiple="multiple" class="image-storage-select">
-                    <option value="0">{{__cms('Активна') }}</option>
-                    <option value="1">{{__cms('Не активна') }}</option>
+                <option value="1"
+                        {{in_array(1,Session::get('image_storage_filter.tag.filterByActivity', array())) ? "selected" : ""}}>
+                    {{__cms('Активен') }}</option>
+                <option value="0"
+                        {{in_array(0,Session::get('image_storage_filter.tag.filterByActivity', array())) ? "selected" : ""}}>
+                    {{__cms('Не активен') }}</option>
             </select>
         </td>
         <td>
             <button class="btn btn-default btn-sm image-storage-button"
                     type="button"
-                    onclick="ImageStorage.doSearchGalleries();">
+                    onclick="ImageStorage.doSearchTags();">
                 {{__cms('Поиск') }}
             </button>
             <button class="btn btn-default btn-sm image-storage-button"
                     type="button"
-                    onclick="ImageStorage.doResetFiltersGallery();">
+                    onclick="ImageStorage.doResetFiltersTags();">
                 {{__cms('Сбросить') }}
             </button>
         </td>
     </tr>
-    </form>--}}
  </thead>

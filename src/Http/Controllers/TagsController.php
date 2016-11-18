@@ -2,6 +2,7 @@
 
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\View;
@@ -12,6 +13,8 @@ class TagsController extends Controller
 
     public function fetchIndex()
     {
+        $this->setSearchInput();
+
         $model = new $this->model;
 
         $perPage = $model->getConfigPerPage();
@@ -117,4 +120,12 @@ class TagsController extends Controller
             'status' => true,
         ));
     } // end doSaveImageInfo
+
+    private function setSearchInput(){
+        if(Input::has('image_storage_filter')){
+            Session::put('image_storage_filter.tag', Input::get('image_storage_filter', array()));
+        }elseif(Input::has('forget_filters')){
+            Session::forget('image_storage_filter.tag');
+        }
+    }
 }

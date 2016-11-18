@@ -714,6 +714,41 @@ var ImageStorage = {
     }, // end saveImagesTagsRelations
 
     //tags
+
+    doSearchTags: function()
+    {
+        var data = $('#image-storage-search-form').serializeArray();
+        TableBuilder.showPreloader();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/tags",
+            data: data,
+            success : function(response) {
+                $('#content_admin').html(response);
+                ImageStorage.init();
+                TableBuilder.hidePreloader()
+            }
+        });
+    },
+
+    doResetFiltersTags: function()
+    {
+        TableBuilder.showPreloader();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/tags",
+            data: {forget_filters: true},
+            success : function(response) {
+                $('#content_admin').html(response);
+                ImageStorage.init();
+                TableBuilder.hidePreloader()
+            }
+        });
+    },
+
+
     getTagEditForm: function(id)
     {
         id =   id || null;

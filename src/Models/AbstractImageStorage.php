@@ -90,13 +90,13 @@ abstract class AbstractImageStorage extends Model
         return $query->whereBetween('created_at', array($from, $to));
     } // end scopeByTitle
 
-    public function scopeFilterByActivity($query, $activity)
+    public function scopeFilterByActivity($query, $activity  = array())
     {
         if (!$activity) {
             return $query;
         }
 
-        return $query->where('is_active', $activity);
+        return $query->whereIn('is_active', $activity);
     } // end scopeByTitle
 
     public function scopeFilterSearch($query)

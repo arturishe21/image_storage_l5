@@ -14,10 +14,7 @@
             </header>
 
             <div class="table_center no-padding">
-                <table class="table  table-hover table-bordered " id="sort_t">
-                @include('image-storage::tags.partials.filters_table')
                 @include('image-storage::tags.partials.content_table')
-                </table>
                 @include('image-storage::partials.pagination')
             </div>
         </div>
@@ -25,9 +22,7 @@
 </div>
 <!-- END MAIN CONTENT -->
 
-
 @include('image-storage::partials.modal_wrapper', ["width" => "600px"])
-
 
 <link rel="stylesheet" href="{{asset('packages/vis/image-storage/css/image_storage.css')}}">
 <script src="{{asset('packages/vis/image-storage/js/image_storage.js')}}"></script>
