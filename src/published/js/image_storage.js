@@ -133,6 +133,8 @@ var ImageStorage = {
         var failPercentage    = 0;
         var successPercentage = 0;
 
+        var imageIdsArray = [];
+
         var $fog = $('.image-storage-process-popup').show();
         $fog.find('.image-storage-upload-total').text(imgTotal);
 
@@ -158,11 +160,11 @@ var ImageStorage = {
                         imgSuccessCount = imgSuccessCount + 1;
                         successPercentage = successPercentage + percentageMod;
 
+                        imageIdsArray.push(response.id);
+
                         $fog.find('.image-storage-upload-upload').text(imgCount);
                         $fog.find('.image-storage-upload-success').text(imgSuccessCount);
                         $fog.find('.image-storage-progress-success').css('width', successPercentage +'%');
-
-                        ImageStorage.sendOptimizeImageRequest(response.id);
 
                     } else {
                         imgFailCount = imgFailCount + 1;
@@ -180,6 +182,8 @@ var ImageStorage = {
 
                     if (imgCount == imgTotal) {
                         $fog.find('.image-storage-upload-finish-btn').show();
+                        ImageStorage.sendOptimizeImageRequest(imageIdsArray);
+
                     }
                 }
             });
@@ -257,11 +261,11 @@ var ImageStorage = {
         });
     },
 
-    replaceSingleImage: function(context, type, idImage)
+    replaceSingleImage: function(context, size, idImage)
     {
         var data = new FormData();
         data.append("image", context.files[0]);
-        data.append('type', type);
+        data.append('size', size);
         data.append('id', idImage);
 
         jQuery.ajax({
@@ -274,7 +278,7 @@ var ImageStorage = {
             success: function(response) {
                 if (response.status) {
                     $(context).parents(".tab-pane.active").find('.superbox-current-img').prop('src', response.src);
-                    ImageStorage.sendOptimizeImageRequest(idImage, type);
+                    ImageStorage.sendOptimizeImageRequest(idImage, size);
                 } else {
                     if (response.message){
                         TableBuilder.showErrorNotification(response.message);
@@ -392,16 +396,14 @@ var ImageStorage = {
         }
     }, // end checkSelectedImages
 
-    sendOptimizeImageRequest: function (id, type)
+    sendOptimizeImageRequest: function (id, size)
     {
-        type =   type || "all";
-
         jQuery.ajax({
             type: "POST",
             url: "/admin/image_storage/images/optimize_image",
             data: {
                 id:    id,
-                type:  type,
+                size:  size,
             },
             dataType: 'json',
 /*            success: function(response) {

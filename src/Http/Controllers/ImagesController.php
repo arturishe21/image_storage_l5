@@ -112,7 +112,7 @@ class ImagesController extends Controller
         $model = new $this->model;
 
         $file = Input::file('image');
-        $size = Input::get('type');
+        $size = Input::get('size');
         $id   = Input::get('id');
 
         $entity = $model::find($id);
@@ -210,12 +210,19 @@ class ImagesController extends Controller
     {
 
         $model = new $this->model;
+
+        $size = Input::get('size');
         $id   = Input::get('id');
-        $size = Input::get('type');
 
-        $image = $model::find($id);
+        //fixme weird into array transformation
+        if(!is_array($id)){
+            $id = explode(" ",$id);
+        }
 
-        $image->optimizeImage($size);
+        foreach($id as $key => $value){
+            $image = $model::find($value);
+            $image->optimizeImage($size);
+        }
 
         $model::flushCache();
 
@@ -223,6 +230,4 @@ class ImagesController extends Controller
             'status' => true,
         ));
     }
-
-
 }

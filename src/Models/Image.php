@@ -242,11 +242,8 @@ class Image extends AbstractImageStorage
 
     public function optimizeImage($size)
     {
-        if($size == 'all'){
-            $sizes = $this->getConfigSizes();
-        }else{
-            $sizes = array($size => "");
-        }
+        //fixme weird way to assign $size
+        $sizes = $size ? [$size => ''] : $this->getConfigSizes();
 
         foreach ($sizes as $sizeName => $sizeInfo) {
             $imagePath = $this->getSource($sizeName);
