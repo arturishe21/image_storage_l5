@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Session;
+
 
 abstract class AbstractImageStorage extends Model
 {
@@ -88,9 +90,18 @@ abstract class AbstractImageStorage extends Model
         return $query->whereBetween('created_at', array($from, $to));
     } // end scopeByTitle
 
+    public function scopeFilterByActivity($query, $activity)
+    {
+        if (!$activity) {
+            return $query;
+        }
+
+        return $query->where('is_active', $activity);
+    } // end scopeByTitle
+
     public function scopeFilterSearch($query)
     {
-        $filters = Input::get('image_storage_filter', array());
+        $filters = Session::get('image_storage_filter.'.$this->configPrefix, array());
 
         foreach($filters as $column => $value) {
             $query->$column($value);

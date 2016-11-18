@@ -2,6 +2,7 @@
 
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\View;
@@ -12,6 +13,9 @@ class GalleriesController extends Controller
 
     public function fetchIndex()
     {
+
+        $this->setSearchInput();
+
         $model = new $this->model;
 
         $perPage = $model->getConfigPerPage();
@@ -34,16 +38,6 @@ class GalleriesController extends Controller
             ->with('tags', $tags)
             ->with('galleries', $galleries);
 
-    }
-
-    public function doSearchGalleries()
-    {
-        $html = $this->fetchIndex()->render();
-
-        return Response::json(array(
-            'status' => true,
-            'html' => $html
-        ));
     }
 
     public function doDeleteGallery()
@@ -198,6 +192,14 @@ class GalleriesController extends Controller
             'status' => true
         ));
 
+    }
+
+    private function setSearchInput(){
+        if(Input::has('image_storage_filter')){
+            Session::put('image_storage_filter.gallery', Input::get('image_storage_filter', array()));
+        }elseif(Input::has('forget_filters')){
+            Session::forget('image_storage_filter.gallery');
+        }
     }
 
 }

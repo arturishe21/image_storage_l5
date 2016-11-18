@@ -9,13 +9,6 @@
     if (Request::ajax()) {
 
             Route::post(
-                'galleries/search_galleries', array(
-                    'as' => 'galleries_search',
-                    'uses' => 'Vis\ImageStorage\GalleriesController@doSearchGalleries'
-                )
-            );
-
-            Route::post(
                 'galleries/delete_gallery', array(
                     'as' => 'delete_gallery',
                     'uses' => 'Vis\ImageStorage\GalleriesController@doDeleteGallery'

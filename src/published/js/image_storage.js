@@ -421,30 +421,32 @@ var ImageStorage = {
         var data = $('#image-storage-search-form').serializeArray();
         TableBuilder.showPreloader();
 
-        console.table(data);
         jQuery.ajax({
             type: "POST",
-            url: "/admin/image_storage/galleries/search_galleries",
+            url: "/admin/image_storage/galleries",
             data: data,
-            dataType: 'json',
-            success: function(response) {
-                if (response.status) {
-                    $('#content_admin').html(response.html);
+            success : function(response) {
+                    $('#content_admin').html(response);
                     ImageStorage.init();
-                    TableBuilder.hidePreloader();
-                } else {
-                    TableBuilder.showErrorNotification('Что-то пошло не так');
-                    TableBuilder.hidePreloader();
-
-                }
+                    TableBuilder.hidePreloader()
             }
         });
     },
 
     doResetFiltersGallery: function()
     {
-        $('#image-storage-search-form')[0].reset();
-        ImageStorage.doSearchGalleries();
+        TableBuilder.showPreloader();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/galleries",
+            data: {forget_filters: true},
+            success : function(response) {
+                $('#content_admin').html(response);
+                ImageStorage.init();
+                TableBuilder.hidePreloader()
+            }
+        });
     },
 
     getGalleryEditForm: function(id)

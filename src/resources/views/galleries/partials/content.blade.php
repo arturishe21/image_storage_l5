@@ -14,10 +14,7 @@
             </header>
 
             <div class="table_center no-padding">
-                <table class="table  table-hover table-bordered " id="sort_t">
-                @include('image-storage::galleries.partials.filters_table')
                 @include('image-storage::galleries.partials.content_table')
-                </table>
                 @include('image-storage::partials.pagination')
             </div>
         </div>
