@@ -23,7 +23,6 @@
             </div>
         </div>
         <div class="col-md-2">
-            <!--fixme сделать  -->
             <a onclick="ImageStorage.saveImagesGalleriesRelations();" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-image-operations-button">{{__cms('Добавить')}}</a>
         </div>
     </div>
@@ -39,7 +38,6 @@
             </div>
         </div>
         <div class="col-md-2">
-            <!--fixme сделать  -->
             <a onclick="ImageStorage.saveImagesTagsRelations();" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-image-operations-button">{{__cms('Добавить')}}</a>
         </div>
     </div>
