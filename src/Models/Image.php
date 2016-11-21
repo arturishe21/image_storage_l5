@@ -42,6 +42,19 @@ class Image extends AbstractImageStorage
         return $this->belongsToMany('Vis\ImageStorage\Tag', 'vis_images2tags', 'id_image', 'id_tag');
     } // end tags
 
+    public function scopeFilterByGalleries($query, $galleries = array())
+    {
+        if (!$galleries) {
+            return $query;
+        }
+        //fixme переписать под модель
+        $table = $this->table;
+        $prefix = $this->configPrefix;
+        $relatedImagesIds =  \DB::table($table.'2galleries')->whereIn('id_gallery', $galleries)->lists('id_'.$prefix);
+
+        return $query->whereIn('id', $relatedImagesIds);
+    } // end scopeByGalleries
+
     public function getRelatedEntities()
     {
         $relatedEntities = [];

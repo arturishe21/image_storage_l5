@@ -62,19 +62,6 @@ abstract class AbstractImageStorage extends Model
         return $query->whereIn('id', $relatedImagesIds);
     } // end scopeByTags
 
-    public function scopeFilterByGalleries($query, $galleries = array())
-    {
-        if (!$galleries) {
-            return $query;
-        }
-        //fixme переписать под модель
-        $table = $this->table;
-        $prefix = $this->configPrefix;
-        $relatedImagesIds =  \DB::table($table.'2galleries')->whereIn('id_gallery', $galleries)->lists('id_'.$prefix);
-
-        return $query->whereIn('id', $relatedImagesIds);
-    } // end scopeByGalleries
-
     public function scopeFilterByTitle($query, $title)
     {
         if (!$title) {
