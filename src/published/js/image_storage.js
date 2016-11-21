@@ -188,7 +188,7 @@ var ImageStorage = {
                 }
             });
         }
-        $("#upload-image-storage-form")[0].reset();
+        $("#upload-image-storage-input").val("");
     }, // end uploadFile
 
     getImageEditForm: function(context)

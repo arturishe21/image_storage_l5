@@ -1,3 +1,4 @@
+<form id="image-storage-search-form">
 <table class="table  table-hover table-bordered " id="sort_t">
     <thead>
     <tr>
@@ -7,18 +8,17 @@
         <th width="10%">{{__cms("Связанные галереи")}}</th>
         <th width="10%">{{__cms("Связанные теги")}}</th>
         <th width="1%">
-            <form class="smart-form pull-right" id="upload-image-storage-form">
+            <div class="smart-form pull-right">
                 <div class="input input-file image-storage-images">
                     <span class="button">
-                        <input type="file" name="images[]" multiple="multiple" accept="image/*" onchange="ImageStorage.uploadImage(this);">
+                        <input type="file" name="images[]" multiple="multiple" accept="image/*" id="upload-image-storage-input" onchange="ImageStorage.uploadImage(this);">
                         {{__cms("Выбрать")}}
                     </span>
                     <input type="text" class="j-image-title" placeholder="{{__cms("Загрузить изображения")}}">
                 </div>
-            </form>
+            </div>
         </th>
     </tr>
-    <form id="image-storage-search-form">
     <tr class="image-storage-filters-row">
         <td>
             <div class="relative">
@@ -76,6 +76,6 @@
             </button>
         </td>
     </tr>
-    </form>
     </thead>
 </table>
+</form>
