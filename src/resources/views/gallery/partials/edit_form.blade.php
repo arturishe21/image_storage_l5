@@ -14,7 +14,7 @@
             <ul class="dop_foto image-storage-sortable">
                 @forelse ($entity->images as $key => $image)
                     <li id="{{$image->id}}" class="image-storage-sortable-item {{ $image->pivot->is_preview ? "preview" : ""}}">
-                        @include('image-storage::images.partials.single_image')
+                        @include('image-storage::image.partials.single_image')
                         <div class="tb-btn-delete-wrap">
                             <!-- fixme inline styles -->
                             <button class="btn2 btn-default btn-sm tb-btn-image-delete" style="height:22px;"
@@ -55,7 +55,7 @@
                 <fieldset>
                  <section><label>{{__cms('Теги')}}</label>
                         <select name="relations[image-storage-tags][]" multiple class="imgInfoBox-select image-storage-select">
-                            @foreach ($tags as $tag)
+                            @foreach ($relatedEntities['tag'] as $tag)
                                 <option {{$entity->tags->contains($tag->id) ? 'selected="selected"' : ''}} value="{{$tag->id}}">{{$tag->title}}</option>
                             @endforeach
                         </select>

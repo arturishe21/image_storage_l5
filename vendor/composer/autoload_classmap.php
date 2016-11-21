@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'ImageStorageMigration' => $baseDir . '/src/Migrations/2016_11_14_124120_image_storage_migration.php',
     'Vis\\ImageStorage\\AbstractImageStorage' => $baseDir . '/src/Models/AbstractImageStorage.php',
+    'Vis\\ImageStorage\\AbstractImageStorageController' => $baseDir . '/src/Http/Controllers/AbstractImageStorageController.php',
     'Vis\\ImageStorage\\GalleriesController' => $baseDir . '/src/Http/Controllers/GalleriesController.php',
     'Vis\\ImageStorage\\Gallery' => $baseDir . '/src/Models/Gallery.php',
     'Vis\\ImageStorage\\Image' => $baseDir . '/src/Models/Image.php',

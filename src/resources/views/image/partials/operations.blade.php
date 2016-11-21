@@ -16,7 +16,7 @@
         <div class="col-md-8">
             <div class="input-group">
                 <select name="relations[image-storage-galleries][]" class="image-storage-image-operations-input image-storage-select" multiple="multiple">
-                    @foreach($galleries as $gallery)
+                    @foreach($relatedEntities['gallery'] as $gallery)
                         <option value="{{ $gallery->id }}">{{ $gallery->title }}</option>
                     @endforeach
                 </select>
@@ -32,7 +32,7 @@
         <div class="col-md-8">
             <div class="input-group">
                 <select name="relations[image-storage-tags][]" multiple="multiple" class="image-storage-image-operations-input image-storage-select">
-                    @foreach($tags as $tag)
+                    @foreach($relatedEntities['tag'] as $tag)
                         <option value="{{ $tag->id }}">{{ $tag->title }}</option>
                     @endforeach
                 </select>

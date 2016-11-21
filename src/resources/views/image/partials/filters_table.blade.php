@@ -22,14 +22,17 @@
     <tr class="image-storage-filters-row">
         <td>
             <div class="relative">
-                <input type="text" value="" name="image_storage_filter[filterByTitle]" class="form-control input-small">
+                <input type="text"
+                       value="{{Session::get('image_storage_filter.image.filterByTitle')}}"
+                       name="image_storage_filter[filterByTitle]"
+                       class="form-control input-small">
             </div>
         </td>
         <td>
             <div>
                 <input type="text"
                        id="f-datepicker-from"
-                       value=""
+                       value="{{Session::get('image_storage_filter.image.filterByDate.from')}}"
                        name="image_storage_filter[filterByDate][from]"
                        class="form-control input-small datepicker" >
                 <span class="input-group-addon form-input-icon form-input-filter-icon">
@@ -41,7 +44,7 @@
             <div>
                 <input type="text"
                        id="f-datepicker-to"
-                       value=""
+                       value="{{Session::get('image_storage_filter.image.filterByDate.to')}}"
                        name="image_storage_filter[filterByDate][to]"
                        class="form-control input-small datepicker" >
                 <span class="input-group-addon form-input-icon form-input-filter-icon">
@@ -51,15 +54,21 @@
         </td>
         <td>
             <select name="image_storage_filter[filterByGalleries][]" multiple="multiple" class="image-storage-select">
-                @foreach($galleries as $gallery)
-                    <option value="{{$gallery->id}}">{{$gallery->title}}</option>
+                @foreach($relatedEntities['gallery'] as $gallery)
+                    <option value="{{$gallery->id}}"
+                            {{in_array($gallery->id,Session::get('image_storage_filter.image.filterByGalleries', array())) ? "selected" : ""}}>
+                        {{$gallery->title}}
+                    </option>
                 @endforeach
             </select>
         </td>
         <td>
             <select name="image_storage_filter[filterByTags][]" multiple="multiple" class="image-storage-select">
-                @foreach($tags as $tag)
-                    <option value="{{$tag->id}}">{{$tag->title}}</option>
+                @foreach($relatedEntities['tag'] as $tag)
+                    <option value="{{$tag->id}}"
+                            {{in_array($tag->id,Session::get('image_storage_filter.image.filterByTags', array())) ? "selected" : ""}}>
+                        {{$tag->title}}
+                    </option>
                 @endforeach
             </select>
         </td>

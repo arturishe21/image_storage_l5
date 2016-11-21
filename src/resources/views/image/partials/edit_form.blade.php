@@ -1,6 +1,6 @@
 <div class="superbox-show image-storage-popup">
 <ul id="image-storage-images-sizes-tabs" class="nav nav-tabs bordered">
-    @foreach ($sizes as $ident => $info)
+    @foreach ($relatedEntities['sizes'] as $ident => $info)
         <li class="{{$info['default_tab'] ? 'active':""}}">
             <a style="color: #000000 !important;" href="#image-storage-images-size-{{ $ident }}" data-toggle="tab">{{ __cms($info['caption']) }}</a>
         </li>
@@ -8,7 +8,7 @@
 </ul>
 
 <div id="image-storage-images-sizes-tabs-content" class="tab-content padding-10">
-    @foreach ($sizes as $ident => $info)
+    @foreach ($relatedEntities['sizes'] as $ident => $info)
         <div class="tab-pane fade {{$info['default_tab'] ? 'in active':""}}" id="image-storage-images-size-{{ $ident }}">
         <p>
             <img {{$info['default_tab'] ? '':"real-"}}src="{{asset($entity->getSource($ident))}}" class="superbox-current-img">
@@ -68,14 +68,14 @@
             <fieldset>
                 <section><label>{{__cms('Галереи')}}</label>
                     <select name="relations[image-storage-galleries][]" multiple class="imgInfoBox-select image-storage-select">
-                        @foreach ($galleries as $gallery)
+                        @foreach ($relatedEntities['gallery'] as $gallery)
                             <option {{$entity->galleries->contains($gallery->id) ? 'selected="selected"' : ''}} value="{{$gallery->id}}">{{$gallery->title}}</option>
                         @endforeach
                  </select>
                 </section>
                 <section><label>{{__cms('Теги')}}</label>
                     <select name="relations[image-storage-tags][]" multiple class="imgInfoBox-select image-storage-select">
-                        @foreach ($tags as $tag)
+                        @foreach ($relatedEntities['tag'] as $tag)
                             <option {{$entity->tags->contains($tag->id) ? 'selected="selected"' : ''}} value="{{$tag->id}}">{{$tag->title}}</option>
                         @endforeach
                     </select>

@@ -1,9 +1,9 @@
 <form id="image-storage-search-form">
     <table class="table  table-hover table-bordered " id="sort_t">
-        @include('image-storage::galleries.partials.filters_table')
+        @include('image-storage::gallery.partials.filters_table')
     <tbody>
     @forelse($data as $k=>$el)
-        @include('image-storage::galleries.partials.row_table')
+        @include('image-storage::gallery.partials.row_table')
     @empty
         <tr>
             <td colspan="6"  class="text-align-center">

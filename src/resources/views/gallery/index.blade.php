@@ -5,7 +5,7 @@
 @stop
 
 @section('main')
-    @include('image-storage::galleries.partials.content')
+    @include('image-storage::gallery.partials.content')
 @stop
 
 

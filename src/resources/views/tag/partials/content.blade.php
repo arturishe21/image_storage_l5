@@ -14,7 +14,7 @@
             </header>
 
             <div class="table_center no-padding">
-                @include('image-storage::tags.partials.content_table')
+                @include('image-storage::tag.partials.content_table')
                 @include('image-storage::partials.pagination')
             </div>
         </div>
