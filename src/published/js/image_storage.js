@@ -297,28 +297,31 @@ var ImageStorage = {
 
         jQuery.ajax({
             type: "POST",
-            url: "/admin/image_storage/images/search_images",
+            url: "/admin/image_storage/images",
             data: data,
-            dataType: 'json',
             success: function(response) {
-                if (response.status) {
-                    $('.image-storage-container').html(response.html);
-                    ImageStorage.images_page = 1;
+                    $('#content_admin').html(response);
                     ImageStorage.init();
                     TableBuilder.hidePreloader();
-                } else {
-                    TableBuilder.showErrorNotification('Что-то пошло не так');
-                    TableBuilder.hidePreloader();
-
-                }
+                    ImageStorage.images_page = 1;
             }
         });
     },
 
     doResetFilters: function()
     {
-        $('#image-storage-search-form')[0].reset();
-        ImageStorage.doSearch();
+        TableBuilder.showPreloader();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/images",
+            data: {forget_filters: true},
+            success : function(response) {
+                $('#content_admin').html(response);
+                ImageStorage.init();
+                TableBuilder.hidePreloader()
+            }
+        });
     },
 
     deleteImage: function(idImage)
@@ -449,6 +452,7 @@ var ImageStorage = {
                 TableBuilder.hidePreloader()
             }
         });
+
     },
 
     getGalleryEditForm: function(id)
@@ -716,7 +720,6 @@ var ImageStorage = {
     }, // end saveImagesTagsRelations
 
     //tags
-
     doSearchTags: function()
     {
         var data = $('#image-storage-search-form').serializeArray();
@@ -749,7 +752,6 @@ var ImageStorage = {
             }
         });
     },
-
 
     getTagEditForm: function(id)
     {

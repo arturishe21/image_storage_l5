@@ -10,12 +10,17 @@ use Illuminate\Support\Facades\Session;
 
 abstract class AbstractImageStorage extends Model
 {
+    protected $configPrefix;
+    protected $table;
 
-    protected $configPrefix = '';
+    public function getConfigPrefix()
+    {
+        return $this->configPrefix;
+    }
 
     public function getConfigValue($value)
     {
-        return Config::get('image-storage.config.'.$this->configPrefix.'.'.$value);
+        return Config::get('image-storage.config.'.$this->getConfigPrefix().'.'.$value);
     }
 
     public function getConfigTitle()
@@ -50,7 +55,9 @@ abstract class AbstractImageStorage extends Model
         }
 
         //fixme переписать под модель
-        $relatedImagesIds = \DB::table('vis_images2tags')->whereIn('id_tag', $tags)->lists('id_image');
+        $table = $this->table;
+        $prefix = $this->configPrefix;
+        $relatedImagesIds = \DB::table($table.'2tags')->whereIn('id_tag', $tags)->lists('id_'.$prefix);
 
         return $query->whereIn('id', $relatedImagesIds);
     } // end scopeByTags
@@ -61,7 +68,9 @@ abstract class AbstractImageStorage extends Model
             return $query;
         }
         //fixme переписать под модель
-        $relatedImagesIds = \DB::table('vis_images2galleries')->whereIn('id_gallery', $galleries)->lists('id_image');
+        $table = $this->table;
+        $prefix = $this->configPrefix;
+        $relatedImagesIds =  \DB::table($table.'2galleries')->whereIn('id_gallery', $galleries)->lists('id_'.$prefix);
 
         return $query->whereIn('id', $relatedImagesIds);
     } // end scopeByGalleries
@@ -101,7 +110,7 @@ abstract class AbstractImageStorage extends Model
 
     public function scopeFilterSearch($query)
     {
-        $filters = Session::get('image_storage_filter.'.$this->configPrefix, array());
+        $filters = Session::get('image_storage_filter.'.$this->getConfigPrefix(), array());
 
         foreach($filters as $column => $value) {
             $query->$column($value);
@@ -121,11 +130,6 @@ abstract class AbstractImageStorage extends Model
             $value = isset($fields[$key]) ? $fields[$key] : false;
             $this->$key = $value;
         }
-
-    }
-
-    public function makeRelations()
-    {
 
     }
 
@@ -160,5 +164,21 @@ abstract class AbstractImageStorage extends Model
         }
     }
 
+    public function makeRelations()
+    {
+        return true;
+    }
+
+    public function getRelatedEntities()
+    {
+        $relatedEntities = [];
+
+        return $relatedEntities;
+    }
+
+    public function onDeleteAction()
+    {
+        return true;
+    }
 
 }

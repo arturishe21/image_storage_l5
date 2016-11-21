@@ -5,8 +5,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Input;
 
-
-
 class Gallery extends AbstractImageStorage
 {
     protected $table = 'vis_galleries';
@@ -31,15 +29,25 @@ class Gallery extends AbstractImageStorage
         return $this->belongsToMany('Vis\ImageStorage\Tag', 'vis_galleries2tags', 'id_gallery', 'id_tag');
     } // end tags
 
-
-    public function getUrl(){
+    public function getUrl()
+    {
 
         return route("vis_galleries_show_single", [$this->getSlug(), $this->id]);
     }
 
-    public function getSlug(){
+    public function getSlug()
+    {
         $slug = \Jarboe::urlify($this->title);
         return $slug;
+    }
+
+    public function getRelatedEntities()
+    {
+        $relatedEntities = [];
+
+        $relatedEntities['tag'] = Tag::active()->byId()->get();
+
+        return $relatedEntities;
     }
 
     private function getGalleryCurrentPreview(){

@@ -11,23 +11,24 @@
             Route::post(
                 'galleries/delete_gallery', array(
                     'as' => 'delete_gallery',
-                    'uses' => 'Vis\ImageStorage\GalleriesController@doDeleteGallery'
+                    'uses' => 'Vis\ImageStorage\GalleriesController@doDelete'
                 )
             );
 
             Route::post(
                 'galleries/get_gallery_form', array(
                     'as' => 'get_gallery_edit_form',
-                    'uses' => 'Vis\ImageStorage\GalleriesController@getGalleryForm'
+                    'uses' => 'Vis\ImageStorage\GalleriesController@getForm'
                 )
             );
 
             Route::post(
                 'galleries/save_gallery_info', array(
                     'as' => 'save_gallery_info',
-                    'uses' => 'Vis\ImageStorage\GalleriesController@doSaveGalleryInfo'
+                    'uses' => 'Vis\ImageStorage\GalleriesController@doSaveInfo'
                 )
             );
+
 
             Route::post(
                 'galleries/change_image_order', array(

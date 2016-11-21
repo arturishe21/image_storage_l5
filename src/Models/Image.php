@@ -42,6 +42,24 @@ class Image extends AbstractImageStorage
         return $this->belongsToMany('Vis\ImageStorage\Tag', 'vis_images2tags', 'id_image', 'id_tag');
     } // end tags
 
+    public function getRelatedEntities()
+    {
+        $relatedEntities = [];
+
+        $relatedEntities['tag'] = Tag::active()->byId()->get();
+
+        $relatedEntities['gallery'] = Gallery::active()->byId()->get();
+
+        $relatedEntities['sizes'] = $this->getConfigSizes();
+
+        return $relatedEntities;
+    }
+
+    public function onDeleteAction()
+    {
+        $this->doDeleteImageFiles();
+    }
+
     public function getSource($size = 'source')
     {
         $field = $this->imageSizePrefix.$size;
@@ -393,7 +411,7 @@ class Image extends AbstractImageStorage
         $this->doMakeImage($size);
     }
 
-    public function doDeleteImageFiles()
+    private function doDeleteImageFiles()
     {
         if ($this->getConfigDeleteFiles()) {
             //fixme rtrim
