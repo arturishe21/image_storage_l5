@@ -40,7 +40,7 @@
             Route::post(
                 'images/load_more', array(
                     'as' => 'load_more_images',
-                    'uses' => 'Vis\ImageStorage\ImagesController@doLoadMoreImages'
+                    'uses' => 'Vis\ImageStorage\ImagesController@doLoadMore'
                 )
             );
 

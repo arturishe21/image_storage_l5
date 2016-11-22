@@ -11,7 +11,7 @@ class ImagesController extends AbstractImageStorageController
 {
     protected $model = "Vis\\ImageStorage\\Image";
 
-    public function doLoadMoreImages()
+    public function doLoadMore()
     {
         $page = Input::get('page');
 
