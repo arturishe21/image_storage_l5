@@ -14,7 +14,7 @@
             <ul class="dop_foto image-storage-sortable">
                 @forelse ($entity->images as $key => $image)
                     <li id="{{$image->id}}" class="image-storage-sortable-item {{ $image->pivot->is_preview ? "preview" : ""}}">
-                        @include('image-storage::image.partials.single_image')
+                        @include('image-storage::image.partials.single')
                         <div class="tb-btn-delete-wrap">
                             <!-- fixme inline styles -->
                             <button class="btn2 btn-default btn-sm tb-btn-image-delete" style="height:22px;"

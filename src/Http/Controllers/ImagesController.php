@@ -22,7 +22,7 @@ class ImagesController extends AbstractImageStorageController
         $images = $model::filterSearch()->orderBy('id', 'desc')->skip($perPage * $page)->limit($perPage)->get();
         $html = '';
         foreach ($images as $image) {
-            $html .= View::make('image-storage::'.$prefix.'.partials.list_image')->with('image', $image)->render();
+            $html .= View::make('image-storage::'.$prefix.'.partials.single_list')->with('image', $image)->render();
         }
         return Response::json(array(
             'status' => true,
@@ -36,7 +36,7 @@ class ImagesController extends AbstractImageStorageController
 
         $model = $this->model;
         $entity = new $model;
-        $prefix = $model->getConfigPrefix();
+        $prefix = $entity->getConfigPrefix();
 
         if(!$entity->setSourceFile($file)){
             return Response::json( array( 'status' => false, 'message'   => $entity->getUploadErrorMessage() ));
@@ -50,7 +50,7 @@ class ImagesController extends AbstractImageStorageController
         $entity->doImageVariations();
         $entity->save();
 
-        $html = View::make('image-storage::'. $prefix .'.partials.list_image')->with('image', $entity)->render();
+        $html = View::make('image-storage::'. $prefix .'.partials.single_list')->with('image', $entity)->render();
 
         $model::flushCache();
 
