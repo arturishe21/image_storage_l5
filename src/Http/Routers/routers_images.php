@@ -16,7 +16,7 @@
             );
 
             Route::post(
-                'images/get_image_form', array(
+                'images/get_form', array(
                     'as' => 'get_image_form',
                     'uses' => 'Vis\ImageStorage\ImagesController@getForm'
                 )
@@ -38,7 +38,7 @@
             );
 
             Route::post(
-                'images/load_more_images', array(
+                'images/load_more', array(
                     'as' => 'load_more_images',
                     'uses' => 'Vis\ImageStorage\ImagesController@doLoadMoreImages'
                 )

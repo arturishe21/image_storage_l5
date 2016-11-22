@@ -2,9 +2,12 @@
 
 var ImageStorage = {
 
-    images_page: 1,
+    loaded_page: 1,
+    //fixme entity setter
+    entity: 'images',
     is_last_page: false,
-    is_images_loading: false,
+    is_loading: false,
+
 
     init: function()
     {
@@ -34,7 +37,7 @@ var ImageStorage = {
         $(document).scroll(function() {
             if ($(document).scrollTop() + $(window).height() == $(document).height()) {
                 if ($('.image-storage-container.images-container').length) {
-                    ImageStorage.loadMoreImages();
+                    ImageStorage.loadMore(ImageStorage.entity);
                 }
             }
         });
@@ -53,7 +56,8 @@ var ImageStorage = {
                 ImageStorage.checkSelected();
             }else{
                 //fixme remove popup on second click
-                ImageStorage.getImageEditForm($(this));
+
+                ImageStorage.getEditForm($(this));
             }
         })
     },
@@ -90,29 +94,29 @@ var ImageStorage = {
         $('.image-storage-upload-success, .image-storage-upload-fail, .image-storage-upload-upload, .image-storage-upload-total').text("0");
     },
 
-    loadMoreImages: function()
+    loadMore: function()
     {
-        if (ImageStorage.is_images_loading) {
+        if (ImageStorage.is_loading) {
             return;
         }
         TableBuilder.showPreloader();
-        ImageStorage.is_images_loading = true;
+        ImageStorage.is_loading = true;
 
         var data = $('#image-storage-search-form').serializeArray();
 
-        data.push({ name: 'page', value: ImageStorage.images_page});
+        data.push({ name: 'page', value: ImageStorage.loaded_page});
 
         jQuery.ajax({
             type: "POST",
-            url: "/admin/image_storage/images/load_more_images",
+            url: "/admin/image_storage/"+ImageStorage.entity+"/load_more",
             data: data,
             dataType: 'json',
             success: function(response) {
                 if (response.status) {
-                    ImageStorage.images_page = ImageStorage.images_page + 1;
+                    ImageStorage.loaded_page = ImageStorage.loaded_page + 1;
                     $('.superbox').append(response.html);
                     ImageStorage.initEditClickEvent();
-                    ImageStorage.is_images_loading = false;
+                    ImageStorage.is_loading = false;
                     TableBuilder.hidePreloader();
                 } else {
                     TableBuilder.hidePreloader();
@@ -121,7 +125,7 @@ var ImageStorage = {
             }
         });
 
-    }, // end loadMoreImages
+    }, // end loadMore
 
     uploadImage: function(context)
     {
@@ -191,7 +195,7 @@ var ImageStorage = {
         $("#upload-image-storage-input").val("");
     }, // end uploadFile
 
-    getImageEditForm: function(context)
+    getEditForm: function(context)
     {
         var $this = $(context);
         var currentImg = $this.find('.superbox-img');
@@ -199,7 +203,7 @@ var ImageStorage = {
 
         jQuery.ajax({
             type: "POST",
-            url: "/admin/image_storage/images/get_image_form",
+            url: "/admin/image_storage/"+ImageStorage.entity+"/get_form",
             dataType: 'json',
             data: {
                 id: currentImgId,
@@ -304,7 +308,7 @@ var ImageStorage = {
                     $('#content_admin').html(response);
                     ImageStorage.init();
                     TableBuilder.hidePreloader();
-                    ImageStorage.images_page = 1;
+                    ImageStorage.loaded_page = 1;
             }
         });
     },
