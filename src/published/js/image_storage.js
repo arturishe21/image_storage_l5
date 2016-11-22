@@ -50,7 +50,7 @@ var ImageStorage = {
                 //fixme close popup if opened
                 $(this).toggleClass('selected')
 
-                ImageStorage.checkSelectedImages();
+                ImageStorage.checkSelected();
             }else{
                 //fixme remove popup on second click
                 ImageStorage.getImageEditForm($(this));
@@ -195,13 +195,14 @@ var ImageStorage = {
     {
         var $this = $(context);
         var currentImg = $this.find('.superbox-img');
+        var currentImgId = currentImg.data('id');
 
         jQuery.ajax({
             type: "POST",
             url: "/admin/image_storage/images/get_image_form",
             dataType: 'json',
             data: {
-                id: currentImg.data('id'),
+                id: currentImgId,
             },
             success: function(response) {
                 if (response.status) {
@@ -374,30 +375,30 @@ var ImageStorage = {
 
     }, // end saveImageInfo
 
-    getSelectedImages: function()
+    getSelected: function()
     {
-        var images = $('.superbox-list.selected img'),
-            imagesArray = [];
+        var selected = $('.superbox-list.selected img'),
+            selectedArray = [];
 
-        images.each(function() {
-            imagesArray.push($(this).data('id'));
+        selected.each(function() {
+            selectedArray.push($(this).data('id'));
         });
 
-        return imagesArray;
+        return selectedArray;
 
     },
 
-    checkSelectedImages: function()
+    checkSelected: function()
     {
-        var imagesArray = ImageStorage.getSelectedImages();
+        var selectedArray = ImageStorage.getSelected();
 
-        if (imagesArray.length) {
-            $('.image-storage-image-operations').show();
+        if (selectedArray.length) {
+            $('.image-storage-operations').show();
         } else {
-            $('.image-storage-image-operations').hide();
-            $('form[name=image-storage-image-operations-form]')[0].reset();
+            $('.image-storage-operations').hide();
+            $('form[name=image-storage-operations-form]')[0].reset();
         }
-    }, // end checkSelectedImages
+    }, // end checkSImages
 
     sendOptimizeImageRequest: function (id, size)
     {
@@ -633,14 +634,14 @@ var ImageStorage = {
     createGalleryWithImages: function ()
     {
 
-        var galleryName = $('form[name="image-storage-image-operations-form"] input[name="gallery_name"]').val().trim();
+        var galleryName = $('form[name="image-storage-operations-form"] input[name="gallery_name"]').val().trim();
 
         if (!galleryName) {
             TableBuilder.showErrorNotification('Введите название галереи для создания');
             return false;
         }
 
-        var imagesArray = ImageStorage.getSelectedImages();
+        var imagesArray = ImageStorage.getSelected();
 
         jQuery.ajax({
             type: "POST",
@@ -663,14 +664,14 @@ var ImageStorage = {
 
     saveImagesGalleriesRelations: function ()
     {
-        var  galleriesArray = $('form[name="image-storage-image-operations-form"] select[name="relations[image-storage-galleries][]"]').val();
+        var  galleriesArray = $('form[name="image-storage-operations-form"] select[name="relations[image-storage-galleries][]"]').val();
 
         if (!galleriesArray) {
             TableBuilder.showErrorNotification('Выберите галереи для добавления изображений');
             return false;
         }
 
-        var imagesArray = ImageStorage.getSelectedImages();
+        var imagesArray = ImageStorage.getSelected();
 
         jQuery.ajax({
             type: "POST",
@@ -692,14 +693,14 @@ var ImageStorage = {
 
     saveImagesTagsRelations: function()
     {
-        var  tagsArray = $('form[name="image-storage-image-operations-form"] select[name="relations[image-storage-tags][]"]').val();
+        var  tagsArray = $('form[name="image-storage-operations-form"] select[name="relations[image-storage-tags][]"]').val();
 
         if (!tagsArray) {
             TableBuilder.showErrorNotification('Выберите теги для добавления изображений');
             return false;
         }
 
-        var imagesArray = ImageStorage.getSelectedImages();
+        var imagesArray = ImageStorage.getSelected();
 
         jQuery.ajax({
             type: "POST",

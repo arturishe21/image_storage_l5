@@ -167,27 +167,27 @@
     position: relative;
 }
 
-.image-storage-image-operations{
+.image-storage-operations{
     display:none;
     margin:10px;
     text-align:center;
 }
 
-.image-storage-image-operations-row {
+.image-storage-operations-row {
     margin-bottom:10px;
 }
 
-.image-storage-image-operations-row .input-group {
+.image-storage-operations-row .input-group {
     width:100%
 }
 
-.image-storage-image-operations-input{
+.image-storage-operations-input{
     min-width: 500px;
     display:block;
     width:100%;
 }
 
-.image-storage-image-operations-button{
+.image-storage-operations-button{
     width:100%;
 }
 
