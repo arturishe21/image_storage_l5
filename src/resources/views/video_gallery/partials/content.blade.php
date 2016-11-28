@@ -14,7 +14,7 @@
             </header>
 
             <div class="table_center no-padding">
-                @include('image-storage::gallery.partials.content_table')
+                @include('image-storage::video_gallery.partials.content_table')
                 @include('image-storage::partials.pagination')
             </div>
         </div>
@@ -30,6 +30,6 @@
 <script>
     //fixme entity setter
     $(document).ready(function(){
-        ImageStorage.entity = 'galleries';
+        ImageStorage.entity = 'video_galleries';
     });
 </script>

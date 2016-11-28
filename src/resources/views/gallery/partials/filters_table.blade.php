@@ -7,7 +7,7 @@
         <th width="10%">{{__cms("Связанные теги")}}</th>
         <th width="10%">{{__cms("Галерея активна")}}</th>
         <th width="8%">
-            <a class="btn btn-sm btn-success" onclick="ImageStorage.getGalleryEditForm(null);">
+            <a class="btn btn-sm btn-success" onclick="ImageStorage.getEditFormInTable();">
                 <i class="fa fa-plus"></i> {{__cms('Создать')}}
             </a>
         </th>
@@ -70,12 +70,12 @@
         <td>
             <button class="btn btn-default btn-sm image-storage-button"
                     type="button"
-                    onclick="ImageStorage.doSearchGalleries();">
+                    onclick="ImageStorage.doSearchInTable();">
                 {{__cms('Поиск') }}
             </button>
             <button class="btn btn-default btn-sm image-storage-button"
                     type="button"
-                    onclick="ImageStorage.doResetFiltersGallery();">
+                    onclick="ImageStorage.doResetFilters();">
                 {{__cms('Сбросить') }}
             </button>
         </td>

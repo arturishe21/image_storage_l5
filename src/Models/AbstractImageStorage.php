@@ -12,6 +12,40 @@ abstract class AbstractImageStorage extends Model
 {
     protected $configPrefix;
     protected $table;
+    protected $errorMessage;
+    protected $fillable = ['id'];
+    
+    public function beforeSaveAction()
+    {
+        return true;
+    }
+
+    public function beforeDeleteAction()
+    {
+        return true;
+    }
+
+    public function afterSaveAction()
+    {
+        return true;
+    }
+
+    public function afterDeleteAction()
+    {
+        return true;
+    }
+
+    public function getErrorMessage()
+    {
+        return $this->errorMessage;
+    }
+
+    public function getRelatedEntities()
+    {
+        $relatedEntities = [];
+
+        return $relatedEntities;
+    }
 
     public function getConfigPrefix()
     {
@@ -20,7 +54,7 @@ abstract class AbstractImageStorage extends Model
 
     public function getConfigValue($value)
     {
-        return Config::get('image-storage.config.'.$this->getConfigPrefix().'.'.$value);
+        return Config::get('image-storage.'.$this->getConfigPrefix().'.'.$value);
     }
 
     public function getConfigTitle()
@@ -36,6 +70,19 @@ abstract class AbstractImageStorage extends Model
     public function getConfigFields()
     {
         return $this->getConfigValue('fields');
+    }
+
+    public function setFields($fields)
+    {
+        $this->doCheckSchemeFields();
+
+        $configFields = $this->getConfigFields();
+
+        foreach($configFields as $key=>$value){
+            $value = isset($fields[$key]) ? $fields[$key] : false;
+            $this->$key = $value;
+        }
+
     }
 
     public function scopeActive($query)
@@ -55,12 +102,13 @@ abstract class AbstractImageStorage extends Model
         }
 
         //fixme переписать под модель
-        $table = $this->table;
-        $prefix = $this->configPrefix;
-        $relatedImagesIds = \DB::table($table.'2tags')->whereIn('id_tag', $tags)->lists('id_'.$prefix);
 
-        return $query->whereIn('id', $relatedImagesIds);
-    } // end scopeByTags
+        $className = get_class($this);
+
+        $relatedId = \DB::table('vis_tags2entities')->whereIn('id_tag', $tags)->where('entity_type', $className)->lists('id_entity');
+
+        return $query->whereIn('id', $relatedId);
+    }
 
     public function scopeFilterByTitle($query, $title)
     {
@@ -68,8 +116,8 @@ abstract class AbstractImageStorage extends Model
             return $query;
         }
 
-        return $query->where('title', 'like', '%'. $title .'%');
-    } // end scopeByTitle
+        return $query->where('title', 'like', '%' . $title . '%');
+    }
 
     public function scopeFilterByDate($query, $date)
     {
@@ -107,19 +155,6 @@ abstract class AbstractImageStorage extends Model
     } // end scopeSearch
 
 
-    public function setFields($fields)
-    {
-        $this->doCheckSchemeFields();
-
-        $configFields = $this->getConfigFields();
-
-        foreach($configFields as $key=>$value){
-            $value = isset($fields[$key]) ? $fields[$key] : false;
-            $this->$key = $value;
-        }
-
-    }
-
     protected function doCheckSchemeFields()
     {
         $fields = $this->getConfigFields();
@@ -149,23 +184,6 @@ abstract class AbstractImageStorage extends Model
                 }
             }
         }
-    }
-
-    public function makeRelations()
-    {
-        return true;
-    }
-
-    public function getRelatedEntities()
-    {
-        $relatedEntities = [];
-
-        return $relatedEntities;
-    }
-
-    public function onDeleteAction()
-    {
-        return true;
     }
 
 }

@@ -10,7 +10,7 @@
 </div>
 <div class="modal-body row">
     <div class="imgInfoBox-container col-xs-12">
-            <form class="smart-form" id="imgInfoBox-form-tag">
+            <form class="smart-form" id="imgInfoBox-form-table">
                 <fieldset>
                     <div class="imgInfoBox-container-content tab-content padding-10">
                         @foreach ($fields as $fieldName => $field)
@@ -29,10 +29,10 @@
                 </fieldset>
 
                 <div class="well action-buttons-row">
-                    <a onclick="ImageStorage.saveTagInfo({{ $entity->id }});" href="javascript:void(0);"
+                    <a onclick="ImageStorage.doSaveInfoInTable({{ $entity->id }});" href="javascript:void(0);"
                        class="btn btn-success btn-sm pull-right j-btn-save">{{__cms('Сохранить')}}</a>
                     @if($entity->id)
-                    <a onclick="ImageStorage.deleteTag({{ $entity->id }});" href="javascript:void(0);"
+                    <a onclick="ImageStorage.doDeleteInTable({{ $entity->id }});" href="javascript:void(0);"
                        class="btn btn-danger btn-sm pull-left j-btn-del">{{__cms('Удалить')}}</a>
                     @endif
                 </div>

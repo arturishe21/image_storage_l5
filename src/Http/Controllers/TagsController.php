@@ -15,12 +15,30 @@ class TagsController extends AbstractImageStorageController
     {
         $model = $this->model;
 
-        $tags = Input::get('tags', array());
-        $images = Input::get('images', array());
+        $idTags  = Input::get('idTags', array());
+        $idArray = Input::get('idArray', array());
 
-        foreach ($tags as $key => $id){
+        foreach ($idTags as $key => $id){
             $entity = $model::find($id);
-            $entity->relateImagesToTag($images);
+            $entity->relateImagesToTag($idArray);
+        }
+
+        return Response::json(array(
+            'status' => true
+        ));
+
+    }
+
+    public function doAddVideosToTags()
+    {
+        $model = $this->model;
+
+        $idTags  = Input::get('idTags', array());
+        $idArray = Input::get('idArray', array());
+
+        foreach ($idTags as $key => $id){
+            $entity = $model::find($id);
+            $entity->relateVideosToTag($idArray);
         }
 
         return Response::json(array(

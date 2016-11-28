@@ -7,12 +7,18 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'ImageStorageMigration' => $baseDir . '/src/Migrations/2016_11_14_124120_image_storage_migration.php',
+    'ImageStorageVideosMigration' => $baseDir . '/src/Migrations/2016_11_21_124120_image_storage_videos_migration.php',
     'Vis\\ImageStorage\\AbstractImageStorage' => $baseDir . '/src/Models/AbstractImageStorage.php',
     'Vis\\ImageStorage\\AbstractImageStorageController' => $baseDir . '/src/Http/Controllers/AbstractImageStorageController.php',
+    'Vis\\ImageStorage\\AbstractImageStorageGalleryController' => $baseDir . '/src/Http/Controllers/AbstractImageStorageGalleryController.php',
     'Vis\\ImageStorage\\GalleriesController' => $baseDir . '/src/Http/Controllers/GalleriesController.php',
     'Vis\\ImageStorage\\Gallery' => $baseDir . '/src/Models/Gallery.php',
     'Vis\\ImageStorage\\Image' => $baseDir . '/src/Models/Image.php',
     'Vis\\ImageStorage\\ImagesController' => $baseDir . '/src/Http/Controllers/ImagesController.php',
     'Vis\\ImageStorage\\Tag' => $baseDir . '/src/Models/Tag.php',
     'Vis\\ImageStorage\\TagsController' => $baseDir . '/src/Http/Controllers/TagsController.php',
+    'Vis\\ImageStorage\\Video' => $baseDir . '/src/Models/Video.php',
+    'Vis\\ImageStorage\\VideoGalleriesController' => $baseDir . '/src/Http/Controllers/VideoGalleriesController.php',
+    'Vis\\ImageStorage\\VideoGallery' => $baseDir . '/src/Models/VideoGallery.php',
+    'Vis\\ImageStorage\\VideosController' => $baseDir . '/src/Http/Controllers/VideosController.php',
 );

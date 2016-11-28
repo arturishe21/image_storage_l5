@@ -26,3 +26,11 @@
 
 <link rel="stylesheet" href="{{asset('packages/vis/image-storage/css/image_storage.css')}}">
 <script src="{{asset('packages/vis/image-storage/js/image_storage.js')}}"></script>
+
+
+<script>
+    //fixme entity setter
+    $(document).ready(function(){
+        ImageStorage.entity = 'tags';
+    });
+</script>

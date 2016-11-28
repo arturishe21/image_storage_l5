@@ -7,7 +7,6 @@ class Tag extends AbstractImageStorage
 {
     protected $table = 'vis_tags';
     protected $configPrefix = 'tag';
-    
 
     //fixme optimize flushCache
     public static function flushCache()
@@ -15,21 +14,39 @@ class Tag extends AbstractImageStorage
         Cache::tags('image_storage-tags')->flush();
     } // end flushCache
 
-    public function galleries()
-    {
-        return $this->belongsToMany('Vis\ImageStorage\Gallery', 'vis_galleries2tags', 'id_tag', 'id_gallery');
-    } // end tags
-
     public function images()
     {
-        return $this->belongsToMany('Vis\ImageStorage\Image', 'vis_images2tags', 'id_tag', 'id_image');
-    } // end tags
+        return $this->morphedByMany('Vis\ImageStorage\Image',   'entity', 'vis_tags2entities', 'id_tag', 'id_entity');
+    }
 
-    public function relateImagesToTag($images)
+    public function videos()
     {
-        $this->images()->syncWithoutDetaching($images);
+        return $this->morphedByMany('Vis\ImageStorage\Video',   'entity', 'vis_tags2entities', 'id_tag', 'id_entity');
+    }
+
+    public function galleries()
+    {
+        return $this->morphedByMany('Vis\ImageStorage\Gallery', 'entity', 'vis_tags2entities', 'id_tag', 'id_entity');
+    }
+
+    public function video_galleries()
+    {
+        return $this->morphedByMany('Vis\ImageStorage\VideoGallery', 'entity', 'vis_tags2entities', 'id_tag', 'id_entity');
+    }
+
+    public function relateImagesToTag($entities)
+    {
+        $this->images()->syncWithoutDetaching($entities);
 
         self::flushCache();
         Image::flushCache();
+    }
+
+    public function relateVideosToTag($entities)
+    {
+        $this->videos()->syncWithoutDetaching($entities);
+
+        self::flushCache();
+        Video::flushCache();
     }
 }

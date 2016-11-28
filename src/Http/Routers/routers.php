@@ -11,6 +11,10 @@ Route::group (['middleware' => ['web']], function () {
 
         include("routers_tags.php");
 
+        include("routers_videos.php");
+
+        include("routers_video_galleries.php");
+
     });
 });
 

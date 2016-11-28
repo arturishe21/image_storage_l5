@@ -22,14 +22,20 @@ class ComposerStaticInitb53a329f2de6d2fb9c017a4f182eef61
 
     public static $classMap = array (
         'ImageStorageMigration' => __DIR__ . '/../..' . '/src/Migrations/2016_11_14_124120_image_storage_migration.php',
+        'ImageStorageVideosMigration' => __DIR__ . '/../..' . '/src/Migrations/2016_11_21_124120_image_storage_videos_migration.php',
         'Vis\\ImageStorage\\AbstractImageStorage' => __DIR__ . '/../..' . '/src/Models/AbstractImageStorage.php',
         'Vis\\ImageStorage\\AbstractImageStorageController' => __DIR__ . '/../..' . '/src/Http/Controllers/AbstractImageStorageController.php',
+        'Vis\\ImageStorage\\AbstractImageStorageGalleryController' => __DIR__ . '/../..' . '/src/Http/Controllers/AbstractImageStorageGalleryController.php',
         'Vis\\ImageStorage\\GalleriesController' => __DIR__ . '/../..' . '/src/Http/Controllers/GalleriesController.php',
         'Vis\\ImageStorage\\Gallery' => __DIR__ . '/../..' . '/src/Models/Gallery.php',
         'Vis\\ImageStorage\\Image' => __DIR__ . '/../..' . '/src/Models/Image.php',
         'Vis\\ImageStorage\\ImagesController' => __DIR__ . '/../..' . '/src/Http/Controllers/ImagesController.php',
         'Vis\\ImageStorage\\Tag' => __DIR__ . '/../..' . '/src/Models/Tag.php',
         'Vis\\ImageStorage\\TagsController' => __DIR__ . '/../..' . '/src/Http/Controllers/TagsController.php',
+        'Vis\\ImageStorage\\Video' => __DIR__ . '/../..' . '/src/Models/Video.php',
+        'Vis\\ImageStorage\\VideoGalleriesController' => __DIR__ . '/../..' . '/src/Http/Controllers/VideoGalleriesController.php',
+        'Vis\\ImageStorage\\VideoGallery' => __DIR__ . '/../..' . '/src/Models/VideoGallery.php',
+        'Vis\\ImageStorage\\VideosController' => __DIR__ . '/../..' . '/src/Http/Controllers/VideosController.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

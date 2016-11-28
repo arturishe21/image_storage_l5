@@ -1,107 +1,6 @@
 <?php
 return array(
 
-
-    'tag' => array(
-        'title' => "Теги",
-
-        'per_page' => 20,
-
-        //Only text\textarea\checkbox\datetime fields are supported for now
-        'fields' => array(
-            'title' => array(
-                'caption' => 'Название',
-                'type' => 'text',
-                'field' => 'string',
-                'tabs' => array(
-                    array(
-                        'caption' => 'ru',
-                        'postfix' => '',
-                        'placeholder' => 'Название русском'
-                    ),
-                    array(
-                        'caption' => 'ua',
-                        'postfix' => '_ua',
-                        'placeholder' => 'Название на украинском'
-                    ),
-                )
-            ),
-            'is_active' => array(
-                'caption' => 'Тег активен',
-                'type' => 'checkbox',
-                'options' => array(
-                    1 => 'Активные',
-                    0 => 'He aктивные',
-                ),
-                'field' => 'tinyInteger',
-            ),
-        ),
-
-    ),
-
-    'gallery' => array(
-
-        'title' => "Галереи",
-
-        'per_page' => 20,
-
-        //Only text\textarea\checkbox\datetime fields are supported for now
-        'fields' => array(
-            'title' => array(
-                'caption' => 'Название',
-                'type' => 'text',
-                'field' => 'string',
-                'tabs' => array(
-                    array(
-                        'caption' => 'ru',
-                        'postfix' => '',
-                        'placeholder' => 'Название русском'
-                    ),
-                    array(
-                        'caption' => 'ua',
-                        'postfix' => '_ua',
-                        'placeholder' => 'Название на украинском'
-                    ),
-                )
-            ),
-            'description' => array(
-                'caption' => 'Описание',
-                'type' => 'textarea',
-                'field' => 'text',
-                'tabs' => array(
-                    array(
-                        'caption' => 'ru',
-                        'postfix' => '',
-                        'placeholder' => 'Описание на русском'
-                    ),
-                    array(
-                        'caption' => 'ua',
-                        'postfix' => '_ua',
-                        'placeholder' => 'Описание на украинском'
-                    ),
-                )
-            ),
-            'event_date' => array(
-                'caption' => 'Дата события',
-                'type' => 'datetime',
-                'is_sorting' => true,
-                'months' => 2,
-                'field' => 'timestamp',
-            ),
-            'is_active' => array(
-                'caption' => 'Галерея активна',
-                'type' => 'checkbox',
-                'options' => array(
-                    1 => 'Активные',
-                    0 => 'He aктивные',
-                ),
-                'field' => 'tinyInteger',
-            ),
-        ),
-    ),
-
-    'image' => array(
-
         'title' => "Изображения",
 
         'per_page' => 40,
@@ -133,6 +32,9 @@ return array(
         /* delete files upon deleting entry from database */
         'delete_files' => true,
 
+        /* rename files upon renaming entry title in database */
+        'rename_files' => true,
+
         //Only text\textarea\checkbox\datetime fields are supported for now
         'fields' => array(
             'title' => array(
@@ -172,7 +74,6 @@ return array(
             ),
         ),
 
-
         'sizes' => array(
             'source' => array(
                 'caption' => 'Оригинал',
@@ -201,6 +102,5 @@ return array(
             ),
 
         ),
-    ),
 
 );

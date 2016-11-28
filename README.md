@@ -53,6 +53,20 @@ composer update
                     }
                 ),
                 array(
+                    'title' => "Видео",
+                    'link'  => '/image_storage/videos',
+                    'check' => function() {
+                        return true;
+                    }
+                ),
+                array(
+                    'title' => "Видеогалереи",
+                    'link'  => '/image_storage/video_galleries',
+                    'check' => function() {
+                        return true;
+                    }
+                ),
+                array(
                     'title' => "Теги",
                     'link'  => '/image_storage/tags',
                     'check' => function() {

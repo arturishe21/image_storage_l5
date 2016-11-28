@@ -5,21 +5,21 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Input;
 
-class Gallery extends AbstractImageStorage
+class VideoGallery extends AbstractImageStorage
 {
-    protected $table = 'vis_galleries';
-    protected $configPrefix = 'gallery';
+    protected $table = 'vis_video_galleries';
+    protected $configPrefix = 'video_gallery';
 
     //fixme optimize flushCache
     public static function flushCache()
     {
-        Cache::tags('image_storage-galleries')->flush();
+        Cache::tags('image_storage-video-galleries')->flush();
     }
 
-    public function images()
+    public function videos()
     {
         return $this
-            ->belongsToMany('Vis\ImageStorage\Image', 'vis_images2galleries', 'id_gallery', 'id_image')
+            ->belongsToMany('Vis\ImageStorage\Video', 'vis_videos2video_galleries', 'id_video_gallery', 'id_video')
             ->orderBy('priority', 'desc')
             ->withPivot('is_preview');
     }
@@ -44,7 +44,7 @@ class Gallery extends AbstractImageStorage
 
     public function getUrl()
     {
-        return route("vis_galleries_show_single", [$this->getSlug(), $this->id]);
+        return route("vis_video_galleries_show_single", [$this->getSlug(), $this->id]);
     }
 
     public function getSlug()
@@ -55,22 +55,9 @@ class Gallery extends AbstractImageStorage
 
     private function getGalleryCurrentPreview(){
 
-        $preview = $this->images()->wherePivot("is_preview", "1")->first();
+        $preview = $this->videos()->wherePivot("is_preview", "1")->first();
 
         return $preview;
-    }
-
-    public function getGalleryPreviewImage($size = 'cms_preview'){
-
-        $preview = $this->getGalleryCurrentPreview() ?: $this->images()->first();
-
-        if($preview){
-            $image = $preview->getSource($size);
-        }else{
-            $image = '/packages/vis/image-storage/img/no_image.png';
-        }
-
-        return $image;
     }
 
     public function setPreview($preview)
@@ -78,13 +65,13 @@ class Gallery extends AbstractImageStorage
         $currentPreview = $this->getGalleryCurrentPreview();
 
         if($currentPreview){
-            $this->images()->updateExistingPivot($currentPreview->id, ["is_preview" => 0]);
+            $this->videos()->updateExistingPivot($currentPreview->id, ["is_preview" => 0]);
         }
 
-        $this->images()->updateExistingPivot($preview, ["is_preview" => 1]);
+        $this->videos()->updateExistingPivot($preview, ["is_preview" => 1]);
 
         self::flushCache();
-        Image::flushCache();
+        Video::flushCache();
     }
 
     public function changeGalleryOrder($idArray)
@@ -92,20 +79,20 @@ class Gallery extends AbstractImageStorage
         $priority = count($idArray);
 
         foreach ($idArray as $id) {
-            $this->images()->updateExistingPivot($id, ['priority' => $priority]);
+            $this->videos()->updateExistingPivot($id, ['priority' => $priority]);
             $priority--;
         }
 
         self::flushCache();
-        Image::flushCache();
-    } // end tags
+        Video::flushCache();
+    }
 
     public function deleteToGalleryRelation($id)
     {
-        $this->images()->detach($id);
+        $this->videos()->detach($id);
 
         self::flushCache();
-        Image::flushCache();
+        Video::flushCache();
     }
 
     private function makeRelations()
@@ -125,11 +112,10 @@ class Gallery extends AbstractImageStorage
 
     public function relateToGallery($idArray)
     {
-        $this->images()->syncWithoutDetaching($idArray);
+        $this->videos()->syncWithoutDetaching($idArray);
 
         self::flushCache();
-        Image::flushCache();
+        Video::flushCache();
     }
-
 
 }

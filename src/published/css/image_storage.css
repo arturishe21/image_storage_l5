@@ -108,14 +108,14 @@
     width: 58%;
 }
 
-#image-storage-images-sizes-tabs-content{
+#image-storage-tabs-content{
     overflow: auto;
     width: 60%;
     float: left;
     border: none;
 }
 
-#image-storage-images-sizes-tabs-content img.superbox-current-img {
+#image-storage-tabs-content img.superbox-current-img {
     width: auto;
     display: block;
     margin: 0 auto;
@@ -220,4 +220,24 @@
 
 .image-storage-sortable-no_photo{
     text-align: center;
+}
+
+.image-storage-video-iframe{
+    width:100%;
+    padding-right:25px;
+    height:500px;
+}
+
+.image-storage-youtube-button {
+    content: '';
+    display: block;
+    width: 53px;
+    height: 38px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -19px;
+    margin-left: -26px;
+    background: url(/packages/vis/image-storage/img/video-icon-medium.png);
+    z-index: 1;
 }

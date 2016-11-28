@@ -9,7 +9,7 @@
     if (Request::ajax()) {
 
             Route::post(
-                'images/delete_image', array(
+                'images/delete', array(
                     'as' => 'delete_image',
                     'uses' => 'Vis\ImageStorage\ImagesController@doDelete'
                 )
@@ -23,24 +23,23 @@
             );
 
             Route::post(
-                'images/save_image_info', array(
+                'images/save_info', array(
                     'as' => 'save_image_info',
                     'uses' => 'Vis\ImageStorage\ImagesController@doSaveInfo'
-                )
-            );
-
-
-            Route::post(
-                'images/upload', array(
-                    'as' => 'upload_image',
-                    'uses' => 'Vis\ImageStorage\ImagesController@doUploadImage'
                 )
             );
 
             Route::post(
                 'images/load_more', array(
                     'as' => 'load_more_images',
-                    'uses' => 'Vis\ImageStorage\ImagesController@doLoadMore'
+                    'uses' => 'Vis\ImageStorage\ImagesController@doLoadMoreEndless'
+                )
+            );
+
+            Route::post(
+                'images/upload', array(
+                    'as' => 'upload_image',
+                    'uses' => 'Vis\ImageStorage\ImagesController@doUploadImage'
                 )
             );
 

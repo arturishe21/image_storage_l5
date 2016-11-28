@@ -11,25 +11,6 @@ class ImagesController extends AbstractImageStorageController
 {
     protected $model = "Vis\\ImageStorage\\Image";
 
-    public function doLoadMore()
-    {
-        $page = Input::get('page');
-
-        $model = new $this->model;
-        $perPage = $model->getConfigPerPage();
-        $prefix = $model->getConfigPrefix();
-
-        $images = $model::filterSearch()->orderBy('id', 'desc')->skip($perPage * $page)->limit($perPage)->get();
-        $html = '';
-        foreach ($images as $image) {
-            $html .= View::make('image-storage::'.$prefix.'.partials.single_list')->with('image', $image)->render();
-        }
-        return Response::json(array(
-            'status' => true,
-            'html'   => $html
-        ));
-    } // end doLoadMoreImages
-
     public function doUploadImage()
     {
         $file = Input::file('image');
@@ -39,20 +20,14 @@ class ImagesController extends AbstractImageStorageController
         $prefix = $entity->getConfigPrefix();
 
         if(!$entity->setSourceFile($file)){
-            return Response::json( array( 'status' => false, 'message'   => $entity->getUploadErrorMessage() ));
+            return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
         }
 
-        $entity->setImageData();
-        $entity->setImageTitle();
-        $entity->save();
+        if(!$entity->setNewImageData()) {
+            return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
+        }
 
-        $entity->doMakeSourceFile();
-        $entity->doImageVariations();
-        $entity->save();
-
-        $html = View::make('image-storage::'. $prefix .'.partials.single_list')->with('image', $entity)->render();
-
-        $model::flushCache();
+        $html = View::make('image-storage::'. $prefix .'.partials.single_list')->with('entity', $entity)->render();
 
         $data = array(
             'status' => true,
@@ -60,12 +35,13 @@ class ImagesController extends AbstractImageStorageController
             'id'     => $entity->id
         );
 
+        $model::flushCache();
+
         return Response::json($data);
-    } // end doUploadImage
+    }
 
     public function doReplaceSingleImage()
     {
-
         $file = Input::file('image');
         $size = Input::get('size');
         $id   = Input::get('id');
@@ -75,7 +51,7 @@ class ImagesController extends AbstractImageStorageController
         $entity = $model::find($id);
 
         if(!$entity->setSourceFile($file)){
-            return Response::json( array( 'status' => false, 'message'   => $entity->getUploadErrorMessage() ));
+            return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
         }
 
         $entity->replaceSingleImage($size);

@@ -1,13 +1,13 @@
-<tr class="tr_{{$el->id}} " id_page="{{$el->id}}">
+<tr class="tr_{{$entity->id}} " id_page="{{$entity->id}}">
     <td>
-        {{$el->id}}
+        {{$entity->id}}
     </td>
     <td>
-        {{$el->title}}
+        {{$entity->title}}
     </td>
-    <td colspan="2">{{$el->created_at}}</td>
+    <td colspan="2">{{$entity->created_at}}</td>
     <td>
-        @forelse($el->tags as $key=>$tag)
+        @forelse($entity->tags as $key=>$tag)
             <span>{{$tag->title}} </span>
         @empty
             <span class="glyphicon glyphicon-minus"></span>
@@ -15,7 +15,7 @@
     </td>
     <td>
 <span>
-    @if ($el->is_active)
+    @if ($entity->is_active)
         <span class="glyphicon glyphicon-ok"></span>
     @else
         <span class="glyphicon glyphicon-minus"></span>
@@ -25,12 +25,12 @@
     <td>
         <div class="btn-group hidden-phone pull-right">
             <a class="btn dropdown-toggle btn-xs btn-default"  data-toggle="dropdown"><i class="fa fa-cog"></i> <i class="fa fa-caret-down"></i></a>
-            <ul class="dropdown-menu pull-right" id_rec ="{{$el->id}}">
+            <ul class="dropdown-menu pull-right" id_rec ="{{$entity->id}}">
                 <li>
-                    <a class="edit_record" onclick="ImageStorage.getGalleryEditForm({{$el->id}})"><i class="fa fa-pencil"></i> {{__cms('Редактировать')}}</a>
+                    <a class="edit_record" onclick="ImageStorage.getEditFormInTable({{$entity->id}})"><i class="fa fa-pencil"></i> {{__cms('Редактировать')}}</a>
                 </li>
                 <li>
-                    <a onclick="ImageStorage.deleteGallery({{$el->id}});"><i class="fa red fa-times"></i> {{__cms("Удалить")}}</a>
+                    <a onclick="ImageStorage.doDeleteInTable({{$entity->id}});"><i class="fa red fa-times"></i> {{__cms("Удалить")}}</a>
                 </li>
             </ul>
         </div>

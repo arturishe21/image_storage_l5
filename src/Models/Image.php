@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 use Vis\Builder\OptmizationImg;
 
@@ -21,9 +22,9 @@ class Image extends AbstractImageStorage
     protected $prefixPath = '/storage/image-storage/';
 
     protected $uploadedImage;
-    protected $errorMessage;
 
     protected $sourceImage;
+    protected $extension;
     protected $imageData;
 
     //fixme optimize flushCache
@@ -35,12 +36,29 @@ class Image extends AbstractImageStorage
     public function galleries()
     {
         return $this->belongsToMany('Vis\ImageStorage\Gallery', 'vis_images2galleries', 'id_image', 'id_gallery');
-    } // end images
+    }
 
     public function tags()
     {
-        return $this->belongsToMany('Vis\ImageStorage\Tag', 'vis_images2tags', 'id_image', 'id_tag');
-    } // end tags
+        return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
+    }
+
+    public function beforeSaveAction(){
+        if(!$this->doRenameImageFiles()){
+            return false;
+        }
+
+        return true;
+    }
+
+    public function afterSaveAction(){
+        $this->makeRelations();
+    }
+
+    public function afterDeleteAction()
+    {
+        $this->doDeleteImageFiles();
+    }
 
     public function scopeFilterByGalleries($query, $galleries = array())
     {
@@ -53,7 +71,7 @@ class Image extends AbstractImageStorage
         $relatedImagesIds =  \DB::table($table.'2galleries')->whereIn('id_gallery', $galleries)->lists('id_'.$prefix);
 
         return $query->whereIn('id', $relatedImagesIds);
-    } // end scopeByGalleries
+    }
 
     public function getRelatedEntities()
     {
@@ -68,18 +86,24 @@ class Image extends AbstractImageStorage
         return $relatedEntities;
     }
 
-    public function onDeleteAction()
-    {
-        $this->doDeleteImageFiles();
-    }
-
     public function getSource($size = 'source')
     {
         $field = $this->imageSizePrefix.$size;
         $source = $this->file_folder . $this->$field;
 
         return $source;
-    } // end getSource
+    }
+
+    public function getSlug()
+    {
+        $slug = \Jarboe::urlify($this->title);
+        return $slug;
+    }
+
+    private function getFileName()
+    {
+       return $this->getSlug() . "_" . time(). "." . $this->extension;
+    }
 
     public function getConfigSizes()
     {
@@ -124,6 +148,11 @@ class Image extends AbstractImageStorage
         return $this->getConfigValue('delete_files');
     }
 
+    private function getConfigRenameFiles()
+    {
+        return $this->getConfigValue('rename_files');
+    }
+
     private function getConfigImageSizeValidation()
     {
         return $this->getConfigValue('image_size_validation.enabled');
@@ -154,33 +183,27 @@ class Image extends AbstractImageStorage
         return $this->getConfigValue('image_extension_validation.error_message');
     }
 
-    private function getPathByID()
+    private function getPathForFile()
     {
-        $id = str_pad($this->id, 6, '0', STR_PAD_LEFT);
-        $chunks = str_split($id, 2);
+        $postfixPath = date('Y') .'/'. date('m') .'/'. date('d') .'/'. $this->id .'/';
+
+        $chunks = explode("/", $postfixPath);
 
         return array(
             $chunks,
-            implode('/', $chunks) . '/'
+            $postfixPath
         );
-    } // end getPathByID
-
-    public function getSlug()
-    {
-        $fileName = \Jarboe::urlify($this->title);
-        return $fileName;
-    }
-
-    public function getUploadErrorMessage()
-    {
-        return $this->errorMessage;
     }
 
     public function setSourceFile($file)
     {
+        if(!$file){
+            return false;
+        }
+
         $this->uploadedImage = $file;
 
-        if($this->failsToValidateImage()){
+       if($this->failsToValidateImage()){
             return false;
         }
 
@@ -189,7 +212,30 @@ class Image extends AbstractImageStorage
         return true;
     }
 
-    public function setImageTitle()
+    public function setNewImageData()
+    {
+        DB::beginTransaction();
+
+        try {
+            $this->setImageExifData();
+            $this->setImageTitle();
+            $this->save();
+
+            $this->doMakeSourceFile();
+            $this->doImageVariations();
+            $this->save();
+
+            DB::commit();
+            return true;
+
+        } catch (Exception $e) {
+
+            DB::rollBack();
+            return false;
+        }
+    }
+
+    private function setImageTitle()
     {
         if($this->getConfigUseSourceTitle()){
             $title = pathinfo($this->sourceImage->getClientOriginalName(), PATHINFO_FILENAME);
@@ -200,7 +246,7 @@ class Image extends AbstractImageStorage
         $this->title = $title;
     }
 
-    public function setImageData()
+    private function setImageExifData()
     {
         $this->sourceImage->imageData = @(exif_read_data($this->sourceImage, 0, true));
 
@@ -271,17 +317,6 @@ class Image extends AbstractImageStorage
         return false;
     }
 
-    public function optimizeImage($size)
-    {
-        //fixme weird way to assign $size
-        $sizes = $size ? [$size => ''] : $this->getConfigSizes();
-
-        foreach ($sizes as $sizeName => $sizeInfo) {
-            $imagePath = $this->getSource($sizeName);
-            $this->doOptimizeImage($imagePath);
-        }
-    }
-
     private function doOptimizeImage($imagePath)
     {
         if ($this->getConfigOptimization()) {
@@ -307,7 +342,7 @@ class Image extends AbstractImageStorage
         }
     }
 
-    public function makeRelations()
+    private function makeRelations()
     {
         $this->makeImageTagsRelations();
         $this->makeImageGalleriesRelations();
@@ -338,7 +373,7 @@ class Image extends AbstractImageStorage
     {
         $prefixPath = $this->prefixPath;
 
-        list($chunks, $postfixPath) = $this->getPathByID();
+        list($chunks, $postfixPath) = $this->getPathForFile();
 
         $chunks[] = $size;
 
@@ -360,10 +395,11 @@ class Image extends AbstractImageStorage
         return $destinationPath;
     }
 
-    public function doMakeSourceFile()
+    private function doMakeSourceFile()
     {
-        //fixme find a better way to get absolute path or remove file_folder field
-        $absolutePath =  $this->prefixPath.$this->getPathByID()[1];
+        list($chunks, $postfixPath) = $this->getPathForFile();
+
+        $absolutePath =  $this->prefixPath.$postfixPath;
 
         $this->file_folder = $absolutePath;
 
@@ -379,10 +415,10 @@ class Image extends AbstractImageStorage
         //fixme can be optimized here
         if($this->sourceImage){
             $sourcePath = $this->sourceImage->getRealPath();
-            $extension = $this->sourceImage->guessExtension();
+            $this->extension = $this->sourceImage->guessExtension();
         }else{
             $sourcePath = public_path() . $this->getSource();
-            $extension  = pathinfo($sourcePath, PATHINFO_EXTENSION);
+            $this->extension  = pathinfo($sourcePath, PATHINFO_EXTENSION);
         }
 
         $img = \Image::make($sourcePath);
@@ -393,12 +429,12 @@ class Image extends AbstractImageStorage
             foreach ($sizeInfo['modify'] as $method => $args) {
                 call_user_func_array(array($img, $method), $args);
                 if ($method == 'resizeCanvas' && (isset($args[4]) && preg_match('~rgba\(\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[01]+\.?[0-9]?\)~', $args[4]))) {
-                    $extension = 'png';
+                    $this->extension = 'png';
                 }
             }
         }
 
-        $fileName = $this->getSlug() . "_" . time(). "." . $extension;
+        $fileName = $this->getFileName();
 
         $destinationPath = $this->makeFoldersAndReturnPath($size);
 
@@ -409,7 +445,7 @@ class Image extends AbstractImageStorage
         $this->$field = $size."/".$fileName;
     }
 
-    public function doImageVariations()
+    private function doImageVariations()
     {
         $this->doCheckSchemeSizes();
 
@@ -419,16 +455,64 @@ class Image extends AbstractImageStorage
         }
     }
 
+    private function doDeleteImageFiles()
+    {
+        if ($this->getConfigDeleteFiles()) {
+
+            //two level protection from removing the public folder
+            if($this->file_folder){
+
+                $fileFolder = public_path() . rtrim($this->file_folder, "/");
+
+                if(public_path() != $fileFolder){
+
+                    File::deleteDirectory($fileFolder);
+                }
+            }
+        }
+    }
+
+    private function doRenameImageFiles()
+    {
+        if ($this->getConfigRenameFiles()) {
+
+            if($this->isDirty('title')){
+
+                $sizes = $this->getConfigSizes();
+
+                foreach ($sizes as $sizeName => $sizeInfo) {
+
+                    $imagePath = public_path() . $this->getSource($sizeName);
+                    $this->extension  = pathinfo($imagePath, PATHINFO_EXTENSION);
+
+                    $newName = $sizeName ."/".$this->getFileName();
+                    $newPath = public_path(). $this->file_folder .  $newName;
+
+                    $field = $this->imageSizePrefix.$sizeName;
+
+                    if(File::move($imagePath,$newPath)){
+                        $this->$field = $newName;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     public function replaceSingleImage($size)
     {
         $this->doMakeImage($size);
     }
 
-    private function doDeleteImageFiles()
+    public function optimizeImage($size)
     {
-        if ($this->getConfigDeleteFiles()) {
-            //fixme rtrim
-            File::deleteDirectory(public_path() . rtrim($this->file_folder, "/") );
+        //fixme weird way to assign $size
+        $sizes = $size ? [$size => ''] : $this->getConfigSizes();
+
+        foreach ($sizes as $sizeName => $sizeInfo) {
+            $imagePath = $this->getSource($sizeName);
+            $this->doOptimizeImage($imagePath);
         }
     }
+
 }

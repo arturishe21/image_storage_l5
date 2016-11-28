@@ -8,7 +8,6 @@ var ImageStorage = {
     is_last_page: false,
     is_loading: false,
 
-
     init: function()
     {
         ImageStorage.initEvents()
@@ -86,14 +85,48 @@ var ImageStorage = {
         });
     },
 
-    //images
-    resetUploadPreloader: function(button)
+    initSortable: function()
     {
-        $(button).hide().parent().parent().hide();
-        $('.image-storage-progress-fail,.image-storage-progress-success').css('width', '0%');
-        $('.image-storage-upload-success, .image-storage-upload-fail, .image-storage-upload-upload, .image-storage-upload-total').text("0");
+        var $sortable = $('.image-storage-sortable');
+        $sortable.sortable(
+            {
+                items: "> li",
+                context: this,
+                update: function() {
+                    ImageStorage.onChangeGalleryOrder();
+                },
+                create: function(event, ui) {
+                    $('.image-storage-sortable-item').click(function(e) {
+                        if (e.ctrlKey) {
+                            ImageStorage.setGalleryPreview(this);
+                        }
+                    });
+                },
+            }
+        );
+        $sortable.disableSelection();
     },
 
+    doResetFilters: function()
+    {
+        TableBuilder.showPreloader();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/"+ImageStorage.entity,
+            data: {
+                forget_filters: true
+            },
+            success : function(response) {
+                $('#content_admin').html(response);
+                ImageStorage.init();
+                TableBuilder.hidePreloader()
+            }
+        });
+
+    },
+
+    //common in pages with grid view
     loadMore: function()
     {
         if (ImageStorage.is_loading) {
@@ -125,7 +158,298 @@ var ImageStorage = {
             }
         });
 
-    }, // end loadMore
+    },
+
+    doSearch: function()
+    {
+        var data = $('#image-storage-search-form').serializeArray();
+        TableBuilder.showPreloader();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/"+ImageStorage.entity,
+            data: data,
+            success: function(response) {
+                $('#content_admin').html(response);
+                ImageStorage.init();
+                TableBuilder.hidePreloader();
+                ImageStorage.loaded_page = 1;
+            }
+        });
+    },
+
+    openFormPopup: function(context,currentBlock,html)
+    {
+
+        $('.superbox-show').remove();
+
+        $(html).insertAfter(context).css('display', 'block');
+
+        var superbox =  $('.superbox-show');
+
+        $('html, body').animate({
+            scrollTop:superbox.position().top - currentBlock.width()
+        }, 'medium');
+
+    },
+
+    closeSuperBoxPopup: function()
+    {
+        $('.superbox-list').removeClass('active');
+        $('#image-storage-tabs-content').animate({opacity: 0}, 200, function() {
+            $('.superbox-show').slideUp();
+        });
+
+    },
+
+    getSelected: function()
+    {
+        var selected = $('.superbox-list.selected img'),
+            selectedArray = [];
+
+        selected.each(function() {
+            selectedArray.push($(this).data('id'));
+        });
+
+        return selectedArray;
+
+    },
+
+    checkSelected: function()
+    {
+        var selectedArray = ImageStorage.getSelected();
+
+        if (selectedArray.length) {
+            $('.image-storage-operations').show();
+        } else {
+            $('.image-storage-operations').hide();
+            $('form[name=image-storage-operations-form]')[0].reset();
+        }
+    },
+
+    doDelete: function(id)
+    {
+        jQuery.SmartMessageBox({
+            title : "Удалить запись?",
+            content : "Эту операцию нельзя будет отменить.",
+            buttons : '[Нет][Да]'
+        }, function(ButtonPressed) {
+            if (ButtonPressed === "Да") {
+                jQuery.ajax({
+                    type: "POST",
+                    url: "/admin/image_storage/"+ImageStorage.entity+"/delete",
+                    data: { id: id },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status) {
+                            $('.superbox .superbox-show').remove();
+                            $('.superbox').find(".superbox-img[data-id='" + id + "']").parent().remove();
+
+                            TableBuilder.showSuccessNotification('Запись удалено');
+                        } else {
+                            TableBuilder.showErrorNotification('Что-то пошло не так');
+                        }
+                    }
+                });
+            }
+        });
+    },
+
+    doSaveInfo: function(id)
+    {
+        var data = $('#imgInfoBox-form').serializeArray();
+        data.push({ name: 'id', value: id });
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/"+ImageStorage.entity+"/save_info",
+            data: data,
+            dataType: 'json',
+            success: function(response) {
+                if (response.status) {
+                    TableBuilder.showSuccessNotification('Сохранено');
+                    ImageStorage.closeSuperBoxPopup();
+                } else {
+                    if (response.message){
+                        TableBuilder.showErrorNotification(response.message);
+                    }else{
+                        TableBuilder.showErrorNotification("Что-то пошло не так");
+                    }
+                }
+            }
+        });
+    },
+
+    getEditForm: function(context)
+    {
+        var $this = $(context);
+        var currentBlock = $this.find('.superbox-img');
+        var currentBlockId = currentBlock.data('id');
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/"+ImageStorage.entity+"/get_form",
+            dataType: 'json',
+            data: {
+                id: currentBlockId,
+            },
+            success: function(response) {
+                if (response.status) {
+
+                    $('.superbox-list').removeClass('active');
+                    $this.addClass('active');
+
+                    ImageStorage.openFormPopup(context,currentBlock, response.html);
+
+                    ImageStorage.initSelectBoxes();
+
+                    ImageStorage.initPopupClicks();
+
+                    ImageStorage.replaceSrcImageForm();
+
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+    },
+
+    getCreateForm: function()
+    {
+        var context = $("#image-storage-search-form");
+        var currentBlock = context;
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/"+ImageStorage.entity+"/get_form",
+            dataType: 'json',
+            success: function(response) {
+                if (response.status) {
+
+                    ImageStorage.openFormPopup(context,currentBlock, response.html);
+
+                    ImageStorage.initSelectBoxes();
+
+                    ImageStorage.initPopupClicks();
+
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+    },
+    //end common in pages with grid view
+
+    //common in pages with table view
+    doSearchInTable: function()
+    {
+        var data = $('#image-storage-search-form').serializeArray();
+        TableBuilder.showPreloader();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/"+ImageStorage.entity,
+            data: data,
+            success : function(response) {
+                $('#content_admin').html(response);
+                ImageStorage.init();
+                TableBuilder.hidePreloader()
+            }
+        });
+    },
+
+    getEditFormInTable: function(id)
+    {
+        id =   id || null;
+
+        TableBuilder.showPreloader();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/"+ImageStorage.entity+"/get_form",
+            dataType: 'json',
+            data: { id: id },
+            success: function(response) {
+                if (response.status) {
+                    $("#modal_form").modal('show');
+                    $("#modal_form .modal-content").html(response.html);
+                    TableBuilder.hidePreloader();
+                    ImageStorage.initSortable();
+                    ImageStorage.initSelectBoxes();
+                } else {
+                    TableBuilder.hidePreloader();
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+    },
+
+    doDeleteInTable: function(id)
+    {
+        jQuery.SmartMessageBox({
+            title : "Удалить запись?",
+            content : "Эту операцию нельзя будет отменить.",
+            buttons : '[Нет][Да]'
+        }, function(ButtonPressed) {
+            if (ButtonPressed === "Да") {
+                jQuery.ajax({
+                    type: "POST",
+                    url: "/admin/image_storage/"+ImageStorage.entity+"/delete",
+                    data: { id: id },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status) {
+                            $('.tr_'+id).remove();
+                            //fixme hide modal gallery popup
+                            if($(".modal-body.row").length){
+                                $("button.close").click();
+                            }
+                            TableBuilder.showSuccessNotification('Запись удалена');
+                        } else {
+                            TableBuilder.showErrorNotification('Что-то пошло не так');
+                        }
+                    }
+                });
+            }
+        });
+    },
+
+    doSaveInfoInTable: function(id)
+    {
+        var data = $('#imgInfoBox-form-table').serializeArray();
+        data.push({ name: 'id', value: id });
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/"+ImageStorage.entity+"/save_info",
+            data: data,
+            dataType: 'json',
+            success: function(response) {
+                if (response.status) {
+                    TableBuilder.showSuccessNotification('Сохранено');
+                    //fixme hide modal gallery popup
+                    if($(".modal-body.row").length){
+                        $("button.close").click();
+                    }
+                } else {
+                    if (response.message){
+                        TableBuilder.showErrorNotification(response.message);
+                    }else{
+                        TableBuilder.showErrorNotification("Что-то пошло не так");
+                    }
+                }
+            }
+        });
+    },
+    //end common in pages with table view
+
+    //images
+    resetUploadPreloader: function(button)
+    {
+        $(button).hide().parent().parent().hide();
+        $('.image-storage-progress-fail,.image-storage-progress-success').css('width', '0%');
+        $('.image-storage-upload-success, .image-storage-upload-fail, .image-storage-upload-upload, .image-storage-upload-total').text("0");
+    },
 
     uploadImage: function(context)
     {
@@ -186,77 +510,21 @@ var ImageStorage = {
 
                     if (imgCount == imgTotal) {
                         $fog.find('.image-storage-upload-finish-btn').show();
-                        ImageStorage.sendOptimizeImageRequest(imageIdsArray);
-
+                        if(imageIdsArray.length){
+                            ImageStorage.sendOptimizeImageRequest(imageIdsArray);
+                        }
                     }
                 }
             });
         }
         $("#upload-image-storage-input").val("");
-    }, // end uploadFile
-
-    getEditForm: function(context)
-    {
-        var $this = $(context);
-        var currentImg = $this.find('.superbox-img');
-        var currentImgId = currentImg.data('id');
-
-        jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/"+ImageStorage.entity+"/get_form",
-            dataType: 'json',
-            data: {
-                id: currentImgId,
-            },
-            success: function(response) {
-                if (response.status) {
-
-                    $('.superbox-list').removeClass('active');
-                    $this.addClass('active');
-
-                    ImageStorage.openFormPopup(context,currentImg, response.html);
-
-                    ImageStorage.initSelectBoxes();
-
-                    ImageStorage.initPopupClicks();
-
-                    ImageStorage.replaceSrcImageForm();
-
-                } else {
-                    TableBuilder.showErrorNotification('Что-то пошло не так');
-                }
-            }
-        });
-    },
-
-    openFormPopup: function(context,currentImg,html)
-    {
-        $('.superbox-show').remove();
-
-        $(html).insertAfter(context).css('display', 'block');
-
-        var superbox =  $('.superbox-show');
-
-        $('html, body').animate({
-            scrollTop:superbox.position().top - currentImg.width()
-        }, 'medium');
-
-    },
-
-    closeSuperBoxPopup: function()
-    {
-        $('.superbox-list').removeClass('active');
-        $('.superbox-current-img').animate({opacity: 0}, 200, function() {
-            $('.superbox-show').slideUp();
-        });
-
     },
 
     replaceSrcImageForm: function()
     {
         $('#image-storage-images-sizes-tabs li').click(function(){
             var element = $(this).find("a").attr('href');
-            var img = ($("#image-storage-images-sizes-tabs-content").find(element).find("img"));
+            var img = ($("#image-storage-tabs-content").find(element).find("img"));
 
             if(typeof img.attr('real-src') !== typeof undefined && img.attr('real-src') !== false)
             {
@@ -295,115 +563,6 @@ var ImageStorage = {
         });
     },
 
-    doSearch: function()
-    {
-        var data = $('#image-storage-search-form').serializeArray();
-        TableBuilder.showPreloader();
-
-        jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/images",
-            data: data,
-            success: function(response) {
-                    $('#content_admin').html(response);
-                    ImageStorage.init();
-                    TableBuilder.hidePreloader();
-                    ImageStorage.loaded_page = 1;
-            }
-        });
-    },
-
-    doResetFilters: function()
-    {
-        TableBuilder.showPreloader();
-
-        jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/images",
-            data: {forget_filters: true},
-            success : function(response) {
-                $('#content_admin').html(response);
-                ImageStorage.init();
-                TableBuilder.hidePreloader()
-            }
-        });
-    },
-
-    deleteImage: function(idImage)
-    {
-        jQuery.SmartMessageBox({
-            title : "Удалить изображение?",
-            content : "Эту операцию нельзя будет отменить.",
-            buttons : '[Нет][Да]'
-        }, function(ButtonPressed) {
-            if (ButtonPressed === "Да") {
-                jQuery.ajax({
-                    type: "POST",
-                    url: "/admin/image_storage/images/delete_image",
-                    data: { id: idImage },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.status) {
-                            $('.superbox .superbox-show').remove();
-                            $('.superbox').find(".image-storage-img[data-id='" + idImage + "']").parent().remove();
-
-                            TableBuilder.showSuccessNotification('Изображение удалено');
-                        } else {
-                            TableBuilder.showErrorNotification('Что-то пошло не так');
-                        }
-                    }
-                });
-            }
-        });
-    }, // end deleteImage
-
-    saveImageInfo: function(idImage)
-    {
-        var data = $('#imgInfoBox-form').serializeArray();
-        data.push({ name: 'id', value: idImage });
-
-        jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/images/save_image_info",
-            data: data,
-            dataType: 'json',
-            success: function(response) {
-                if (response.status) {
-                    TableBuilder.showSuccessNotification('Сохранено');
-                } else {
-                    TableBuilder.showErrorNotification('Что-то пошло не так');
-                }
-            }
-        });
-
-
-    }, // end saveImageInfo
-
-    getSelected: function()
-    {
-        var selected = $('.superbox-list.selected img'),
-            selectedArray = [];
-
-        selected.each(function() {
-            selectedArray.push($(this).data('id'));
-        });
-
-        return selectedArray;
-
-    },
-
-    checkSelected: function()
-    {
-        var selectedArray = ImageStorage.getSelected();
-
-        if (selectedArray.length) {
-            $('.image-storage-operations').show();
-        } else {
-            $('.image-storage-operations').hide();
-            $('form[name=image-storage-operations-form]')[0].reset();
-        }
-    }, // end checkSImages
-
     sendOptimizeImageRequest: function (id, size)
     {
         jQuery.ajax({
@@ -414,99 +573,71 @@ var ImageStorage = {
                 size:  size,
             },
             dataType: 'json',
-/*            success: function(response) {
-                if (response.status) {
-                    TableBuilder.showSuccessNotification('Изображение успешно оптимизированно');
-                } else {
-                    TableBuilder.showErrorNotification('Что-то пошло не так при оптимизации изображения');
-                }
-            }
-*/
+            /*            success: function(response) {
+             if (response.status) {
+             TableBuilder.showSuccessNotification('Изображение успешно оптимизированно');
+             } else {
+             TableBuilder.showErrorNotification('Что-то пошло не так при оптимизации изображения');
+             }
+             }
+             */
         });
     },
+    //end images
 
-    //galleries
-    doSearchGalleries: function()
+    //videos
+    uploadVideoPreview: function(context, id)
     {
-        var data = $('#image-storage-search-form').serializeArray();
-        TableBuilder.showPreloader();
+        var data = new FormData();
+        data.append("image", context.files[0]);
+        data.append('id', id);
 
         jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/galleries",
             data: data,
-            success : function(response) {
-                    $('#content_admin').html(response);
-                    ImageStorage.init();
-                    TableBuilder.hidePreloader()
-            }
-        });
-    },
-
-    doResetFiltersGallery: function()
-    {
-        TableBuilder.showPreloader();
-
-        jQuery.ajax({
             type: "POST",
-            url: "/admin/image_storage/galleries",
-            data: {forget_filters: true},
-            success : function(response) {
-                $('#content_admin').html(response);
-                ImageStorage.init();
-                TableBuilder.hidePreloader()
-            }
-        });
-
-    },
-
-    getGalleryEditForm: function(id)
-    {
-        id =   id || null;
-
-        TableBuilder.showPreloader();
-
-        jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/galleries/get_gallery_form",
-            dataType: 'json',
-            data: { id: id },
+            url: "/admin/image_storage/videos/upload_video_preview",
+            cache: false,
+            contentType: false,
+            processData: false,
             success: function(response) {
                 if (response.status) {
-                    $("#modal_form").modal('show');
-                    $("#modal_form .modal-content").html(response.html);
-                    TableBuilder.hidePreloader();
-                    ImageStorage.initSortable();
-                    ImageStorage.initSelectBoxes();
+                    $(context).parents(".tab-pane.active").find('.superbox-current-img').prop('src', response.src);
+                    $(".superbox-list-video.active").find('.image-storage-img').prop('src', response.src);
+
+                    //fixme solution for not triggering optimization before user sees preview changes on page
+                    setTimeout(function(){
+                        ImageStorage.sendOptimizeImageRequest(response.id);
+                    }, 1000)
+
                 } else {
-                    TableBuilder.hidePreloader();
-                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                    if (response.message){
+                        TableBuilder.showErrorNotification(response.message);
+                    }else{
+                        TableBuilder.showErrorNotification("Ошибка при загрузке изображения");
+                    }
                 }
             }
         });
     },
-
-    deleteGallery: function(id)
+    removeUploadedPreview: function(context, id)
     {
         jQuery.SmartMessageBox({
-            title : "Удалить галерею?",
+            title : "Удалить превью?",
             content : "Эту операцию нельзя будет отменить.",
             buttons : '[Нет][Да]'
         }, function(ButtonPressed) {
             if (ButtonPressed === "Да") {
                 jQuery.ajax({
                     type: "POST",
-                    url: "/admin/image_storage/galleries/delete_gallery",
+                    url: "/admin/image_storage/videos/remove_video_preview",
                     data: { id: id },
                     dataType: 'json',
                     success: function(response) {
                         if (response.status) {
-                            $('.tr_'+id).remove();
-                            //fixme hide modal gallery popup
-                            if($(".modal-body.row").length){
-                                $("button.close").click();
-                            }
-                            TableBuilder.showSuccessNotification('Галерея удалена');
+                            $(context).parents(".tab-pane.active").find('.superbox-current-img').prop('src', response.src);
+                            $(".superbox-list-video.active").find('.image-storage-img').prop('src', response.src);
+
+                            TableBuilder.showSuccessNotification('Превью удалено');
                         } else {
                             TableBuilder.showErrorNotification('Что-то пошло не так');
                         }
@@ -514,66 +645,20 @@ var ImageStorage = {
                 });
             }
         });
-    }, // end deleteImage
-
-    initSortable: function()
-    {
-        var $sortable = $('.image-storage-sortable');
-        $sortable.sortable(
-            {
-                items: "> li",
-                context: this,
-                update: function() {
-                    ImageStorage.onChangeGalleryImagesOrder();
-                },
-                create: function(event, ui) {
-                    $('.image-storage-sortable-item').click(function(e) {
-                        if (e.ctrlKey) {
-                            ImageStorage.setGalleryPreviewImage(this);
-                        }
-                    });
-                },
-            }
-        );
-        $sortable.disableSelection();
     },
+    //end videos
 
-    saveGalleryInfo: function(id)
+    //galleries
+    onChangeGalleryOrder: function()
     {
-        var data = $('#imgInfoBox-form-gallery').serializeArray();
-        data.push({ name: 'id', value: id });
-
-        jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/galleries/save_gallery_info",
-            data: data,
-            dataType: 'json',
-            success: function(response) {
-                if (response.status) {
-                    TableBuilder.showSuccessNotification('Сохранено');
-                    //fixme hide modal gallery popup
-                    if($(".modal-body.row").length){
-                        $("button.close").click();
-                    }
-                } else {
-                    TableBuilder.showErrorNotification('Что-то пошло не так');
-                }
-            }
-        });
-
-
-    }, // end saveImageInfo
-
-    onChangeGalleryImagesOrder: function()
-    {
-        var images = $('.image-storage-sortable').sortable('toArray');
+        var idArray = $('.image-storage-sortable').sortable('toArray');
         //fixme hidden input? find better decision
         var idGallery = $('[name=gallery_id]').val();
 
         jQuery.ajax({
             type: "POST",
-            url: "/admin/image_storage/galleries/change_image_order",
-            data: { images: images, idGallery:idGallery  },
+            url: "/admin/image_storage/"+ImageStorage.entity+"/change_order",
+            data: { idArray: idArray, idGallery: idGallery  },
             dataType: 'json',
             success: function(response) {
                 if (response.status) {
@@ -585,24 +670,24 @@ var ImageStorage = {
         });
     },
 
-    deleteGalleryImageRelation: function(idImage, idGallery)
+    deleteGalleryRelation: function(id, idGallery)
     {
         jQuery.SmartMessageBox({
-            title : "Удалить изображение из галереи?",
+            title : "Удалить связь?",
             content : "Эту операцию нельзя будет отменить.",
             buttons : '[Нет][Да]'
         }, function(ButtonPressed) {
             if (ButtonPressed === "Да") {
                 jQuery.ajax({
                     type: "POST",
-                    url: "/admin/image_storage/galleries/delete_image_relation",
-                    data: { idImage: idImage, idGallery:idGallery  },
+                    url: "/admin/image_storage/"+ImageStorage.entity+"/delete_relation",
+                    data: { id: id, idGallery:idGallery  },
                     dataType: 'json',
                     success: function(response) {
                         if (response.status) {
-                            $('li#'+idImage).remove();
+                            $('li#'+id).remove();
                             $(".image-storage-sortable").sortable("refresh");
-                            TableBuilder.showSuccessNotification('Изображение удалено из галереи');
+                            TableBuilder.showSuccessNotification('Связь успешно удалена из галереи');
                         } else {
                             TableBuilder.showErrorNotification('Что-то пошло не так');
                         }
@@ -610,31 +695,32 @@ var ImageStorage = {
                 });
             }
         });
-    }, // end deleteGalleryImageRelation
+    },
 
-    setGalleryPreviewImage: function(image)
+    setGalleryPreview: function(preview)
     {
-        var idImage = $(image).attr('id');
+        var idPreview = $(preview).attr('id');
         //fixme hidden input? find better decision
         var idGallery = $('[name=gallery_id]').val();
 
         jQuery.ajax({
             type: "POST",
-            url: "/admin/image_storage/galleries/set_gallery_image_preview",
-            data: { idImage: idImage, idGallery:idGallery  },
+            url: "/admin/image_storage/"+ImageStorage.entity+"/set_gallery_preview",
+            data: { idPreview: idPreview, idGallery:idGallery  },
             dataType: 'json',
             success: function(response) {
                 if (response.status) {
                     $(".image-storage-sortable-item").removeClass('preview');
-                    $(image).addClass('preview');
+                    $(preview).addClass('preview');
                     TableBuilder.showSuccessNotification('Превью галереи успешно установлено');
                 } else {
                     TableBuilder.showErrorNotification('Что-то пошло не так');
                 }
             }
         });
-    }, // end deleteGalleryImageRelation
+    },
 
+    //image-gallery
     createGalleryWithImages: function ()
     {
 
@@ -645,13 +731,74 @@ var ImageStorage = {
             return false;
         }
 
-        var imagesArray = ImageStorage.getSelected();
+        var idArray = ImageStorage.getSelected();
 
         jQuery.ajax({
             type: "POST",
-            url: "/admin/image_storage/galleries/create_gallery_with_images",
+            url: "/admin/image_storage/galleries/create_gallery_with",
             data: {
-                images:     imagesArray,
+                idArray:     idArray,
+                galleryName: galleryName
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status) {
+                    TableBuilder.showSuccessNotification('Галерея с изображениями успешно создана');
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+
+    },
+    saveImagesGalleriesRelations: function ()
+    {
+        var  idGalleries = $('form[name="image-storage-operations-form"] select[name="relations[image-storage-galleries][]"]').val();
+
+        if (!idGalleries) {
+            TableBuilder.showErrorNotification('Выберите галереи для добавления изображений');
+            return false;
+        }
+
+        var idArray = ImageStorage.getSelected();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/galleries/add_array_to_galleries",
+            data: {
+                idArray:     idArray,
+                idGalleries:  idGalleries
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status) {
+                    TableBuilder.showSuccessNotification('Изображения успешно добавлены к галереям');
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+    },
+    //end galleries
+
+    //video-galleries
+    createGalleryWithVideos: function ()
+    {
+
+        var galleryName = $('form[name="image-storage-operations-form"] input[name="gallery_name"]').val().trim();
+
+        if (!galleryName) {
+            TableBuilder.showErrorNotification('Введите название галереи для создания');
+            return false;
+        }
+
+        var idArray = ImageStorage.getSelected();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/video_galleries/create_gallery_with",
+            data: {
+                idArray:     idArray,
                 galleryName:   galleryName
             },
             dataType: 'json',
@@ -665,53 +812,54 @@ var ImageStorage = {
         });
 
     },
-
-    saveImagesGalleriesRelations: function ()
+    saveVideosGalleriesRelations: function ()
     {
-        var  galleriesArray = $('form[name="image-storage-operations-form"] select[name="relations[image-storage-galleries][]"]').val();
+        var  idGalleries = $('form[name="image-storage-operations-form"] select[name="relations[image-storage-video-galleries][]"]').val();
 
-        if (!galleriesArray) {
-            TableBuilder.showErrorNotification('Выберите галереи для добавления изображений');
+        if (!idGalleries) {
+            TableBuilder.showErrorNotification('Выберите галереи для добавления');
             return false;
         }
 
-        var imagesArray = ImageStorage.getSelected();
+        var idArray = ImageStorage.getSelected();
 
         jQuery.ajax({
             type: "POST",
-            url: "/admin/image_storage/galleries/add_images_to_galleries",
+            url: "/admin/image_storage/video_galleries/add_array_to_galleries",
             data: {
-                images:     imagesArray,
-                galleries:  galleriesArray
+                idArray:    idArray,
+                idGalleries:  idGalleries
             },
             dataType: 'json',
             success: function(response) {
                 if (response.status) {
-                    TableBuilder.showSuccessNotification('Изображения успешно добавлены к галереям');
+                    TableBuilder.showSuccessNotification('Видео успешно добавлены к галереям');
                 } else {
                     TableBuilder.showErrorNotification('Что-то пошло не так');
                 }
             }
         });
     },
+    //end galleries
 
+    //tags
     saveImagesTagsRelations: function()
     {
-        var  tagsArray = $('form[name="image-storage-operations-form"] select[name="relations[image-storage-tags][]"]').val();
+        var  idTags = $('form[name="image-storage-operations-form"] select[name="relations[image-storage-tags][]"]').val();
 
-        if (!tagsArray) {
-            TableBuilder.showErrorNotification('Выберите теги для добавления изображений');
+        if (!idTags) {
+            TableBuilder.showErrorNotification('Выберите теги для добавления');
             return false;
         }
 
-        var imagesArray = ImageStorage.getSelected();
+        var idArray = ImageStorage.getSelected();
 
         jQuery.ajax({
             type: "POST",
             url: "/admin/image_storage/tags/add_images_to_tags",
             data: {
-                images:     imagesArray,
-                tags:       tagsArray
+                idArray: idArray,
+                idTags:  idTags
             },
             dataType: 'json',
             success: function(response) {
@@ -722,120 +870,36 @@ var ImageStorage = {
                 }
             }
         });
-    }, // end saveImagesTagsRelations
-
-    //tags
-    doSearchTags: function()
-    {
-        var data = $('#image-storage-search-form').serializeArray();
-        TableBuilder.showPreloader();
-
-        jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/tags",
-            data: data,
-            success : function(response) {
-                $('#content_admin').html(response);
-                ImageStorage.init();
-                TableBuilder.hidePreloader()
-            }
-        });
     },
-
-    doResetFiltersTags: function()
+    saveVideosTagsRelations: function()
     {
-        TableBuilder.showPreloader();
+        var  idTags = $('form[name="image-storage-operations-form"] select[name="relations[image-storage-tags][]"]').val();
+
+        if (!idTags) {
+            TableBuilder.showErrorNotification('Выберите теги для добавления');
+            return false;
+        }
+
+        var idArray = ImageStorage.getSelected();
 
         jQuery.ajax({
             type: "POST",
-            url: "/admin/image_storage/tags",
-            data: {forget_filters: true},
-            success : function(response) {
-                $('#content_admin').html(response);
-                ImageStorage.init();
-                TableBuilder.hidePreloader()
-            }
-        });
-    },
-
-    getTagEditForm: function(id)
-    {
-        id =   id || null;
-
-        TableBuilder.showPreloader();
-
-        jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/tags/get_edit_form",
-            dataType: 'json',
-            data: { id: id },
-            success: function(response) {
-                if (response.status) {
-                    $("#modal_form").modal('show');
-                    $("#modal_form .modal-content").html(response.html);
-                    TableBuilder.hidePreloader();
-                } else {
-                    TableBuilder.hidePreloader();
-                    TableBuilder.showErrorNotification('Что-то пошло не так');
-                }
-            }
-        });
-    },
-    deleteTag: function(id)
-    {
-        jQuery.SmartMessageBox({
-            title : "Удалить тэг?",
-            content : "Эту операцию нельзя будет отменить.",
-            buttons : '[Нет][Да]'
-        }, function(ButtonPressed) {
-            if (ButtonPressed === "Да") {
-                jQuery.ajax({
-                    type: "POST",
-                    url: "/admin/image_storage/tags/delete_tag",
-                    data: { id: id },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.status) {
-                            $('.tr_'+id).remove();
-                            //fixme hide modal gallery popup
-                            if($(".modal-body.row").length){
-                                $("button.close").click();
-                            }
-                            TableBuilder.showSuccessNotification('Тэг удалена');
-                        } else {
-                            TableBuilder.showErrorNotification('Что-то пошло не так');
-                        }
-                    }
-                });
-            }
-        });
-    }, // end deleteImage
-
-    saveTagInfo: function(id)
-    {
-        var data = $('#imgInfoBox-form-tag').serializeArray();
-        data.push({ name: 'id', value: id });
-
-        jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/tags/save_tag_info",
-            data: data,
+            url: "/admin/image_storage/tags/add_videos_to_tags",
+            data: {
+                idArray: idArray,
+                idTags:  idTags
+            },
             dataType: 'json',
             success: function(response) {
                 if (response.status) {
-                    TableBuilder.showSuccessNotification('Сохранено');
-                    //fixme hide modal gallery popup
-                    if($(".modal-body.row").length){
-                        $("button.close").click();
-                    }
+                    TableBuilder.showSuccessNotification('Изображения добавлены к тегу');
                 } else {
                     TableBuilder.showErrorNotification('Что-то пошло не так');
                 }
             }
         });
-
-
-    }, // end saveImageInfo
+    },
+    //end tags
 
 };
 $(document).ready(function(){

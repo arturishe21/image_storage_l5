@@ -14,15 +14,14 @@
             <ul class="dop_foto image-storage-sortable">
                 @forelse ($entity->images as $key => $image)
                     <li id="{{$image->id}}" class="image-storage-sortable-item {{ $image->pivot->is_preview ? "preview" : ""}}">
-                        @include('image-storage::image.partials.single')
+                        @include('image-storage::image.partials.single', ['entity' => $image])
                         <div class="tb-btn-delete-wrap">
                             <!-- fixme inline styles -->
                             <button class="btn2 btn-default btn-sm tb-btn-image-delete" style="height:22px;"
                                     type="button"
-                                    onclick="ImageStorage.deleteGalleryImageRelation({{ $image->id }},{{ $entity->id }});">
+                                    onclick="ImageStorage.deleteGalleryRelation({{ $image->id }},{{ $entity->id }});">
                                 <i class="fa fa-times"></i>
                             </button>
-
                         </div>
                     </li>
                 @empty
@@ -34,7 +33,7 @@
     </div>
 
     <div class="imgInfoBox-container col-xs-4">
-            <form class="smart-form" id="imgInfoBox-form-gallery">
+            <form class="smart-form" id="imgInfoBox-form-table">
                 <fieldset>
                     <div class="imgInfoBox-container-content tab-content padding-10">
                         @foreach ($fields as $fieldName => $field)
@@ -63,10 +62,10 @@
                 </fieldset>
 
                 <div class="well action-buttons-row">
-                    <a onclick="ImageStorage.saveGalleryInfo({{ $entity->id }});" href="javascript:void(0);"
+                    <a onclick="ImageStorage.doSaveInfoInTable({{ $entity->id }});" href="javascript:void(0);"
                        class="btn btn-success btn-sm pull-right j-btn-save">{{__cms('Сохранить')}}</a>
                     @if($entity->id)
-                    <a onclick="ImageStorage.deleteGallery({{ $entity->id }});" href="javascript:void(0);"
+                    <a onclick="ImageStorage.doDeleteInTable({{ $entity->id }});" href="javascript:void(0);"
                        class="btn btn-danger btn-sm pull-left j-btn-del">{{__cms('Удалить')}}</a>
                     @endif
                 </div>

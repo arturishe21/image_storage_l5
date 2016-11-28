@@ -36,6 +36,25 @@ abstract class AbstractImageStorageController extends Controller
             ->with('relatedEntities', $relatedEntities);
     }
 
+    public function doLoadMoreEndless()
+    {
+        $page = Input::get('page');
+
+        $model = new $this->model;
+        $perPage = $model->getConfigPerPage();
+        $prefix = $model->getConfigPrefix();
+
+        $entities = $model::filterSearch()->orderBy('id', 'desc')->skip($perPage * $page)->limit($perPage)->get();
+        $html = '';
+        foreach ($entities as $entity) {
+            $html .= View::make('image-storage::'.$prefix.'.partials.single_list')->with('entity', $entity)->render();
+        }
+        return Response::json(array(
+            'status' => true,
+            'html'   => $html
+        ));
+    }
+
     public function doDelete()
     {
         $id    = Input::get('id');
@@ -43,13 +62,18 @@ abstract class AbstractImageStorageController extends Controller
 
         $entity = $model::find($id);
 
-        $entity->onDeleteAction();
+        if(!$entity->beforeDeleteAction()){
+            return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
+        }
 
         $entity->delete();
+
+        $entity->afterDeleteAction();
 
         $model::flushCache();
 
         return Response::json(array(
+            'id'     => $id,
             'status' => true
         ));
     }
@@ -62,12 +86,7 @@ abstract class AbstractImageStorageController extends Controller
         $prefix = $model->getConfigPrefix();
         $relatedEntities = $model->getRelatedEntities();
 
-        //fixme should be optimized
-        if($id){
-            $entity = $model::find($id);
-        }else{
-            $entity = new $model;
-        }
+        $entity = $model::firstOrNew(['id' => $id]);
 
         $fields = $entity->getConfigFields();
 
@@ -80,7 +99,7 @@ abstract class AbstractImageStorageController extends Controller
             'status' => true,
             'html' => $html,
         ));
-    } // end getImageForm
+    }
 
     public function doSaveInfo()
     {
@@ -88,25 +107,30 @@ abstract class AbstractImageStorageController extends Controller
 
         $fields = Input::except('relations');
 
-        //fixme should be optimized
-        if($fields['id']){
-            $entity = $model::find($fields['id']);
-        }else{
-            $entity = new $model;
-        }
+        $entity = $model::firstOrNew(['id' => $fields['id']]);
+
+        $prefix = $entity->getConfigPrefix();
 
         $entity->setFields($fields);
 
+        if(!$entity->beforeSaveAction()){
+            return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
+        }
+
         $entity->save();
 
-        $entity->makeRelations();
+        $entity->afterSaveAction();
+
+        $html = View::make('image-storage::'. $prefix .'.partials.single_list')->with('entity', $entity)->render();
 
         $model::flushCache();
 
         return Response::json(array(
+            'html'   => $html,
+            'id'     => $entity->id,
             'status' => true,
         ));
-    } // end doSaveImageInfo
+    }
 
     //fixme optimize searchInput
     protected function setSearchInput(){
