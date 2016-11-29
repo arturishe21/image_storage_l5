@@ -5,7 +5,7 @@ var ImageStorage = {
     loaded_page: 1,
     //fixme entity setter
     entity: 'images',
-    is_last_page: false,
+    last_page: false,
     is_loading: false,
 
     init: function()
@@ -29,6 +29,7 @@ var ImageStorage = {
     initSelectBoxes: function()
     {
         $('select.image-storage-select').select2("destroy").select2();
+        $('.select2-hidden-accessible').hide();
     },
 
     initScrollEndlessEvent: function()
@@ -36,7 +37,7 @@ var ImageStorage = {
         $(document).scroll(function() {
             if ($(document).scrollTop() + $(window).height() == $(document).height()) {
                 if ($('.image-storage-container.images-container').length) {
-                    ImageStorage.loadMore(ImageStorage.entity);
+                    ImageStorage.loadMore();
                 }
             }
         });
@@ -132,6 +133,11 @@ var ImageStorage = {
         if (ImageStorage.is_loading) {
             return;
         }
+
+        if(ImageStorage.loaded_page >= ImageStorage.last_page ){
+            return;
+        }
+
         TableBuilder.showPreloader();
         ImageStorage.is_loading = true;
 

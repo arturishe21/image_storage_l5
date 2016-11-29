@@ -30,5 +30,7 @@
     //fixme entity setter
     $(document).ready(function(){
         ImageStorage.entity = 'images';
+        //fixme lastPage setter
+        ImageStorage.last_page = {{$lastPage}};
     });
 </script>

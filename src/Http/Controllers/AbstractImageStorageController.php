@@ -24,6 +24,8 @@ abstract class AbstractImageStorageController extends Controller
 
         $data = $model::filterSearch()->orderBy('id', 'DESC')->paginate($perPage);
 
+        $lastPage = $data->lastPage();
+
         if (Request::ajax()) {
             $view = "image-storage::". $prefix .".partials.content";
         } else {
@@ -33,6 +35,7 @@ abstract class AbstractImageStorageController extends Controller
         return View::make($view)
             ->with('title', $title)
             ->with('data', $data)
+            ->with('lastPage', $lastPage)
             ->with('relatedEntities', $relatedEntities);
     }
 
