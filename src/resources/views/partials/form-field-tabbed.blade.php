@@ -11,11 +11,12 @@
     @foreach($field['tabs'] as $lang => $tab)
         <div class="tab-pane {{$loop->first ? 'active' : ''}}" id="e-{{$fieldName}}-{{$tab['postfix']}}-{{$loop->index}}">
             <div class="imgInfoBox-relative-block">
+                <? $tabFieldName = $fieldName.$tab['postfix'] ?>
                 <label class="input">
                     @if($field['type'] == 'text')
-                        <input type="text" value="{{$entity->$fieldName}}" name="{{$fieldName.$tab['postfix']}}" placeholder="{{$tab['placeholder']}}" class="dblclick-edit-input form-control input-sm unselectable">
+                        <input type="text" value="{{$entity->$tabFieldName}}" name="{{$tabFieldName}}" placeholder="{{$tab['placeholder']}}" class="dblclick-edit-input form-control input-sm unselectable">
                     @elseif($field['type'] == 'textarea')
-                        <textarea rows="{{$field['rows'] or '3'}}" id="{{$fieldName.$tab['postfix']}}"  name="{{ $fieldName.$tab['postfix'] }}" class="custom-scroll imgInfoBox-textarea">{{$entity->$fieldName}}</textarea>
+                        <textarea rows="{{$field['rows'] or '3'}}" id="{{$tabFieldName}}"  name="{{ $tabFieldName }}" class="custom-scroll imgInfoBox-textarea">{{$entity->$tabFieldName}}</textarea>
                     @endif
                 </label>
             </div>
