@@ -31,50 +31,50 @@ composer update
 
 В файле config/builder/admin.php в массив menu в настройки добавляем
 ```php
-        array(
-            'title' => 'Фотохранилище',
-            'icon'  => 'picture-o',
-            'check' => function() {
-                return true;
-            },
-            'submenu' => array(
-                array(
-                    'title' => "Изображения",
-                    'link'  => '/image_storage/images',
-                    'check' => function() {
-                        return true;
-                    }
-                ),
-                array(
-                    'title' => "Галереи",
-                    'link'  => '/image_storage/galleries',
-                    'check' => function() {
-                        return true;
-                    }
-                ),
-                array(
-                    'title' => "Видео",
-                    'link'  => '/image_storage/videos',
-                    'check' => function() {
-                        return true;
-                    }
-                ),
-                array(
-                    'title' => "Видеогалереи",
-                    'link'  => '/image_storage/video_galleries',
-                    'check' => function() {
-                        return true;
-                    }
-                ),
-                array(
-                    'title' => "Теги",
-                    'link'  => '/image_storage/tags',
-                    'check' => function() {
-                        return true;
-                    }
-                ),
-            )
-        ),
+          array(
+              'title' => 'Медиахранилище',
+              'icon'  => 'picture-o',
+              'check' => function() {
+                  return true;
+              },
+              'submenu' => array(
+                  array(
+                      'title' => "Изображения",
+                      'link'  => '/image_storage/images',
+                      'check' => function() {
+                          return true;
+                      }
+                  ),
+                  array(
+                      'title' => "Галереи",
+                      'link'  => '/image_storage/galleries',
+                      'check' => function() {
+                          return true;
+                      }
+                  ),
+                  array(
+                      'title' => "Видео",
+                      'link'  => '/image_storage/videos',
+                      'check' => function() {
+                          return true;
+                      }
+                  ),
+                  array(
+                      'title' => "Видеогалереи",
+                      'link'  => '/image_storage/video_galleries',
+                      'check' => function() {
+                          return true;
+                      }
+                  ),
+                  array(
+                      'title' => "Теги",
+                      'link'  => '/image_storage/tags',
+                      'check' => function() {
+                          return true;
+                      }
+                  ),
+              )
+          ),
 ```
 
 Использование сверху (В зависимости того какой класс нужен)
@@ -82,6 +82,8 @@ composer update
     use Vis\ImageStorage\Gallery;
     use Vis\ImageStorage\Image;
     use Vis\ImageStorage\Tag;
+    use Vis\ImageStorage\VideoGallery;
+    use Vis\ImageStorage\Video;
 ```
 
 вызов
