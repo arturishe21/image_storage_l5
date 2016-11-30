@@ -80,6 +80,7 @@ abstract class AbstractImageStorage extends Model
         return $this->getConfigValue('fields');
     }
 
+    //fixme do check for unique
     public function setSlug(){
 
         $this->slug = \Jarboe::urlify($this->title);
