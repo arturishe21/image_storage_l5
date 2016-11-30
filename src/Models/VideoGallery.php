@@ -44,13 +44,7 @@ class VideoGallery extends AbstractImageStorage
 
     public function getUrl()
     {
-        return route("vis_video_galleries_show_single", [$this->getSlug(), $this->id]);
-    }
-
-    public function getSlug()
-    {
-        $slug = \Jarboe::urlify($this->title);
-        return $slug;
+        return route("vis_video_galleries_show_single", [$this->getSlug()]);
     }
 
     private function getGalleryCurrentPreview(){

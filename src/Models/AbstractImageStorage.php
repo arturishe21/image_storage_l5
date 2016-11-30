@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Session;
 
 abstract class AbstractImageStorage extends Model
 {
+    use \Vis\Builder\Helpers\Traits\TranslateTrait;
+
     protected $configPrefix;
     protected $table;
     protected $errorMessage;
@@ -47,6 +49,12 @@ abstract class AbstractImageStorage extends Model
         return $relatedEntities;
     }
 
+    public function getSlug()
+    {
+        $slug = \Jarboe::urlify($this->title);
+        return $slug;
+    }
+
     public function getConfigPrefix()
     {
         return $this->configPrefix;
@@ -78,11 +86,23 @@ abstract class AbstractImageStorage extends Model
 
         $configFields = $this->getConfigFields();
 
-        foreach($configFields as $key=>$value){
-            $value = isset($fields[$key]) ? $fields[$key] : false;
-            $this->$key = $value;
-        }
+        foreach ($configFields as $field => $fieldInfo) {
 
+            $columnNames = [];
+
+            if(isset($fieldInfo['tabs'])){
+                foreach ($fieldInfo['tabs'] as $tab => $tabInfo) {
+                    $columnNames[] = $field.$tabInfo['postfix'];
+                }
+            }else{
+                $columnNames[] = $field;
+            }
+
+            foreach($columnNames as $key=>$columnName) {
+                $value =  isset($fields[$columnName]) ? $fields[$columnName] : false;
+                $this->$columnName = $value;
+            }
+        }
     }
 
     public function scopeActive($query)

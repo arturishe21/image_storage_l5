@@ -86,6 +86,11 @@ class Image extends AbstractImageStorage
         return $relatedEntities;
     }
 
+    public function getUrl()
+    {
+        return route("vis_images_show_single", [$this->getSlug(), $this->id]);
+    }
+
     public function getSource($size = 'source')
     {
         $field = $this->imageSizePrefix.$size;
@@ -94,11 +99,7 @@ class Image extends AbstractImageStorage
         return $source;
     }
 
-    public function getSlug()
-    {
-        $slug = \Jarboe::urlify($this->title);
-        return $slug;
-    }
+
 
     private function getFileName()
     {
