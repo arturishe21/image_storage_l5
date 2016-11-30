@@ -55,7 +55,6 @@ var ImageStorage = {
                 ImageStorage.checkSelected();
             }else{
                 //fixme remove popup on second click
-
                 ImageStorage.getEditForm($(this));
             }
         })
@@ -183,17 +182,14 @@ var ImageStorage = {
         });
     },
 
-    openFormPopup: function(context,currentBlock,html)
+    openSuperBoxPopup: function(context,currentBlock,html)
     {
-
         $('.superbox-show').remove();
 
         $(html).insertAfter(context).css('display', 'block');
 
-        var superbox =  $('.superbox-show');
-
         $('html, body').animate({
-            scrollTop:superbox.position().top - currentBlock.width()
+            scrollTop:$('.superbox-show').position().top - currentBlock.width()
         }, 'medium');
 
     },
@@ -202,9 +198,10 @@ var ImageStorage = {
     {
         $('.superbox-list').removeClass('active');
         $('#image-storage-tabs-content').animate({opacity: 0}, 200, function() {
-            $('.superbox-show').slideUp();
+            $('.superbox-show').slideUp(400, function() {
+                $('.superbox-show').remove();
+            });
         });
-
     },
 
     getSelected: function()
@@ -247,10 +244,9 @@ var ImageStorage = {
                     dataType: 'json',
                     success: function(response) {
                         if (response.status) {
-                            $('.superbox .superbox-show').remove();
-                            $('.superbox').find(".superbox-img[data-id='" + id + "']").parent().remove();
-
                             TableBuilder.showSuccessNotification('Запись удалена');
+                            ImageStorage.updateGridView(id);
+                            ImageStorage.closeSuperBoxPopup();
                         } else {
                             TableBuilder.showErrorNotification('Что-то пошло не так');
                         }
@@ -273,6 +269,7 @@ var ImageStorage = {
             success: function(response) {
                 if (response.status) {
                     TableBuilder.showSuccessNotification('Сохранено');
+                    ImageStorage.updateGridView(id,response.html);
                     ImageStorage.closeSuperBoxPopup();
                 } else {
                     if (response.message){
@@ -304,12 +301,9 @@ var ImageStorage = {
                     $('.superbox-list').removeClass('active');
                     $this.addClass('active');
 
-                    ImageStorage.openFormPopup(context,currentBlock, response.html);
-
+                    ImageStorage.openSuperBoxPopup(context,currentBlock, response.html);
                     ImageStorage.initSelectBoxes();
-
                     ImageStorage.initPopupClicks();
-
                     ImageStorage.replaceSrcImageForm();
 
                 } else {
@@ -319,29 +313,15 @@ var ImageStorage = {
         });
     },
 
-    getCreateForm: function()
-    {
-        var context = $("#image-storage-search-form");
-        var currentBlock = context;
+    updateGridView: function(id, html){
 
-        jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/"+ImageStorage.entity+"/get_form",
-            dataType: 'json',
-            success: function(response) {
-                if (response.status) {
+        if(id){
+            $('.superbox').find(".superbox-img[data-id='" + id + "']").parent().replaceWith(html);
+        }else{
+            $('.superbox').prepend(html);
+        }
 
-                    ImageStorage.openFormPopup(context,currentBlock, response.html);
-
-                    ImageStorage.initSelectBoxes();
-
-                    ImageStorage.initPopupClicks();
-
-                } else {
-                    TableBuilder.showErrorNotification('Что-то пошло не так');
-                }
-            }
-        });
+        ImageStorage.initEditClickEvent();
     },
     //end common in pages with grid view
 
@@ -365,7 +345,6 @@ var ImageStorage = {
 
     getEditFormInTable: function(id)
     {
-        id =   id || null;
 
         TableBuilder.showPreloader();
 
@@ -404,12 +383,12 @@ var ImageStorage = {
                     dataType: 'json',
                     success: function(response) {
                         if (response.status) {
-                            $('.tr_'+id).remove();
+                            TableBuilder.showSuccessNotification('Запись удалена');
+                            ImageStorage.updateTableView(id);
                             //fixme hide modal gallery popup
                             if($(".modal-body.row").length){
                                 $("button.close").click();
                             }
-                            TableBuilder.showSuccessNotification('Запись удалена');
                         } else {
                             TableBuilder.showErrorNotification('Что-то пошло не так');
                         }
@@ -432,6 +411,7 @@ var ImageStorage = {
             success: function(response) {
                 if (response.status) {
                     TableBuilder.showSuccessNotification('Сохранено');
+                    ImageStorage.updateTableView(id, response.html);
                     //fixme hide modal gallery popup
                     if($(".modal-body.row").length){
                         $("button.close").click();
@@ -445,6 +425,17 @@ var ImageStorage = {
                 }
             }
         });
+    },
+
+    updateTableView: function(id, html){
+
+        var tableBody = $('#sort_t').find('tbody');
+
+        if(id){
+            tableBody.find('.tr_'+id).replaceWith(html);
+        }else{
+            tableBody.prepend(html);
+        }
     },
     //end common in pages with table view
 
@@ -531,8 +522,7 @@ var ImageStorage = {
             var element = $(this).find("a").attr('href');
             var img = ($("#image-storage-tabs-content").find(element).find("img"));
 
-            if(typeof img.attr('real-src') !== typeof undefined && img.attr('real-src') !== false)
-            {
+            if(typeof img.attr('real-src') !== typeof undefined && img.attr('real-src') !== false){
                 img.attr('src',img.attr("real-src"));
                 img.removeAttr("real-src")
             }
@@ -606,8 +596,8 @@ var ImageStorage = {
             processData: false,
             success: function(response) {
                 if (response.status) {
-                    $(context).parents(".tab-pane.active").find('.superbox-current-img').prop('src', response.src);
-                    $(".superbox-list-video.active").find('.image-storage-img').prop('src', response.src);
+                    TableBuilder.showSuccessNotification('Превью установлено');
+                    ImageStorage.changePreviewSrc(context,response.src);
 
                     //fixme solution for not triggering optimization before user sees preview changes on page
                     setTimeout(function(){
@@ -639,10 +629,8 @@ var ImageStorage = {
                     dataType: 'json',
                     success: function(response) {
                         if (response.status) {
-                            $(context).parents(".tab-pane.active").find('.superbox-current-img').prop('src', response.src);
-                            $(".superbox-list-video.active").find('.image-storage-img').prop('src', response.src);
-
                             TableBuilder.showSuccessNotification('Превью удалено');
+                            ImageStorage.changePreviewSrc(context,response.src);
                         } else {
                             TableBuilder.showErrorNotification('Что-то пошло не так');
                         }
@@ -650,6 +638,11 @@ var ImageStorage = {
                 });
             }
         });
+    },
+
+    changePreviewSrc: function (context,src){
+        $(context).parents(".tab-pane.active").find('.superbox-current-img').prop('src', src);
+        $(".superbox-list-video.active").find('.image-storage-img').prop('src', src);
     },
     //end videos
 

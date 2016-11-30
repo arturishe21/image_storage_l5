@@ -8,7 +8,7 @@
         <th width="10%">{{__cms("Связанные видеогалереи")}}</th>
         <th width="10%">{{__cms("Связанные теги")}}</th>
         <th width="8%">
-            <a class="btn btn-sm btn-success" onclick="ImageStorage.getCreateForm();">
+            <a class="btn btn-sm btn-success" onclick="ImageStorage.getEditForm($('#image-storage-search-form'));">
                 <i class="fa fa-plus"></i> {{__cms('Создать')}}
             </a>
         </th>
