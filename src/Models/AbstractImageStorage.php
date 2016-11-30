@@ -52,8 +52,7 @@ abstract class AbstractImageStorage extends Model
 
     public function getSlug()
     {
-        $slug = \Jarboe::urlify($this->title);
-        return $slug;
+        return $this->slug;
     }
 
     public function getConfigPrefix()
@@ -81,6 +80,11 @@ abstract class AbstractImageStorage extends Model
         return $this->getConfigValue('fields');
     }
 
+    public function setSlug(){
+
+        $this->slug = \Jarboe::urlify($this->title);
+    }
+    
     public function setFields($fields)
     {
         $this->doCheckSchemeFields();
@@ -104,11 +108,18 @@ abstract class AbstractImageStorage extends Model
                 $this->$columnName = $value;
             }
         }
+
+        $this->setSlug();
     }
 
     public function scopeActive($query)
     {
         return $query->where('is_active', '1');
+    }
+
+    public function scopeSlug($query, $slug)
+    {
+        return $query->where('slug', $slug);
     }
 
     public function scopeById($query, $order = "desc")

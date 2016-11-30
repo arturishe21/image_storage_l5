@@ -18,6 +18,7 @@ class ImageStorageMigration extends Migration
             $table->text('file_folder');
             $table->text('file_source');
             $table->string('title',255);
+            $table->string('slug');
             $table->text('exif_data');
             $table->timestamp('date_time_source');
             $table->timestamps();
@@ -27,6 +28,7 @@ class ImageStorageMigration extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('title',255);
+            $table->string('slug');
             $table->timestamp('event_date');
             $table->tinyInteger('is_active');
             $table->timestamps();
@@ -70,6 +72,7 @@ class ImageStorageMigration extends Migration
             $table->integer('id_preview')->unsigned()->nullable();
             $table->string('id_youtube',255);
             $table->string('title',255);
+            $table->string('slug');
             $table->text('description');
             $table->text('youtube_data');
             $table->timestamps();
@@ -82,6 +85,7 @@ class ImageStorageMigration extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('title',255);
+            $table->string('slug');
             $table->timestamp('event_date');
             $table->tinyInteger('is_active');
             $table->timestamps();
