@@ -99,8 +99,6 @@ class Image extends AbstractImageStorage
         return $source;
     }
 
-
-
     private function getFileName()
     {
        return $this->getSlug() . "_" . time(). "." . $this->extension;
@@ -186,7 +184,7 @@ class Image extends AbstractImageStorage
 
     private function getPathForFile()
     {
-        $postfixPath = date('Y') .'/'. date('m') .'/'. date('d') .'/'. $this->id .'/';
+        $postfixPath = date('Y/m/d',strtotime($this->created_at)). '/'. $this->id .'/';
 
         $chunks = explode("/", $postfixPath);
 
@@ -245,6 +243,8 @@ class Image extends AbstractImageStorage
         }
 
         $this->title = $title;
+        $this->setSlug();
+
     }
 
     private function setImageExifData()

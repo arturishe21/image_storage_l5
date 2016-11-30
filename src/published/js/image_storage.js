@@ -11,7 +11,6 @@ var ImageStorage = {
     init: function()
     {
         ImageStorage.initEvents()
-        //fixme jQuery('.select2-hidden-accessible').hide();  TableBuilder.initSelect2Hider();
 
     },
 
@@ -251,7 +250,7 @@ var ImageStorage = {
                             $('.superbox .superbox-show').remove();
                             $('.superbox').find(".superbox-img[data-id='" + id + "']").parent().remove();
 
-                            TableBuilder.showSuccessNotification('Запись удалено');
+                            TableBuilder.showSuccessNotification('Запись удалена');
                         } else {
                             TableBuilder.showErrorNotification('Что-то пошло не так');
                         }
