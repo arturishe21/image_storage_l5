@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Session;
 
 abstract class AbstractImageStorage extends Model
 {
-    use \Vis\Builder\Helpers\Traits\TranslateTrait;
+    use \Vis\Builder\Helpers\Traits\TranslateTrait,
+        \Vis\Builder\Helpers\Traits\SeoTrait;
 
     protected $configPrefix;
     protected $table;
