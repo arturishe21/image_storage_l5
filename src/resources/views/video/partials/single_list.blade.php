@@ -1,3 +1,3 @@
-<div class="superbox-list superbox-list-video ui-state-default">
+<div class="superbox-list superbox-list-video">
     @include('image-storage::video.partials.single')
 </div>
