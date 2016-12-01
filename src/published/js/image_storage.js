@@ -7,6 +7,7 @@ var ImageStorage = {
     entity: 'images',
     last_page: false,
     is_loading: false,
+    is_selecting: false,
 
     init: function()
     {
@@ -20,9 +21,12 @@ var ImageStorage = {
 
         ImageStorage.initScrollEndlessEvent();
 
+        ImageStorage.initDatePickers();
+
+        ImageStorage.initSelectable();
+
         ImageStorage.initEditClickEvent();
 
-        ImageStorage.initDatePickers();
     },
 
     initSelectBoxes: function()
@@ -45,16 +49,11 @@ var ImageStorage = {
     initEditClickEvent: function()
     {
         $('.superbox-list').unbind("click");
-
         $('.superbox-list').click(function(e) {
-
             if (e.ctrlKey) {
-                //fixme close popup if opened
-                $(this).toggleClass('selected')
-
+                $(this).toggleClass('selected').toggleClass('ui-selected');
                 ImageStorage.checkSelected();
             }else{
-                //fixme remove popup on second click
                 ImageStorage.getEditForm($(this));
             }
         })
@@ -106,6 +105,35 @@ var ImageStorage = {
         $sortable.disableSelection();
     },
 
+    initSelectable: function()
+    {
+        var $selectable = $('.image-storage-selectable');
+
+        if ($selectable.hasClass('ui-selectable')) {
+            $selectable.selectable("refresh");
+            return;
+        }
+
+        $selectable.selectable({
+            distance: 5,
+            selected: function (event, ui) {
+                $(ui.selected).addClass('selected');
+                ImageStorage.checkSelected();
+            },
+            unselected: function (event, ui) {
+                $(ui.unselected).removeClass('selected');
+                ImageStorage.checkSelected();
+            },
+            start: function( event, ui ) {
+                ImageStorage.is_selecting = true;
+            },
+            stop: function( event, ui ) {
+                ImageStorage.is_selecting = false;
+            },
+        });
+
+    },
+
     doResetFilters: function()
     {
         TableBuilder.showPreloader();
@@ -128,7 +156,7 @@ var ImageStorage = {
     //common in pages with grid view
     loadMore: function()
     {
-        if (ImageStorage.is_loading) {
+        if (ImageStorage.is_loading || ImageStorage.is_selecting) {
             return;
         }
 
@@ -152,6 +180,7 @@ var ImageStorage = {
                 if (response.status) {
                     ImageStorage.loaded_page = ImageStorage.loaded_page + 1;
                     $('.superbox').append(response.html);
+                    ImageStorage.initSelectable();
                     ImageStorage.initEditClickEvent();
                     ImageStorage.is_loading = false;
                     TableBuilder.hidePreloader();
@@ -321,6 +350,7 @@ var ImageStorage = {
             $('.superbox').prepend(html);
         }
 
+        ImageStorage.initSelectable();
         ImageStorage.initEditClickEvent();
     },
     //end common in pages with grid view
@@ -480,6 +510,7 @@ var ImageStorage = {
 
                     if (response.status) {
                         $('.superbox').prepend(response.html);
+                        ImageStorage.initSelectable();
                         ImageStorage.initEditClickEvent();
                         imgSuccessCount = imgSuccessCount + 1;
                         successPercentage = successPercentage + percentageMod;

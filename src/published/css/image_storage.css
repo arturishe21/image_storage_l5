@@ -59,11 +59,11 @@
     margin-left: 166px;
 }
 
-.image-storage-container
-{
+.image-storage-container{
     text-align:center;
-    margin-top:20px;
+    padding-top:20px;
 }
+
 .superbox-img.image-storage-img {
     width: 160px;
     height: auto !important;
