@@ -30,7 +30,7 @@
                     <a class="edit_record" onclick="ImageStorage.getEditFormInTable({{$entity->id}})"><i class="fa fa-pencil"></i> {{__cms('Редактировать')}}</a>
                 </li>
                 <li>
-                    <a onclick="ImageStorage.deleteGallery({{$entity->id}});"><i class="fa red fa-times"></i> {{__cms("Удалить")}}</a>
+                    <a onclick="ImageStorage.doDeleteInTable({{$entity->id}});"><i class="fa red fa-times"></i> {{__cms("Удалить")}}</a>
                 </li>
             </ul>
         </div>
