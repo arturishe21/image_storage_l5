@@ -50,7 +50,7 @@ var ImageStorage = {
     {
         $('.superbox-list').unbind("click");
         $('.superbox-list').click(function(e) {
-            if (e.ctrlKey) {
+            if (e.ctrlKey || e.metaKey) {
                 $(this).toggleClass('selected').toggleClass('ui-selected');
                 ImageStorage.checkSelected();
             }else{
@@ -95,7 +95,7 @@ var ImageStorage = {
                 },
                 create: function(event, ui) {
                     $('.image-storage-sortable-item').click(function(e) {
-                        if (e.ctrlKey) {
+                        if (e.ctrlKey || e.metaKey) {
                             ImageStorage.setGalleryPreview(this);
                         }
                     });
