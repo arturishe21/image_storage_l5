@@ -329,9 +329,9 @@ class Image extends AbstractImageStorage
     {
         $sizes = $this->getConfigSizes();
 
-        foreach ($sizes as $columnName => $sizeInfo) {
+        foreach ($sizes as $sizeName => $sizeInfo) {
 
-            $columnName = $this->imageSizePrefix . $columnName;
+            $columnName = $this->imageSizePrefix . $sizeName;
 
             if (!Schema::hasColumn($this->table, $columnName)) {
 
@@ -339,6 +339,7 @@ class Image extends AbstractImageStorage
                     $table->text($columnName);
                 });
 
+                $this->createImagesForNewSize($sizeName);
             }
         }
     }
@@ -513,6 +514,16 @@ class Image extends AbstractImageStorage
         foreach ($sizes as $sizeName => $sizeInfo) {
             $imagePath = $this->getSource($sizeName);
             $this->doOptimizeImage($imagePath);
+        }
+    }
+
+    private function createImagesForNewSize($sizeName)
+    {
+        $images = self::all()->except($this->id);
+
+        foreach ($images as $image) {
+            $image->doMakeImage($sizeName);
+            $image->save();
         }
     }
 

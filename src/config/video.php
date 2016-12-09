@@ -25,9 +25,9 @@ return array(
             'api_part'=> 'snippet,statistics',
 
             //https://developers.google.com/youtube/v3/getting-started
-            'api_key' => '',
+            'api_key' => 'AIzaSyDWPTTGEANYwXwAk8QMg9bQTzzBatmhxbc',
 
-            /* use youtube data in db */
+            /* store youtube data in db */
             'store_data' => true,
 
             /* use youtube data to fill in title&description */
