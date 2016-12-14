@@ -285,6 +285,7 @@ class Video extends AbstractImageStorage
 
             if(!$this->title){
                 $this->title = $this->getYouTubeTitle();
+                $this->setSlug();
             }
 
             if(!$this->description){
