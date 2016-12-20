@@ -16,6 +16,13 @@
             );
 
             Route::post(
+                'images/delete_multiple', array(
+                    'as' => 'delete_multiple_images',
+                    'uses' => 'Vis\ImageStorage\ImagesController@doDeleteMultiple'
+                )
+            );
+
+            Route::post(
                 'images/get_form', array(
                     'as' => 'get_image_form',
                     'uses' => 'Vis\ImageStorage\ImagesController@getForm'

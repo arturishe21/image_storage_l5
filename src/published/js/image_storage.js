@@ -353,6 +353,38 @@ var ImageStorage = {
         ImageStorage.initSelectable();
         ImageStorage.initEditClickEvent();
     },
+
+    deleteMultipleGridView: function(){
+
+        jQuery.SmartMessageBox({
+            title : "Удалить записи?",
+            content : "Эту операцию нельзя будет отменить.",
+            buttons : '[Нет][Да]'
+        }, function(ButtonPressed) {
+            if (ButtonPressed === "Да") {
+                var idArray = ImageStorage.getSelected();
+
+                jQuery.ajax({
+                    type: "POST",
+                    url: "/admin/image_storage/"+ImageStorage.entity+"/delete_multiple",
+                    data: {
+                        idArray:     idArray,
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status) {
+                            TableBuilder.showSuccessNotification('Записи удалены');
+                            $.each(idArray, function(index, item) {
+                                ImageStorage.updateGridView(item);
+                            });
+                        } else {
+                            TableBuilder.showErrorNotification('Что-то пошло не так');
+                        }
+                    }
+                });
+            }
+        });
+    },
     //end common in pages with grid view
 
     //common in pages with table view

@@ -134,11 +134,12 @@ abstract class AbstractImageStorage extends Model
             return $query;
         }
 
-        //fixme переписать под модель
-
         $className = get_class($this);
 
-        $relatedId = \DB::table('vis_tags2entities')->whereIn('id_tag', $tags)->where('entity_type', $className)->lists('id_entity');
+        $relatedId = self::whereHas('tags', function($q)  use ($tags,$className){
+            $q->whereIn('id_tag', $tags)
+              ->where('entity_type', $className);
+        })->lists('id');
 
         return $query->whereIn('id', $relatedId);
     }

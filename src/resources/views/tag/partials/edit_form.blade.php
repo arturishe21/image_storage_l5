@@ -17,8 +17,7 @@
                             <section>
                                 <div class="tab-pane active">
                                     @if(isset($field['tabs']))
-                                            <!-- fixme  исправить вьюхи для инпутов-->
-                                    @include('image-storage::partials.form-field-tabbed')
+                                        @include('image-storage::partials.form-field-tabbed')
                                     @else
                                         @include('image-storage::partials.form-field')
                                     @endif

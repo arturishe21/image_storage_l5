@@ -81,6 +81,33 @@ abstract class AbstractImageStorageController extends Controller
         ));
     }
 
+    public function doDeleteMultiple()
+    {
+        $idArray = Input::get('idArray', array());
+
+        $model = new $this->model;
+
+        foreach ($idArray as $key => $id){
+
+            $entity = $model::find($id);
+
+            if(!$entity->beforeDeleteAction()){
+                return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
+            }
+
+            $entity->delete();
+
+            $entity->afterDeleteAction();
+        }
+
+        $model::flushCache();
+
+        return Response::json(array(
+            'id'     => $id,
+            'status' => true
+        ));
+    }
+
     public function getForm()
     {
         $id = Input::get('id');
@@ -135,7 +162,6 @@ abstract class AbstractImageStorageController extends Controller
         ));
     }
 
-    //fixme optimize searchInput
     protected function setSearchInput(){
 
         $model = new $this->model;

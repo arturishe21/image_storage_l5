@@ -65,10 +65,10 @@ class Image extends AbstractImageStorage
         if (!$galleries) {
             return $query;
         }
-        //fixme переписать под модель
-        $table = $this->table;
-        $prefix = $this->configPrefix;
-        $relatedImagesIds =  \DB::table($table.'2galleries')->whereIn('id_gallery', $galleries)->lists('id_'.$prefix);
+
+        $relatedImagesIds = self::whereHas('galleries', function($q)  use ($galleries){
+                                    $q->whereIn('id_gallery', $galleries);
+                                })->lists('id');
 
         return $query->whereIn('id', $relatedImagesIds);
     }

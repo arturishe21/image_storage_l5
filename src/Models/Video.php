@@ -50,12 +50,12 @@ class Video extends AbstractImageStorage
         if (!$galleries) {
             return $query;
         }
-        //fixme переписать под модель
-        $table = $this->table;
-        $prefix = $this->configPrefix;
-        $relatedImagesIds =  \DB::table($table.'2video_galleries')->whereIn('id_video_gallery', $galleries)->lists('id_'.$prefix);
 
-        return $query->whereIn('id', $relatedImagesIds);
+        $relatedVideosId = self::whereHas('video_galleries', function($q)  use ($galleries){
+            $q->whereIn('id_video_gallery', $galleries);
+        })->lists('id');
+
+        return $query->whereIn('id', $relatedVideosId);
     }
 
     public function getRelatedEntities()

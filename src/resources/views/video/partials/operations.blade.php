@@ -41,6 +41,14 @@
             <a onclick="ImageStorage.saveVideosTagsRelations();" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-operations-button">{{__cms('Добавить')}}</a>
         </div>
     </div>
+    <div class="col-md-12 image-storage-operations-row">
+        <div class="col-md-2">{{__cms('Удалить выбранные видео')}}</div>
+        <div class="col-md-8">
+        </div>
+        <div class="col-md-2">
+            <a onclick="ImageStorage.deleteMultipleGridView();" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-operations-button">{{__cms('Удалить')}}</a>
+        </div>
+    </div>
     </form>
 </div>
 
