@@ -80,12 +80,30 @@ abstract class AbstractImageStorage extends Model
         return $this->getConfigValue('fields');
     }
 
-    //fixme do check for unique
-    public function setSlug(){
+    private function getUniqueSlug()
+    {
+        $slug = \Jarboe::urlify($this->title);
 
-        $this->slug = \Jarboe::urlify($this->title);
+        $slugCheck = false;
+
+        while($slugCheck == false){
+            $slugCheckQuery = $this->where('slug', 'like', $slug)->where("id", "!=", $this->id)->count();
+
+            if($slugCheckQuery){
+                $slug = $slug . "(1)";
+            }else{
+                $slugCheck = true;
+            }
+        }
+
+        return $slug;
     }
-    
+
+    public function setSlug()
+    {
+        $this->slug = $this->getUniqueSlug();
+    }
+
     public function setFields($fields)
     {
         $this->doCheckSchemeFields();
