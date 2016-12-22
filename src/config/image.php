@@ -72,6 +72,15 @@ return array(
                     ),
                 )
             ),
+            'is_active' => array(
+                'caption' => 'Изображение активно',
+                'type' => 'checkbox',
+                'options' => array(
+                    1 => 'Активные',
+                    0 => 'He aктивные',
+                ),
+                'field' => 'tinyInteger',
+            ),
         ),
 
         'sizes' => array(

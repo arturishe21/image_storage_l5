@@ -20,6 +20,7 @@ class ImageStorageMigration extends Migration
             $table->string('title',255);
             $table->string('slug',255);
             $table->text('exif_data');
+            $table->tinyInteger('is_active')->default("1");
             $table->timestamp('date_time_source');
             $table->timestamps();
         });
@@ -76,6 +77,7 @@ class ImageStorageMigration extends Migration
             $table->string('slug',255);
             $table->text('description');
             $table->text('youtube_data');
+            $table->tinyInteger('is_active')->default("1");
             $table->timestamps();
 
             $table->foreign('id_preview')->references('id')->on('vis_images')->onDelete('set null')->onUpdate('set null');

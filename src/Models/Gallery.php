@@ -21,6 +21,7 @@ class Gallery extends AbstractImageStorage
         return $this
             ->belongsToMany('Vis\ImageStorage\Image', 'vis_images2galleries', 'id_gallery', 'id_image')
             ->orderBy('priority', 'desc')
+            ->active()
             ->withPivot('is_preview');
     }
 

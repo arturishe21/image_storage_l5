@@ -21,6 +21,7 @@ class VideoGallery extends AbstractImageStorage
         return $this
             ->belongsToMany('Vis\ImageStorage\Video', 'vis_videos2video_galleries', 'id_video_gallery', 'id_video')
             ->orderBy('priority', 'desc')
+            ->active()
             ->withPivot('is_preview');
     }
 
