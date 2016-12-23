@@ -2,7 +2,7 @@
     Route::any(
         'videos', array(
             'as' => 'videos_all',
-            'uses' => 'Vis\ImageStorage\VideosController@fetchIndex'
+            'uses' => 'VideosController@fetchIndex'
         )
     );
 
@@ -11,49 +11,49 @@
             Route::post(
                 'videos/delete', array(
                     'as' => 'delete_video',
-                    'uses' => 'Vis\ImageStorage\VideosController@doDelete'
+                    'uses' => 'VideosController@doDelete'
                 )
             );
 
             Route::post(
                 'videos/delete_multiple', array(
                     'as' => 'delete_multiple_videos',
-                    'uses' => 'Vis\ImageStorage\VideosController@doDeleteMultiple'
+                    'uses' => 'VideosController@doDeleteMultiple'
                 )
             );
 
             Route::post(
                 'videos/get_form', array(
                     'as' => 'get_video_form',
-                    'uses' => 'Vis\ImageStorage\VideosController@getForm'
+                    'uses' => 'VideosController@getForm'
                 )
             );
 
             Route::post(
                 'videos/save_info', array(
                     'as' => 'save_video_info',
-                    'uses' => 'Vis\ImageStorage\VideosController@doSaveInfo'
+                    'uses' => 'VideosController@doSaveInfo'
                 )
             );
 
             Route::post(
                 'videos/load_more', array(
                     'as' => 'load_more_videos',
-                    'uses' => 'Vis\ImageStorage\VideosController@doLoadMoreEndless'
+                    'uses' => 'VideosController@doLoadMoreEndless'
                 )
             );
 
             Route::post(
                 'videos/upload_video_preview', array(
                     'as' => 'upload_video_preview',
-                    'uses' => 'Vis\ImageStorage\VideosController@doUploadPreviewImage'
+                    'uses' => 'VideosController@doUploadPreviewImage'
                 )
             );
 
             Route::post(
                 'videos/remove_video_preview', array(
                     'as' => 'remove_video_preview',
-                    'uses' => 'Vis\ImageStorage\VideosController@doRemovePreviewImage'
+                    'uses' => 'VideosController@doRemovePreviewImage'
                 )
             );
     }

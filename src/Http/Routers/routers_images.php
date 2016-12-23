@@ -2,7 +2,7 @@
     Route::any(
         'images', array(
             'as' => 'images_all',
-            'uses' => 'Vis\ImageStorage\ImagesController@fetchIndex'
+            'uses' => 'ImagesController@fetchIndex'
         )
     );
 
@@ -11,56 +11,56 @@
             Route::post(
                 'images/delete', array(
                     'as' => 'delete_image',
-                    'uses' => 'Vis\ImageStorage\ImagesController@doDelete'
+                    'uses' => 'ImagesController@doDelete'
                 )
             );
 
             Route::post(
                 'images/delete_multiple', array(
                     'as' => 'delete_multiple_images',
-                    'uses' => 'Vis\ImageStorage\ImagesController@doDeleteMultiple'
+                    'uses' => 'ImagesController@doDeleteMultiple'
                 )
             );
 
             Route::post(
                 'images/get_form', array(
                     'as' => 'get_image_form',
-                    'uses' => 'Vis\ImageStorage\ImagesController@getForm'
+                    'uses' => 'ImagesController@getForm'
                 )
             );
 
             Route::post(
                 'images/save_info', array(
                     'as' => 'save_image_info',
-                    'uses' => 'Vis\ImageStorage\ImagesController@doSaveInfo'
+                    'uses' => 'ImagesController@doSaveInfo'
                 )
             );
 
             Route::post(
                 'images/load_more', array(
                     'as' => 'load_more_images',
-                    'uses' => 'Vis\ImageStorage\ImagesController@doLoadMoreEndless'
+                    'uses' => 'ImagesController@doLoadMoreEndless'
                 )
             );
 
             Route::post(
                 'images/upload', array(
                     'as' => 'upload_image',
-                    'uses' => 'Vis\ImageStorage\ImagesController@doUploadImage'
+                    'uses' => 'ImagesController@doUploadImage'
                 )
             );
 
             Route::post(
                 'images/replace_single_image', array(
                     'as' => 'replace_single_image',
-                    'uses' => 'Vis\ImageStorage\ImagesController@doReplaceSingleImage'
+                    'uses' => 'ImagesController@doReplaceSingleImage'
                 )
             );
 
             Route::post(
                 'images/optimize_image', array(
                     'as' => 'optimize_image',
-                    'uses' => 'Vis\ImageStorage\ImagesController@doOptimizeImage'
+                    'uses' => 'ImagesController@doOptimizeImage'
                 )
             );
     }
