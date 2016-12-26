@@ -927,7 +927,7 @@ var ImageStorage = {
     //end galleries
 
     //tags
-    saveImagesTagsRelations: function()
+    doRelateToTags: function()
     {
         var  idTags = $('form[name="image-storage-operations-form"] select[name="relations[image-storage-tags][]"]').val();
 
@@ -940,35 +940,7 @@ var ImageStorage = {
 
         jQuery.ajax({
             type: "POST",
-            url: "/admin/image_storage/tags/add_images_to_tags",
-            data: {
-                idArray: idArray,
-                idTags:  idTags
-            },
-            dataType: 'json',
-            success: function(response) {
-                if (response.status) {
-                    TableBuilder.showSuccessNotification('Изображения добавлены к тегу');
-                } else {
-                    TableBuilder.showErrorNotification('Что-то пошло не так');
-                }
-            }
-        });
-    },
-    saveVideosTagsRelations: function()
-    {
-        var  idTags = $('form[name="image-storage-operations-form"] select[name="relations[image-storage-tags][]"]').val();
-
-        if (!idTags) {
-            TableBuilder.showErrorNotification('Выберите теги для добавления');
-            return false;
-        }
-
-        var idArray = ImageStorage.getSelected();
-
-        jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/tags/add_videos_to_tags",
+            url: "/admin/image_storage/tags/relate_to_tags/"+ImageStorage.entity,
             data: {
                 idArray: idArray,
                 idTags:  idTags

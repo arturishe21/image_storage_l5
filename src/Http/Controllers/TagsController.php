@@ -11,30 +11,16 @@ class TagsController extends AbstractImageStorageController
 {
     protected $model = "Vis\\ImageStorage\\Tag";
 
-    public function doAddImagesToTags()
+    public function doRelateToTags($type)
     {
         $idTags  = Input::get('idTags', array());
         $idArray = Input::get('idArray', array());
 
         foreach ($idTags as $key => $id){
-            $entity = $this->model->find($id);
-            $entity->relateImagesToTag($idArray);
-        }
 
-        return Response::json(array(
-            'status' => true
-        ));
+            $tag = $this->model->find($id);
 
-    }
-
-    public function doAddVideosToTags()
-    {
-        $idTags  = Input::get('idTags', array());
-        $idArray = Input::get('idArray', array());
-
-        foreach ($idTags as $key => $id){
-            $entity = $this->model->find($id);
-            $entity->relateVideosToTag($idArray);
+            $tag->relateToTag($idArray,$type);
         }
 
         return Response::json(array(

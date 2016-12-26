@@ -38,7 +38,7 @@
             </div>
         </div>
         <div class="col-md-2">
-            <a onclick="ImageStorage.saveVideosTagsRelations();" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-operations-button">{{__cms('Добавить')}}</a>
+            <a onclick="ImageStorage.doRelateToTags();" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-operations-button">{{__cms('Добавить')}}</a>
         </div>
     </div>
     <div class="col-md-12 image-storage-operations-row">

@@ -34,19 +34,13 @@ class Tag extends AbstractImageStorage
         return $this->morphedByMany('Vis\ImageStorage\VideoGallery', 'entity', 'vis_tags2entities', 'id_tag', 'id_entity');
     }
 
-    public function relateImagesToTag($entities)
+    public function relateToTag($id,$type)
     {
-        $this->images()->syncWithoutDetaching($entities);
+        $this->$type()->syncWithoutDetaching($id);
 
         self::flushCache();
         Image::flushCache();
-    }
-
-    public function relateVideosToTag($entities)
-    {
-        $this->videos()->syncWithoutDetaching($entities);
-
-        self::flushCache();
         Video::flushCache();
+
     }
 }

@@ -30,20 +30,13 @@
                 )
             );
 
-
             Route::post(
-                'tags/add_images_to_tags', array(
+                'tags/relate_to_tags/{type}', array(
                     'as' => 'add_images_to_tags',
-                    'uses' => 'TagsController@doAddImagesToTags'
+                    'uses' => 'TagsController@doRelateToTags'
                 )
             );
 
-        Route::post(
-            'tags/add_videos_to_tags', array(
-                'as' => 'add_images_to_tags',
-                'uses' => 'TagsController@doAddVideosToTags'
-            )
-        );
     }
 
 
