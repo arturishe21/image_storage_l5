@@ -42,7 +42,7 @@
         </div>
     </div>
     <div class="col-md-12 image-storage-operations-row">
-        <div class="col-md-2">{{__cms('Удалить выбранные изображения')}}</div>
+        <div class="col-md-2">{{__cms('Удалить изображения')}}</div>
         <div class="col-md-8">
         </div>
         <div class="col-md-2">
@@ -50,7 +50,7 @@
         </div>
     </div>
     <div class="col-md-12 image-storage-operations-row">
-        <div class="col-md-2">{{__cms('Отображать изображений')}}</div>
+        <div class="col-md-2">{{__cms('Отображать изображения')}}</div>
         <div class="col-md-8">
         </div>
         <div class="col-md-2">

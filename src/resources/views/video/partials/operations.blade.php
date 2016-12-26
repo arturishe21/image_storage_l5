@@ -42,7 +42,7 @@
         </div>
     </div>
     <div class="col-md-12 image-storage-operations-row">
-        <div class="col-md-2">{{__cms('Удалить выбранные видео')}}</div>
+        <div class="col-md-2">{{__cms('Удалить видео')}}</div>
         <div class="col-md-8">
         </div>
         <div class="col-md-2">
