@@ -948,7 +948,7 @@ var ImageStorage = {
             dataType: 'json',
             success: function(response) {
                 if (response.status) {
-                    TableBuilder.showSuccessNotification('Изображения добавлены к тегу');
+                    TableBuilder.showSuccessNotification('Записи добавлены к тегу');
                 } else {
                     TableBuilder.showErrorNotification('Что-то пошло не так');
                 }
