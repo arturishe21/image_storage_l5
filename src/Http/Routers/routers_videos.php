@@ -37,6 +37,13 @@
             );
 
             Route::post(
+                'images/change_multiple_activity', array(
+                    'as' => 'change_multiple_activity_images',
+                    'uses' => 'ImagesController@doChangeActivity'
+                )
+            );
+
+            Route::post(
                 'videos/load_more', array(
                     'as' => 'load_more_videos',
                     'uses' => 'VideosController@doLoadMoreEndless'

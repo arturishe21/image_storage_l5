@@ -385,6 +385,29 @@ var ImageStorage = {
             }
         });
     },
+
+    changeMultipleActivity: function(activity){
+
+        var idArray = ImageStorage.getSelected();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/"+ImageStorage.entity+"/change_multiple_activity",
+            data: {
+                idArray:     idArray,
+                activity:    activity,
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status) {
+                    TableBuilder.showSuccessNotification('Записи изменены');
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+
+    },
     //end common in pages with grid view
 
     //common in pages with table view

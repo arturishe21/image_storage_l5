@@ -108,6 +108,24 @@ abstract class AbstractImageStorageController extends Controller
         ));
     }
 
+    public function doChangeActivity()
+    {
+        $idArray = Input::get('idArray', array());
+
+        $activity = Input::get('activity', 1);
+
+        $model = new $this->model;
+
+        $model :: whereIn('id', $idArray)
+            ->update(['is_active' => $activity]);
+
+        $model::flushCache();
+
+        return Response::json(array(
+            'status' => true
+        ));
+    }
+
     public function getForm()
     {
         $id = Input::get('id');

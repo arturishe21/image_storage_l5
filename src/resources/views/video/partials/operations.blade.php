@@ -49,6 +49,22 @@
             <a onclick="ImageStorage.deleteMultipleGridView();" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-operations-button">{{__cms('Удалить')}}</a>
         </div>
     </div>
+    <div class="col-md-12 image-storage-operations-row">
+        <div class="col-md-2">{{__cms('Отображать видео')}}</div>
+        <div class="col-md-8">
+        </div>
+        <div class="col-md-2">
+            <a onclick="ImageStorage.changeMultipleActivity(1);" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-operations-button">{{__cms('Отображать')}}</a>
+        </div>
+    </div>
+    <div class="col-md-12 image-storage-operations-row">
+        <div class="col-md-2">{{__cms('Спрятать видео')}}</div>
+        <div class="col-md-8">
+        </div>
+        <div class="col-md-2">
+            <a onclick="ImageStorage.changeMultipleActivity(0);" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-operations-button">{{__cms('Спрятать')}}</a>
+        </div>
+    </div>
     </form>
 </div>
 

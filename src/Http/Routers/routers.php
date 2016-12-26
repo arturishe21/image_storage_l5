@@ -3,9 +3,9 @@
 Route::group (['middleware' => ['web']], function () {
 
     Route::group ([
-            'prefix' => 'admin/image_storage',
+            'prefix'     => 'admin/image_storage',
             'middleware' => 'auth.admin',
-            'namespace' => 'Vis\ImageStorage'
+            'namespace'  => 'Vis\ImageStorage'
         ],
         function () {
 
