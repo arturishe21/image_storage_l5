@@ -15,9 +15,9 @@ class ImagesController extends AbstractImageStorageController
     {
         $file = Input::file('image');
 
-        $model = $this->model;
-        $entity = new $model;
-        $prefix = $entity->getConfigPrefix();
+        $prefix = $this->model->getConfigPrefix();
+
+        $entity = $this->model;
 
         if(!$entity->setSourceFile($file)){
             return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
@@ -35,7 +35,7 @@ class ImagesController extends AbstractImageStorageController
             'id'     => $entity->id
         );
 
-        $model::flushCache();
+        $this->model->flushCache();
 
         return Response::json($data);
     }
@@ -46,9 +46,7 @@ class ImagesController extends AbstractImageStorageController
         $size = Input::get('size');
         $id   = Input::get('id');
 
-        $model = new $this->model;
-
-        $entity = $model::find($id);
+        $entity = $this->model->find($id);
 
         if(!$entity->setSourceFile($file)){
             return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
@@ -58,7 +56,7 @@ class ImagesController extends AbstractImageStorageController
 
         $entity->save();
 
-        $entity::flushCache();
+        $this->model->flushCache();
 
         $data = array(
             'status' => true,
@@ -74,19 +72,17 @@ class ImagesController extends AbstractImageStorageController
         $size = Input::get('size');
         $id   = Input::get('id');
 
-        $model = new $this->model;
-
         //fixme weird into array transformation
         if(!is_array($id)){
             $id = explode(" ",$id);
         }
 
         foreach($id as $key => $value){
-            $image = $model::find($value);
+            $image = $this->model->find($value);
             $image->optimizeImage($size);
         }
 
-        $model::flushCache();
+        $this->model->flushCache();
 
         return Response::json(array(
             'status' => true,

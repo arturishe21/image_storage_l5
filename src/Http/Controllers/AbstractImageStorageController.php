@@ -11,18 +11,21 @@ abstract class AbstractImageStorageController extends Controller
 {
     protected $model;
 
+    public function __construct()
+    {
+        $this->model = new $this->model;
+    }
+
     public function fetchIndex()
     {
         $this->setSearchInput();
 
-        $model = new $this->model;
+        $perPage         = $this->model->getConfigPerPage();
+        $title           = $this->model->getConfigTitle();
+        $prefix          = $this->model->getConfigPrefix();
+        $relatedEntities = $this->model->getRelatedEntities();
 
-        $perPage = $model->getConfigPerPage();
-        $title = $model->getConfigTitle();
-        $prefix = $model->getConfigPrefix();
-        $relatedEntities = $model->getRelatedEntities();
-
-        $data = $model::filterSearch()->orderBy('id', 'DESC')->paginate($perPage);
+        $data = $this->model->filterSearch()->orderBy('id', 'DESC')->paginate($perPage);
 
         $lastPage = $data->lastPage();
 
@@ -43,11 +46,11 @@ abstract class AbstractImageStorageController extends Controller
     {
         $page = Input::get('page');
 
-        $model = new $this->model;
-        $perPage = $model->getConfigPerPage();
-        $prefix = $model->getConfigPrefix();
+        $perPage = $this->model->getConfigPerPage();
+        $prefix  = $this->model->getConfigPrefix();
 
-        $entities = $model::filterSearch()->orderBy('id', 'desc')->skip($perPage * $page)->limit($perPage)->get();
+        $entities = $this->model->filterSearch()->orderBy('id', 'desc')->skip($perPage * $page)->limit($perPage)->get();
+
         $html = '';
         foreach ($entities as $entity) {
             $html .= View::make('image-storage::'.$prefix.'.partials.single_list')->with('entity', $entity)->render();
@@ -60,20 +63,23 @@ abstract class AbstractImageStorageController extends Controller
 
     public function doDelete()
     {
-        $id    = Input::get('id');
-        $model = new $this->model;
+        $id = Input::get('id');
 
-        $entity = $model::find($id);
+        $entity = $this->model->find($id);
 
         if(!$entity->beforeDeleteAction()){
-            return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
+
+            return Response::json( array(
+                'status' => false,
+                'message'   => $entity->getErrorMessage()
+            ));
         }
 
         $entity->delete();
 
         $entity->afterDeleteAction();
 
-        $model::flushCache();
+        $this->model->flushCache();
 
         return Response::json(array(
             'id'     => $id,
@@ -85,11 +91,9 @@ abstract class AbstractImageStorageController extends Controller
     {
         $idArray = Input::get('idArray', array());
 
-        $model = new $this->model;
-
         foreach ($idArray as $key => $id){
 
-            $entity = $model::find($id);
+            $entity = $this->model->find($id);
 
             if(!$entity->beforeDeleteAction()){
                 return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
@@ -100,26 +104,23 @@ abstract class AbstractImageStorageController extends Controller
             $entity->afterDeleteAction();
         }
 
-        $model::flushCache();
+        $this->model->flushCache();
 
         return Response::json(array(
-            'id'     => $id,
             'status' => true
         ));
     }
 
     public function doChangeActivity()
     {
-        $idArray = Input::get('idArray', array());
+        $idArray  = Input::get('idArray', array());
 
         $activity = Input::get('activity', 1);
 
-        $model = new $this->model;
+        $this->model->whereIn('id', $idArray)
+                    ->update(['is_active' => $activity]);
 
-        $model :: whereIn('id', $idArray)
-            ->update(['is_active' => $activity]);
-
-        $model::flushCache();
+        $this->model->flushCache();
 
         return Response::json(array(
             'status' => true
@@ -130,13 +131,11 @@ abstract class AbstractImageStorageController extends Controller
     {
         $id = Input::get('id');
 
-        $model = new $this->model;
-        $prefix = $model->getConfigPrefix();
-        $relatedEntities = $model->getRelatedEntities();
+        $prefix          = $this->model->getConfigPrefix();
+        $fields          = $this->model->getConfigFields();
+        $relatedEntities = $this->model->getRelatedEntities();
 
-        $entity = $model::firstOrNew(['id' => $id]);
-
-        $fields = $entity->getConfigFields();
+        $entity  = $this->model->firstOrNew(['id' => $id]);
 
         $html = View::make(
             "image-storage::". $prefix .".partials.edit_form",
@@ -151,13 +150,12 @@ abstract class AbstractImageStorageController extends Controller
 
     public function doSaveInfo()
     {
-        $model = new $this->model;
 
         $fields = Input::except('relations');
 
-        $entity = $model::firstOrNew(['id' => $fields['id']]);
+        $prefix = $this->model->getConfigPrefix();
 
-        $prefix = $entity->getConfigPrefix();
+        $entity = $this->model->firstOrNew(['id' => $fields['id']]);
 
         $entity->setFields($fields);
 
@@ -171,7 +169,7 @@ abstract class AbstractImageStorageController extends Controller
 
         $html = View::make('image-storage::'. $prefix .'.partials.single_list')->with('entity', $entity)->render();
 
-        $model::flushCache();
+        $this->model->flushCache();
 
         return Response::json(array(
             'html'   => $html,
@@ -182,8 +180,7 @@ abstract class AbstractImageStorageController extends Controller
 
     protected function setSearchInput(){
 
-        $model = new $this->model;
-        $prefix = $model->getConfigPrefix();
+        $prefix = $this->model->getConfigPrefix();
 
         if(Input::has('image_storage_filter')){
 

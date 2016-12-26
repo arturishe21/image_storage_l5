@@ -14,8 +14,7 @@ class VideosController extends AbstractImageStorageController
         $file = Input::file('image');
         $id   = Input::get('id');
 
-        $model = new $this->model;
-        $video = $model::find($id);
+        $video = $this->model->find($id);
 
         $image = new Image;
 
@@ -35,17 +34,16 @@ class VideosController extends AbstractImageStorageController
             'id'     => $image->id
         );
 
-        $model::flushCache();
+        $this->model->flushCache();
 
         return Response::json($data);
     }
 
     public function doRemovePreviewImage()
     {
-        $id   = Input::get('id');
+        $id    = Input::get('id');
 
-        $model = new $this->model;
-        $video = $model::find($id);
+        $video = $this->model->find($id);
 
         $video->unsetPreviewImage();
 
@@ -55,7 +53,7 @@ class VideosController extends AbstractImageStorageController
             'id'     => $video->id
         );
 
-        $model::flushCache();
+        $this->model->flushCache();
 
         return Response::json($data);
     }

@@ -7,13 +7,10 @@ abstract class AbstractImageStorageGalleryController extends AbstractImageStorag
 {
     public function doChangeGalleryOrder()
     {
-        $model = new $this->model;
-
         $idGallery = Input::get('idGallery');
+        $idArray   = Input::get('idArray', array());
 
-        $entity = $model::find($idGallery);
-
-        $idArray = Input::get('idArray', array());
+        $entity = $this->model->find($idGallery);
 
         $entity->changeGalleryOrder($idArray);
 
@@ -24,12 +21,10 @@ abstract class AbstractImageStorageGalleryController extends AbstractImageStorag
 
     public function doDeleteToGalleryRelation()
     {
-        $model = new $this->model;
-
         $idGallery = Input::get('idGallery');
         $idRelated = Input::get('id');
 
-        $entity = $model::find($idGallery);
+        $entity = $this->model->find($idGallery);
 
         $entity->deleteToGalleryRelation($idRelated);
 
@@ -40,12 +35,10 @@ abstract class AbstractImageStorageGalleryController extends AbstractImageStorag
 
     public function doSetGalleryPreview()
     {
-        $model = new $this->model;
-
         $idGallery = Input::get('idGallery');
         $idPreview = Input::get('idPreview');
 
-        $entity = $model::find($idGallery);
+        $entity = $this->model->find($idGallery);
 
         $entity->setPreview($idPreview);
 
@@ -57,13 +50,10 @@ abstract class AbstractImageStorageGalleryController extends AbstractImageStorag
 
     public function doCreateGalleryWith()
     {
-        $entity = new $this->model;
-
         $galleryName = Input::get('galleryName');
         $idArray     = Input::get('idArray', array());
 
-        $entity->title = $galleryName;
-        $entity->save();
+        $entity = $this->model->create(['title' => $galleryName]);
 
         $entity->relateToGallery($idArray);
 
@@ -74,13 +64,11 @@ abstract class AbstractImageStorageGalleryController extends AbstractImageStorag
 
     public function doAddArrayToGalleries()
     {
-        $model = $this->model;
-
         $idGalleries = Input::get('idGalleries', array());
         $idArray     = Input::get('idArray', array());
 
         foreach ($idGalleries as $key => $id){
-            $entity = $model::find($id);
+            $entity = $this->model->find($id);
             $entity->relateToGallery($idArray);
         }
 
