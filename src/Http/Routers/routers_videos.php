@@ -37,9 +37,9 @@
             );
 
             Route::post(
-                'images/change_multiple_activity', array(
+                'videos/change_multiple_activity', array(
                     'as' => 'change_multiple_activity_images',
-                    'uses' => 'ImagesController@doChangeActivity'
+                    'uses' => 'VideosController@doChangeActivity'
                 )
             );
 
