@@ -241,3 +241,6 @@
     background: url(/packages/vis/image-storage/img/video-icon-medium.png);
     z-index: 1;
 }
+div.tb-btn-delete-wrap .delete-relation-button{
+    height: 22px !important;
+}

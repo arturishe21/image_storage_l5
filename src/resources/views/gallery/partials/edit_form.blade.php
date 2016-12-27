@@ -16,8 +16,7 @@
                     <li id="{{$image->id}}" class="image-storage-sortable-item {{ $image->pivot->is_preview ? "preview" : ""}}">
                         @include('image-storage::image.partials.single', ['entity' => $image])
                         <div class="tb-btn-delete-wrap">
-                            <!-- fixme inline styles -->
-                            <button class="btn2 btn-default btn-sm tb-btn-image-delete" style="height:22px;"
+                            <button class="btn2 btn-default btn-sm tb-btn-image-delete delete-relation-button"
                                     type="button"
                                     onclick="ImageStorage.deleteGalleryRelation({{ $image->id }},{{ $entity->id }});">
                                 <i class="fa fa-times"></i>
