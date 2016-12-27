@@ -8,14 +8,14 @@
             </div>
         </div>
         <div class="col-md-2">
-            <a onclick="ImageStorage.createGalleryWithVideos();" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-operations-button">{{__cms('Создать')}}</a>
+            <a onclick="ImageStorage.createGalleryWith('video_galleries');" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-operations-button">{{__cms('Создать')}}</a>
         </div>
     </div>
     <div class="col-md-12 image-storage-operations-row">
         <div class="col-md-2">{{__cms('Добавить в видеогалереи')}}</div>
         <div class="col-md-8">
             <div class="input-group">
-                <select name="relations[image-storage-video-galleries][]" class="image-storage-operations-input image-storage-select" multiple="multiple">
+                <select name="relations[image-storage-video_galleries][]" class="image-storage-operations-input image-storage-select" multiple="multiple">
                     @foreach($relatedEntities['video_gallery'] as $video_gallery)
                         <option value="{{ $video_gallery->id }}">{{ $video_gallery->title }}</option>
                     @endforeach
@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="col-md-2">
-            <a onclick="ImageStorage.saveVideosGalleriesRelations();" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-operations-button">{{__cms('Добавить')}}</a>
+            <a onclick="ImageStorage.saveGalleriesRelations('video_galleries');" href="javascript:void(0);" class="btn btn-default btn-sm image-storage-operations-button">{{__cms('Добавить')}}</a>
         </div>
     </div>
     <div class="col-md-12 image-storage-operations-row">

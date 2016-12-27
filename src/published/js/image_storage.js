@@ -804,14 +804,12 @@ var ImageStorage = {
         });
     },
 
-    //image-gallery
-    createGalleryWithImages: function ()
+    createGalleryWith: function (gallery_type)
     {
-
         var galleryName = $('form[name="image-storage-operations-form"] input[name="gallery_name"]').val().trim();
 
         if (!galleryName) {
-            TableBuilder.showErrorNotification('Введите название галереи для создания');
+            TableBuilder.showErrorNotification('Введите название галереи');
             return false;
         }
 
@@ -819,7 +817,7 @@ var ImageStorage = {
 
         jQuery.ajax({
             type: "POST",
-            url: "/admin/image_storage/galleries/create_gallery_with",
+            url: "/admin/image_storage/"+gallery_type+"/create_gallery_with",
             data: {
                 idArray:     idArray,
                 galleryName: galleryName
@@ -827,7 +825,7 @@ var ImageStorage = {
             dataType: 'json',
             success: function(response) {
                 if (response.status) {
-                    TableBuilder.showSuccessNotification('Галерея с изображениями успешно создана');
+                    TableBuilder.showSuccessNotification('Галерея успешно создана');
                 } else {
                     TableBuilder.showErrorNotification('Что-то пошло не так');
                 }
@@ -835,70 +833,9 @@ var ImageStorage = {
         });
 
     },
-    saveImagesGalleriesRelations: function ()
+    saveGalleriesRelations: function (gallery_type)
     {
-        var  idGalleries = $('form[name="image-storage-operations-form"] select[name="relations[image-storage-galleries][]"]').val();
-
-        if (!idGalleries) {
-            TableBuilder.showErrorNotification('Выберите галереи для добавления изображений');
-            return false;
-        }
-
-        var idArray = ImageStorage.getSelected();
-
-        jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/galleries/add_array_to_galleries",
-            data: {
-                idArray:     idArray,
-                idGalleries:  idGalleries
-            },
-            dataType: 'json',
-            success: function(response) {
-                if (response.status) {
-                    TableBuilder.showSuccessNotification('Изображения успешно добавлены к галереям');
-                } else {
-                    TableBuilder.showErrorNotification('Что-то пошло не так');
-                }
-            }
-        });
-    },
-    //end galleries
-
-    //video-galleries
-    createGalleryWithVideos: function ()
-    {
-
-        var galleryName = $('form[name="image-storage-operations-form"] input[name="gallery_name"]').val().trim();
-
-        if (!galleryName) {
-            TableBuilder.showErrorNotification('Введите название галереи для создания');
-            return false;
-        }
-
-        var idArray = ImageStorage.getSelected();
-
-        jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/video_galleries/create_gallery_with",
-            data: {
-                idArray:     idArray,
-                galleryName:   galleryName
-            },
-            dataType: 'json',
-            success: function(response) {
-                if (response.status) {
-                    TableBuilder.showSuccessNotification('Галерея с изображениями успешно создана');
-                } else {
-                    TableBuilder.showErrorNotification('Что-то пошло не так');
-                }
-            }
-        });
-
-    },
-    saveVideosGalleriesRelations: function ()
-    {
-        var  idGalleries = $('form[name="image-storage-operations-form"] select[name="relations[image-storage-video-galleries][]"]').val();
+        var  idGalleries = $('form[name="image-storage-operations-form"] select[name="relations[image-storage-'+gallery_type+'][]"]').val();
 
         if (!idGalleries) {
             TableBuilder.showErrorNotification('Выберите галереи для добавления');
@@ -909,15 +846,15 @@ var ImageStorage = {
 
         jQuery.ajax({
             type: "POST",
-            url: "/admin/image_storage/video_galleries/add_array_to_galleries",
+            url: "/admin/image_storage/"+gallery_type+"/add_array_to_galleries",
             data: {
-                idArray:    idArray,
+                idArray:     idArray,
                 idGalleries:  idGalleries
             },
             dataType: 'json',
             success: function(response) {
                 if (response.status) {
-                    TableBuilder.showSuccessNotification('Видео успешно добавлены к галереям');
+                    TableBuilder.showSuccessNotification('Записи успешно добавлены к галереям');
                 } else {
                     TableBuilder.showErrorNotification('Что-то пошло не так');
                 }

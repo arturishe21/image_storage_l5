@@ -53,7 +53,19 @@ abstract class AbstractImageStorageGalleryController extends AbstractImageStorag
         $galleryName = Input::get('galleryName');
         $idArray     = Input::get('idArray', array());
 
-        $entity = $this->model->create(['title' => $galleryName]);
+        $fields      = ['title' => $galleryName];
+
+        $entity = $this->model;
+
+        $entity->setFields($fields);
+
+        if(!$entity->beforeSaveAction()){
+            return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
+        }
+
+        $entity->save();
+
+        $entity->afterSaveAction();
 
         $entity->relateToGallery($idArray);
 
