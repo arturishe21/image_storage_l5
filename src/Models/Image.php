@@ -237,7 +237,9 @@ class Image extends AbstractImageStorage
     private function setImageTitle()
     {
         if($this->getConfigUseSourceTitle()){
-            $title = pathinfo($this->sourceImage->getClientOriginalName(), PATHINFO_FILENAME);
+            $fileName = $this->sourceImage->getClientOriginalName();
+            $extension = $this->sourceImage->getClientOriginalExtension();
+            $title = strstr($fileName, ".".$extension, true);
         }else{
             $title = md5_file($this->sourceImage->getPathName()) . '_' . time();
         }
