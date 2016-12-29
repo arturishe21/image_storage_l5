@@ -283,15 +283,17 @@ class Video extends AbstractImageStorage
     {
         if($this->getConfigYouTubeSetData()){
 
-            if(!$this->title){
-                $this->title = $this->getYouTubeTitle();
-                $this->setSlug();
+            $columnNames = $this->getConfigFieldsNames();
+
+            foreach($columnNames as $key=>$columnName) {
+                if(strpos($columnName, 'title') !== false){
+                    $this->$columnName = $this->getYouTubeTitle();
+                }elseif(strpos($columnName, 'description') !== false){
+                    $this->$columnName = $this->getYouTubeDescription();
+                }
             }
 
-            if(!$this->description){
-                $this->description = $this->getYouTubeDescription();
-            }
-
+            $this->setSlug();
         }
     }
 

@@ -38,6 +38,7 @@ class Tag extends AbstractImageStorage
     {
         $this->$type()->syncWithoutDetaching($id);
 
+        //fixme optimize flush cache
         self::flushCache();
         Image::flushCache();
         Video::flushCache();

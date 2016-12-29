@@ -80,6 +80,25 @@ abstract class AbstractImageStorage extends Model
         return $this->getConfigValue('fields');
     }
 
+    public function getConfigFieldsNames()
+    {
+        $columnNames = [];
+
+        $configFields = $this->getConfigFields();
+
+        foreach ($configFields as $field => $fieldInfo) {
+            if(isset($fieldInfo['tabs'])){
+                foreach ($fieldInfo['tabs'] as $tab => $tabInfo) {
+                    $columnNames[] = $field.$tabInfo['postfix'];
+                }
+            }else{
+                $columnNames[] = $field;
+            }
+        }
+
+        return $columnNames;
+    }
+
     private function getUniqueSlug()
     {
         $slug = \Jarboe::urlify($this->title);
@@ -108,24 +127,11 @@ abstract class AbstractImageStorage extends Model
     {
         $this->doCheckSchemeFields();
 
-        $configFields = $this->getConfigFields();
+        $columnNames = $this->getConfigFieldsNames();
 
-        foreach ($configFields as $field => $fieldInfo) {
-
-            $columnNames = [];
-
-            if(isset($fieldInfo['tabs'])){
-                foreach ($fieldInfo['tabs'] as $tab => $tabInfo) {
-                    $columnNames[] = $field.$tabInfo['postfix'];
-                }
-            }else{
-                $columnNames[] = $field;
-            }
-
-            foreach($columnNames as $key=>$columnName) {
-                $value =  isset($fields[$columnName]) ? $fields[$columnName] : false;
-                $this->$columnName = $value;
-            }
+        foreach($columnNames as $key=>$columnName) {
+            $value =  isset($fields[$columnName]) ? $fields[$columnName] : false;
+            $this->$columnName = $value;
         }
 
         $this->setSlug();
@@ -211,29 +217,19 @@ abstract class AbstractImageStorage extends Model
     {
         $fields = $this->getConfigFields();
 
-        foreach ($fields as $field => $fieldInfo) {
-            $columnNames = [];
+        $columnNames = $this->getConfigFieldsNames();
 
-            if(isset($fieldInfo['tabs'])){
-                foreach ($fieldInfo['tabs'] as $tab => $tabInfo) {
-                    $columnNames[] = $field.$tabInfo['postfix'];
-                }
-            }else{
-                $columnNames[] = $field;
-            }
+        foreach($columnNames as $key=>$columnName){
+            if (!Schema::hasColumn($this->table, $columnName)) {
 
-            foreach($columnNames as $key=>$columnName){
-                if (!Schema::hasColumn($this->table, $columnName)) {
+                @list($field, $param) = explode("|", $fields[$key]['field']);
 
-                    @list($field, $param) = explode("|", $fieldInfo['field']);
-
-                    Schema::table($this->table, function ($table) use ($columnName, $field, $param) {
-                        $field_add = $table->$field($columnName);
-                        if ($param) {
-                            $field_add->length($param);
-                        }
-                    });
-                }
+                Schema::table($this->table, function ($table) use ($columnName, $field, $param) {
+                    $field_add = $table->$field($columnName);
+                    if ($param) {
+                        $field_add->length($param);
+                    }
+                });
             }
         }
     }
