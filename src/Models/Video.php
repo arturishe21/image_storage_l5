@@ -286,9 +286,10 @@ class Video extends AbstractImageStorage
             $columnNames = $this->getConfigFieldsNames();
 
             foreach($columnNames as $key=>$columnName) {
-                if(strpos($columnName, 'title') !== false){
+                if(strpos($columnName, 'title') !== false && !$this->$columnName){
                     $this->$columnName = $this->getYouTubeTitle();
-                }elseif(strpos($columnName, 'description') !== false){
+                }else
+                if(strpos($columnName, 'description') !== false && !$this->$columnName){
                     $this->$columnName = $this->getYouTubeDescription();
                 }
             }
