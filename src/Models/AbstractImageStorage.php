@@ -212,24 +212,34 @@ abstract class AbstractImageStorage extends Model
         return $query;
     } // end scopeSearch
 
-
+    //todo find a way to use getConfigFieldsNames here
     protected function doCheckSchemeFields()
     {
         $fields = $this->getConfigFields();
 
-        $columnNames = $this->getConfigFieldsNames();
+        foreach ($fields as $field => $fieldInfo) {
+            $columnNames = [];
 
-        foreach($columnNames as $key=>$columnName){
-            if (!Schema::hasColumn($this->table, $columnName)) {
+            if(isset($fieldInfo['tabs'])){
+                foreach ($fieldInfo['tabs'] as $tab => $tabInfo) {
+                    $columnNames[] = $field.$tabInfo['postfix'];
+                }
+            }else{
+                $columnNames[] = $field;
+            }
 
-                @list($field, $param) = explode("|", $fields[$key]['field']);
+            foreach($columnNames as $key=>$columnName){
+                if (!Schema::hasColumn($this->table, $columnName)) {
 
-                Schema::table($this->table, function ($table) use ($columnName, $field, $param) {
-                    $field_add = $table->$field($columnName);
-                    if ($param) {
-                        $field_add->length($param);
-                    }
-                });
+                    @list($field, $param) = explode("|", $fieldInfo['field']);
+
+                    Schema::table($this->table, function ($table) use ($columnName, $field, $param) {
+                        $field_add = $table->$field($columnName);
+                        if ($param) {
+                            $field_add->length($param);
+                        }
+                    });
+                }
             }
         }
     }
