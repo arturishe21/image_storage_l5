@@ -30,6 +30,6 @@
     $(document).ready(function(){
         ImageStorage.entity = 'videos';
         //fixme lastPage setter
-        ImageStorage.lastPage = {{$lastPage}};
+        ImageStorage.last_page = {{$lastPage}};
     });
 </script>
