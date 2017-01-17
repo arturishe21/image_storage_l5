@@ -109,7 +109,7 @@ abstract class AbstractImageStorage extends Model
             $slugCheckQuery = $this->where('slug', 'like', $slug)->where("id", "!=", $this->id)->count();
 
             if($slugCheckQuery){
-                $slug = $slug . "(1)";
+                $slug = $slug . "-1";
             }else{
                 $slugCheck = true;
             }
