@@ -14,6 +14,21 @@ composer update
     Vis\ImageStorage\ImageStorageServiceProvider::class,
 ```
 
+Выполняем миграцию таблиц
+```json
+   php artisan migrate --path=vendor/vis/image_storage_l5/src/Migrations
+```
+
+Публикуем js, css, images
+```json
+   php artisan vendor:publish --tag=public --force
+```
+
+Публикуем конфиги файлы
+```json
+   php artisan vendor:publish --tag=image-storage-config --force
+```
+
 В файле config/builder/admin.php в массив menu в настройки добавляем
 ```php
           array(
