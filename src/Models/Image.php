@@ -23,12 +23,6 @@ class Image extends AbstractImageStorageFile
 
     protected $imageData;
 
-    //fixme optimize flushCache
-    public static function flushCache()
-    {
-        Cache::tags('image_storage-images')->flush();
-    } // end flushCache
-
     public function galleries()
     {
         return $this->belongsToMany('Vis\ImageStorage\Gallery', 'vis_images2galleries', 'id_image', 'id_gallery');

@@ -8,12 +8,6 @@ class Tag extends AbstractImageStorage
     protected $table = 'vis_tags';
     protected $configPrefix = 'tag';
 
-    //fixme optimize flushCache
-    public static function flushCache()
-    {
-        Cache::tags('image_storage-tags')->flush();
-    } // end flushCache
-
     public function images()
     {
         return $this->morphedByMany('Vis\ImageStorage\Image',   'entity', 'vis_tags2entities', 'id_tag', 'id_entity');
@@ -43,12 +37,11 @@ class Tag extends AbstractImageStorage
     {
         $this->$type()->syncWithoutDetaching($id);
 
-        //fixme optimize flush cache
-        self::flushCache();
-        Image::flushCache();
-        Video::flushCache();
-        Document::flushCache();
+        $relatedClass = $this->$type()->getRelated();
+        $relatedClassName = get_class($relatedClass);
 
+        self::flushCache();
+        $relatedClassName::flushCache();
 
     }
 }

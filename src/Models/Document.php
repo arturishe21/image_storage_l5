@@ -19,12 +19,6 @@ class Document extends AbstractImageStorageFile
     protected $sizePrefix = 'file_';
     protected $prefixPath = '/storage/file-storage/';
 
-    //fixme optimize flushCache
-    public static function flushCache()
-    {
-        Cache::tags('image_storage-documents')->flush();
-    } // end flushCache
-
     public function tags()
     {
         return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');

@@ -10,12 +10,6 @@ class VideoGallery extends AbstractImageStorage
     protected $table = 'vis_video_galleries';
     protected $configPrefix = 'video_gallery';
 
-    //fixme optimize flushCache
-    public static function flushCache()
-    {
-        Cache::tags('image_storage-video-galleries')->flush();
-    }
-
     public function videos()
     {
         return $this

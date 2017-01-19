@@ -10,12 +10,6 @@ class Gallery extends AbstractImageStorage
     protected $table = 'vis_galleries';
     protected $configPrefix = 'gallery';
 
-    //fixme optimize flushCache
-    public static function flushCache()
-    {
-        Cache::tags('image_storage-galleries')->flush();
-    }
-
     public function images()
     {
         return $this

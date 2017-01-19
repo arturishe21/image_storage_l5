@@ -10,12 +10,6 @@ class Video extends AbstractImageStorage
 
     private $youTubeData;
     
-    //fixme optimize flushCache
-    public static function flushCache()
-    {
-        Cache::tags('image_storage-videos')->flush();
-    } // end flushCache
-
     public function preview()
     {
         return $this->belongsTo('Vis\ImageStorage\Image', 'id_preview');

@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
 
-
 abstract class AbstractImageStorage extends Model
 {
     use \Vis\Builder\Helpers\Traits\TranslateTrait,
@@ -17,6 +16,18 @@ abstract class AbstractImageStorage extends Model
     protected $table;
     protected $errorMessage;
     protected $fillable = ['id'];
+
+    protected $cacheNamespace = "image-storage";
+
+    public static function flushCache()
+    {
+       $className = static::class;
+       $classObject = new $className;
+
+       $cacheTag = $classObject->cacheNamespace."-".$classObject->configPrefix;
+
+       Cache::tags($cacheTag)->flush();
+    } // end flushCache
     
     public function beforeSaveAction()
     {
