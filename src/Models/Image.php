@@ -8,23 +8,19 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 
 use Vis\Builder\OptmizationImg;
 
 
-class Image extends AbstractImageStorage
+class Image extends AbstractImageStorageFile
 {
     protected $table = 'vis_images';
     protected $configPrefix = 'image';
-    protected $imageSizePrefix = 'file_';
+
+    protected $sizePrefix = 'file_';
     protected $prefixPath = '/storage/image-storage/';
 
-    protected $uploadedImage;
-
-    protected $sourceImage;
-    protected $extension;
     protected $imageData;
 
     //fixme optimize flushCache
@@ -43,21 +39,8 @@ class Image extends AbstractImageStorage
         return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
     }
 
-    public function beforeSaveAction(){
-        if(!$this->doRenameImageFiles()){
-            return false;
-        }
-
-        return true;
-    }
-
     public function afterSaveAction(){
         $this->makeRelations();
-    }
-
-    public function afterDeleteAction()
-    {
-        $this->doDeleteImageFiles();
     }
 
     public function scopeFilterByGalleries($query, $galleries = array())
@@ -91,37 +74,6 @@ class Image extends AbstractImageStorage
         return route("vis_images_show_single", [$this->getSlug()]);
     }
 
-    public function getSource($size = 'source')
-    {
-        $field = $this->imageSizePrefix.$size;
-        $source = $this->file_folder . $this->$field;
-
-        return $source;
-    }
-
-    private function getFileName()
-    {
-       return $this->getSlug() . "_" . time(). "." . $this->extension;
-    }
-
-    public function getConfigSizes()
-    {
-        return $this->getConfigValue('sizes');
-    }
-
-    private function getConfigSizesModifiable()
-    {
-        $allSizes = $this->getConfigSizes();
-        unset($allSizes['source']);
-        return $allSizes;
-    }
-
-    private function getConfigSizeInfo($size)
-    {
-        $allSizes = $this->getConfigSizes();
-        return $allSizes[$size];
-    }
-
     private function getConfigOptimization()
     {
         return $this->getConfigValue('optimization');
@@ -132,217 +84,40 @@ class Image extends AbstractImageStorage
         return $this->getConfigValue('quality');
     }
 
-    private function getConfigUseSourceTitle()
-    {
-        return $this->getConfigValue('source_title');
-    }
-
     private function getConfigStoreEXIF()
     {
         return $this->getConfigValue('store_exif');
     }
 
-    private function getConfigDeleteFiles()
+    protected function makeFileName()
     {
-        return $this->getConfigValue('delete_files');
-    }
-
-    private function getConfigRenameFiles()
-    {
-        return $this->getConfigValue('rename_files');
-    }
-
-    private function getConfigImageSizeValidation()
-    {
-        return $this->getConfigValue('image_size_validation.enabled');
-    }
-
-    private function getConfigImageSizeMax()
-    {
-        return $this->getConfigValue('image_size_validation.max_image_size');
-    }
-
-    private function getConfigImageSizeMaxErrorMessage()
-    {
-        return $this->getConfigValue('image_size_validation.error_message');
-    }
-
-    private function getConfigImageExtensionValidation()
-    {
-        return $this->getConfigValue('image_extension_validation.enabled');
-    }
-
-    private function getConfigAllowedImageExtensions()
-    {
-        return $this->getConfigValue('image_extension_validation.allowed_image_extensions');
-    }
-
-    private function getConfigImageExtensionsErrorMessage()
-    {
-        return $this->getConfigValue('image_extension_validation.error_message');
-    }
-
-    private function getPathForFile()
-    {
-        $postfixPath = date('Y/m/d',strtotime($this->created_at)). '/'. $this->id .'/';
-
-        $chunks = explode("/", $postfixPath);
-
-        return array(
-            $chunks,
-            $postfixPath
-        );
-    }
-
-    public function setSourceFile($file)
-    {
-        if(!$file){
-            return false;
-        }
-
-        $this->uploadedImage = $file;
-
-       if($this->failsToValidateImage()){
-            return false;
-        }
-
-        $this->sourceImage = $this->uploadedImage;
-        unset($this->uploadedImage);
-        return true;
-    }
-
-    public function setNewImageData()
-    {
-        DB::beginTransaction();
-
-        try {
-            $this->setImageExifData();
-            $this->setImageTitle();
-            $this->save();
-
-            $this->doMakeSourceFile();
-            $this->doImageVariations();
-            $this->save();
-
-            DB::commit();
-            return true;
-
-        } catch (Exception $e) {
-
-            DB::rollBack();
-            return false;
-        }
-    }
-
-    private function setImageTitle()
-    {
-        if($this->getConfigUseSourceTitle()){
-            $fileName = $this->sourceImage->getClientOriginalName();
-            $extension = $this->sourceImage->getClientOriginalExtension();
-            $title = strstr($fileName, ".".$extension, true);
-        }else{
-            $title = md5_file($this->sourceImage->getPathName()) . '_' . time();
-        }
-
-        $this->title = $title;
-        $this->setSlug();
-
+        return $this->getSlug() . "_" . time(). "." . $this->extension;
     }
 
     private function setImageExifData()
     {
-        $this->sourceImage->imageData = @(exif_read_data($this->sourceImage, 0, true));
+        $this->sourceFile->imageData = @(exif_read_data($this->sourceFile, 0, true));
 
         $this->setExifDate();
 
         if($this->getConfigStoreEXIF()){
-            $this->exif_data = json_encode($this->sourceImage->imageData);
+            $this->exif_data = json_encode($this->sourceFile->imageData);
         }
     }
 
     private function setExifDate()
     {
-        if (isset($this->sourceImage->imageData['EXIF']['DateTimesource'])) {
-            $this->date_time_source = $this->sourceImage->imageData['EXIF']['DateTimesource'];
+        if (isset($this->sourceFile->imageData['EXIF']['DateTimesource'])) {
+            $this->date_time_source = $this->sourceFile->imageData['EXIF']['DateTimesource'];
         } else {
             $this->date_time_source = "2035-01-01 00:00:00";
         }
-    }
-
-    private function failsToValidateImage()
-    {
-        if($this->failsToValidateImageSize()){
-            return true;
-        }
-
-        if($this->failsToValidateImageExtension()){
-            return true;
-        }
-
-        return false;
-    }
-
-    private function failsToValidateImageSize()
-    {
-        if(!$this->getConfigImageSizeValidation()){
-            return false;
-        }
-
-        $maxImageSize = $this->getConfigImageSizeMax();
-        $uploadImageSize = $this->uploadedImage->getClientSize();
-
-        if($uploadImageSize > $maxImageSize){
-            $maxImageSizeInMB = $maxImageSize/1000000;
-            $message  =  $this->getConfigImageSizeMaxErrorMessage();
-            $this->errorMessage =  str_replace("[size]", $maxImageSizeInMB, $message);
-            return true;
-        }
-
-        return false;
-    }
-
-    private function failsToValidateImageExtension()
-    {
-        if(!$this->getConfigImageExtensionValidation()){
-            return false;
-        }
-
-        $allowedExtensions = $this->getConfigAllowedImageExtensions();
-        $uploadImageExtension = $this->uploadedImage->getClientOriginalExtension();
-
-        if(!in_array($uploadImageExtension,$allowedExtensions)){
-            $allowedExtensionsList = implode(",", $allowedExtensions);
-            $message  =  $this->getConfigImageExtensionsErrorMessage();
-            $this->errorMessage =  str_replace("[extension_list]", $allowedExtensionsList, $message);
-            return true;
-        }
-
-        return false;
     }
 
     private function doOptimizeImage($imagePath)
     {
         if ($this->getConfigOptimization()) {
             OptmizationImg::run("/" . $imagePath);
-        }
-    }
-
-    private function doCheckSchemeSizes()
-    {
-        $sizes = $this->getConfigSizes();
-
-        foreach ($sizes as $sizeName => $sizeInfo) {
-
-            $columnName = $this->imageSizePrefix . $sizeName;
-
-            if (!Schema::hasColumn($this->table, $columnName)) {
-
-                Schema::table($this->table, function ($table) use ($columnName) {
-                    $table->text($columnName);
-                });
-
-                $this->createImagesForNewSize($sizeName);
-            }
         }
     }
 
@@ -373,56 +148,19 @@ class Image extends AbstractImageStorage
         Gallery::flushCache();
     }
 
-    private function makeFoldersAndReturnPath($size = 'source')
-    {
-        $prefixPath = $this->prefixPath;
-
-        list($chunks, $postfixPath) = $this->getPathForFile();
-
-        $chunks[] = $size;
-
-        $tempPath = public_path() . $prefixPath;
-
-        foreach ($chunks as $chunk) {
-            $tempPath = $tempPath . $chunk;
-
-            if (!file_exists($tempPath)) {
-                if (!mkdir($tempPath, 0755, true)) {
-                    throw new \RuntimeException('Unable to create the directory [' . $tempPath . ']');
-                }
-            }
-            $tempPath = $tempPath . '/';
-        }
-
-        $destinationPath = $prefixPath . $postfixPath . $size. '/';
-
-        return $destinationPath;
-    }
-
-    private function doMakeSourceFile()
-    {
-        list($chunks, $postfixPath) = $this->getPathForFile();
-
-        $absolutePath =  $this->prefixPath.$postfixPath;
-
-        $this->file_folder = $absolutePath;
-
-        $this->doMakeImage('source');
-    }
-
-    private function doMakeImage($size)
+    private function doMakeFile($size = 'source')
     {
         $quality = $this->getConfigQuality();
 
-        $field = $this->imageSizePrefix.$size;
+        $field = $this->sizePrefix.$size;
 
         //fixme can be optimized here
-        if($this->sourceImage){
-            $sourcePath = $this->sourceImage->getRealPath();
-            $this->extension = $this->sourceImage->guessExtension();
+        if($this->sourceFile){
+            $sourcePath = $this->sourceFile->getRealPath();
+            $this->extension = $this->sourceFile->guessExtension();
         }else{
             $sourcePath = public_path() . $this->getSource();
-            $this->extension  = pathinfo($sourcePath, PATHINFO_EXTENSION);
+            $this->extension  = $this->getFileExtension($size);
         }
 
         $img = \Image::make($sourcePath);
@@ -438,9 +176,9 @@ class Image extends AbstractImageStorage
             }
         }
 
-        $fileName = $this->getFileName();
+        $fileName = $this->makeFileName();
 
-        $destinationPath = $this->makeFoldersAndReturnPath($size);
+        $destinationPath = $this->doMakeFoldersAndReturnPath($size);
 
         $path = $destinationPath . $fileName;
 
@@ -449,63 +187,47 @@ class Image extends AbstractImageStorage
         $this->$field = $size."/".$fileName;
     }
 
-    private function doImageVariations()
+    private function doSizesVariations()
     {
-        $this->doCheckSchemeSizes();
+        $checkColumns = $this->doCheckSchemeSizes();
+
+        if(count($checkColumns)){
+            $this->updateWithNewSize($checkColumns);
+        }
 
         $sizes = $this->getConfigSizesModifiable();
         foreach ($sizes as $size => $sizeInfo) {
-            $this->doMakeImage($size);
+            $this->doMakeFile($size);
         }
     }
 
-    private function doDeleteImageFiles()
+    public function setNewFileData()
     {
-        if ($this->getConfigDeleteFiles()) {
+        DB::beginTransaction();
 
-            //two level protection from removing the public folder
-            if($this->file_folder){
+        try {
+            $this->setImageExifData();
+            $this->setFileTitle();
+            $this->save();
 
-                $fileFolder = public_path() . rtrim($this->file_folder, "/");
+            $this->doMakeSourceFile();
+            $this->doMakeFile();
+            $this->doSizesVariations();
+            $this->save();
 
-                if(public_path() != $fileFolder){
+            DB::commit();
+            return true;
 
-                    File::deleteDirectory($fileFolder);
-                }
-            }
+        } catch (Exception $e) {
+
+            DB::rollBack();
+            return false;
         }
     }
 
-    private function doRenameImageFiles()
+    public function replaceSingleFile($size)
     {
-        if ($this->getConfigRenameFiles()) {
-
-            if($this->isDirty('title')){
-
-                $sizes = $this->getConfigSizes();
-
-                foreach ($sizes as $sizeName => $sizeInfo) {
-
-                    $imagePath = public_path() . $this->getSource($sizeName);
-                    $this->extension  = pathinfo($imagePath, PATHINFO_EXTENSION);
-
-                    $newName = $sizeName ."/".$this->getFileName();
-                    $newPath = public_path(). $this->file_folder .  $newName;
-
-                    $field = $this->imageSizePrefix.$sizeName;
-
-                    if(File::move($imagePath,$newPath)){
-                        $this->$field = $newName;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    public function replaceSingleImage($size)
-    {
-        $this->doMakeImage($size);
+        $this->doMakeFile($size);
     }
 
     public function optimizeImage($size)
@@ -519,13 +241,14 @@ class Image extends AbstractImageStorage
         }
     }
 
-    private function createImagesForNewSize($sizeName)
+    private function updateWithNewSize($sizes)
     {
         $images = self::all()->except($this->id);
-
-        foreach ($images as $image) {
-            $image->doMakeImage($sizeName);
-            $image->save();
+        foreach($sizes as $key=>$sizeName) {
+            foreach ($images as $image) {
+                $image->doMakeFile($sizeName);
+                $image->save();
+            }
         }
     }
 

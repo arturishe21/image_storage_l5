@@ -11,7 +11,7 @@ class VideosController extends AbstractImageStorageController
 
     public function doUploadPreviewImage()
     {
-        $file = Input::file('image');
+        $file = Input::file('file');
         $id   = Input::get('id');
 
         $video = $this->model->find($id);

@@ -97,6 +97,7 @@
 }
 
 .image-storage-images-sizes-control_row{
+    margin-top:10px;
     padding-right: 25px;
 }
 
@@ -243,4 +244,69 @@
 }
 div.tb-btn-delete-wrap .delete-relation-button{
     height: 22px !important;
+}
+
+.superbox-file {
+    display: flex;
+}
+
+.superbox-file .file-extension {
+    position: relative;
+    width: 51px;
+    height: 70px;
+    background-image: url(/packages/vis/image-storage/img/super-icon-file-flat.png);
+}
+
+.superbox-file .file-title {
+    position: relative;
+    width: calc(100% - 61px);
+    margin-left:10px;
+    text-align:left;
+    word-wrap: break-word;
+}
+
+.superbox-file .file-title .file-label{
+    font-weight: 600;
+    width:175px;
+}
+
+.superbox-file .file-extension:after {
+    position:relative;
+    top:50%;
+    left:0;
+    width:100%;
+    text-align:center;
+    color:#fff;
+    font-size:14px;
+    text-transform: uppercase;
+    content: attr(data-ext);
+}
+
+.file-extension{
+    text-align:center;
+    background-color: #1e70b6;
+}
+
+.file-extension[data-ext='xls'], .file-extension[data-ext='xlsx']{
+    background-color: #1d7044;
+}
+
+.file-extension[data-ext='doc'], .file-extension[data-ext='docx']{
+    background-color: #2a5695;
+}
+
+.file-extension[data-ext='ppt'], .file-extension[data-ext='pptx']{
+    background-color: #d04423;
+}
+
+.file-extension[data-ext='pdf']{
+    background-color: #bb0706;
+}
+
+.tab-pane .superbox-file{
+    color:#fff;
+}
+
+.tab-pane .superbox-file .file-extension {
+    background-image: url(/packages/vis/image-storage/img/super-icon-file-flat-dark.png);
 }

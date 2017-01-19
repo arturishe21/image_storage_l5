@@ -212,7 +212,7 @@ abstract class AbstractImageStorage extends Model
         return $query;
     } // end scopeSearch
 
-    //todo find a way to use getConfigFieldsNames here
+    //fixme find a way to use getConfigFieldsNames here
     protected function doCheckSchemeFields()
     {
         $fields = $this->getConfigFields();

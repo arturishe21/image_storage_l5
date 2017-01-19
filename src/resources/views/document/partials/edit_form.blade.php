@@ -1,69 +1,49 @@
 <div class="superbox-show image-storage-popup">
 <ul id="image-storage-images-sizes-tabs" class="nav nav-tabs bordered">
-        <li class="active">
-            <a style="color: #000000 !important;" href="#image-storage-video" data-toggle="tab">{{__cms('Видео')}}</a>
+    @foreach ($relatedEntities['sizes'] as $ident => $info)
+        <li class="{{$info['default_tab'] ? 'active':""}}">
+            <a style="color: #000000 !important;" href="#image-storage-images-size-{{ $ident }}" data-toggle="tab">{{ __cms($info['caption']) }}</a>
         </li>
-        @if($entity->id)
-        <li class="">
-            <a style="color: #000000 !important;" href="#image-storage-video-preview" data-toggle="tab">{{__cms('Превью')}}</a>
-        </li>
-        @endif
+    @endforeach
 </ul>
 
 <div id="image-storage-tabs-content" class="tab-content padding-10">
-        <div class="tab-pane fade in active" id="image-storage-video">
-            @if($entity->id)
-                <iframe class="image-storage-video-iframe superbox-current-img" src="https://www.youtube.com/embed/{{$entity->id_youtube}}" frameborder="0" allowfullscreen></iframe>
-            @endif
-        </div>
-        @if($entity->id)
-        <div class="tab-pane fade" id="image-storage-video-preview">
-            <div>
-                <img src="{{ $entity->getPreviewImage()}}" class="superbox-current-img">
+    @foreach ($relatedEntities['sizes'] as $ident => $info)
+        <div class="tab-pane fade {{$info['default_tab'] ? 'in active':""}}" id="image-storage-images-size-{{ $ident }}">
+            <div class="image-storage-images-sizes-content">
+                @include('image-storage::document.partials.tab_content')
             </div>
             <div class="image-storage-images-sizes-control_row">
                 <div class="pull-left button-block">
-                    <a download="{{ $entity->title ." ". __cms('Превью')}}"
+                    <a download="{{ $entity->title .'('. $info['caption'] .')' }}"
                        target="_blank"
-                       href="{{ $entity->getPreviewImage()}}"
+                       href="{{ asset($entity->getSource($ident)) }}"
                        class="image-storage-btn-download btn btn-default btn-sm">
                         {{ __cms("Скачать")}}
                     </a>
-                </div>
-                <div class="pull-left button-block">
-                    <a
-                       onclick="ImageStorage.removeUploadedPreview(this,'{{$entity->id}}');"
-                       href="javascript:;"
-                       class="image-storage-btn-download btn btn-default btn-sm">
-                        {{ __cms("Удалить загруженное превью")}}
-                    </a>
+                    <a class="image-storage-btn-download btn btn-default btn-sm clipboard-copy-button">{{ __cms("Копировать ссылку")}}</a>
                 </div>
                 <div class="pull-right">
                     <form class="smart-form">
-                        <div class="input input-file image-storage-images">
-                    <span class="button">
-                        <input type="file" name="image" accept="image/*" onchange="ImageStorage.uploadVideoPreview(this,'{{$entity->id}}');">
-                        {{ __cms("Выбрать")}}
-                    </span>
-                            <input type="text" readonly="readonly" placeholder="{{__cms("Заменить изображение")}}">
-                        </div>
+                    <div class="input input-file image-storage-images">
+                        <span class="button">
+                            <input type="file" name="image" onchange="ImageStorage.replaceSingleFile(this, '{{ $ident }}', '{{$entity->id}}');">
+                            {{ __cms("Выбрать")}}
+                        </span>
+                        <input type="text" readonly="readonly" placeholder="{{__cms("Заменить документ")}}">
+                    </div>
                     </form>
                 </div>
+
             </div>
         </div>
-        @endif
+    @endforeach
 </div>
 
     <div id="imgInfoBox" class="superbox-imageinfo inline-block">
         <div></div>
         <div class="imgInfoBox-container">
-            <div class="imgInfoBox-title">
-                @if($entity->id)
-                    {{__cms('Редактирование видео')}} # {{ $entity->id }}: {{ $entity->title }} ({{ $entity->created_at }})
-                @else
-                    {{__cms('Создание видео')}}
-                @endif
-            </div>
+            <div class="imgInfoBox-title"># {{ $entity->id }}: {{ $entity->title }} ({{ $entity->created_at }})</div>
             <form class="smart-form" id="imgInfoBox-form">
             <fieldset>
                 <div class="imgInfoBox-container-content tab-content padding-10">
@@ -81,12 +61,6 @@
                 </div>
             </fieldset>
             <fieldset>
-                <section><label>{{__cms('Видеогалереи')}}</label>
-                    <select name="relations[image-storage-galleries][]" multiple class="imgInfoBox-select image-storage-select">
-                        @foreach ($relatedEntities['video_gallery'] as $gallery)
-                            <option {{$entity->video_galleries->contains($gallery->id) ? 'selected="selected"' : ''}} value="{{$gallery->id}}">{{$gallery->title}}</option>
-                        @endforeach
-                 </select>
                 </section>
                 <section><label>{{__cms('Теги')}}</label>
                     <select name="relations[image-storage-tags][]" multiple class="imgInfoBox-select image-storage-select">

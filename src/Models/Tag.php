@@ -19,6 +19,11 @@ class Tag extends AbstractImageStorage
         return $this->morphedByMany('Vis\ImageStorage\Image',   'entity', 'vis_tags2entities', 'id_tag', 'id_entity');
     }
 
+    public function documents()
+    {
+        return $this->morphedByMany('Vis\ImageStorage\Document', 'entity', 'vis_tags2entities', 'id_tag', 'id_entity');
+    }
+
     public function videos()
     {
         return $this->morphedByMany('Vis\ImageStorage\Video',   'entity', 'vis_tags2entities', 'id_tag', 'id_entity');
@@ -42,6 +47,8 @@ class Tag extends AbstractImageStorage
         self::flushCache();
         Image::flushCache();
         Video::flushCache();
+        Document::flushCache();
+
 
     }
 }

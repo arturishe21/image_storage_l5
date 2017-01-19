@@ -116,6 +116,7 @@ var ImageStorage = {
 
         $selectable.selectable({
             distance: 5,
+            filter: '.superbox-list',
             selected: function (event, ui) {
                 $(ui.selected).addClass('selected');
                 ImageStorage.checkSelected();
@@ -132,6 +133,34 @@ var ImageStorage = {
             },
         });
 
+    },
+
+    initReplaceSrcImageForm: function()
+    {
+        $('#image-storage-images-sizes-tabs li').click(function(){
+            var element = $(this).find("a").attr('href');
+            var img = ($("#image-storage-tabs-content").find(element).find("img"));
+
+            if(typeof img.attr('real-src') !== typeof undefined && img.attr('real-src') !== false){
+                img.attr('src',img.attr("real-src"));
+                img.removeAttr("real-src")
+            }
+        });
+    },
+
+    initCopyToClipboard: function()
+    {
+        $('.clipboard-copy-button').click(function(){
+            var $copyTarget = $(this).parents(".tab-pane").find(".clipboard-copy-target"),
+                copyText    = $copyTarget.text(),
+                inputStub   = "<input class='copy-input-stub' type='text' value='"+copyText+"'>";
+
+            $(inputStub).insertAfter($copyTarget).select();
+            document.execCommand('copy');
+            $(".copy-input-stub").remove();
+            TableBuilder.showSuccessNotification('Скопировано в буфер');
+
+        });
     },
 
     doResetFilters: function()
@@ -151,6 +180,13 @@ var ImageStorage = {
             }
         });
 
+    },
+
+    doResetUploadPreloader: function(button)
+    {
+        $(button).hide().parent().parent().hide();
+        $('.image-storage-progress-fail,.image-storage-progress-success').css('width', '0%');
+        $('.image-storage-upload-success, .image-storage-upload-fail, .image-storage-upload-upload, .image-storage-upload-total').text("0");
     },
 
     //common in pages with grid view
@@ -235,7 +271,7 @@ var ImageStorage = {
 
     getSelected: function()
     {
-        var selected = $('.superbox-list.selected img'),
+        var selected = $('.superbox-list.selected .superbox-img'),
             selectedArray = [];
 
         selected.each(function() {
@@ -333,7 +369,8 @@ var ImageStorage = {
                     ImageStorage.openSuperBoxPopup(context,currentBlock, response.html);
                     ImageStorage.initSelectBoxes();
                     ImageStorage.initPopupClicks();
-                    ImageStorage.replaceSrcImageForm();
+                    ImageStorage.initReplaceSrcImageForm();
+                    ImageStorage.initCopyToClipboard();
 
                 } else {
                     TableBuilder.showErrorNotification('Что-то пошло не так');
@@ -377,6 +414,7 @@ var ImageStorage = {
                             $.each(idArray, function(index, item) {
                                 ImageStorage.updateGridView(item);
                             });
+                            ImageStorage.checkSelected();
                         } else {
                             TableBuilder.showErrorNotification('Что-то пошло не так');
                         }
@@ -524,76 +562,72 @@ var ImageStorage = {
     },
     //end common in pages with table view
 
-    //images
-    resetUploadPreloader: function(button)
+    //files
+    uploadFiles: function(context)
     {
-        $(button).hide().parent().parent().hide();
-        $('.image-storage-progress-fail,.image-storage-progress-success').css('width', '0%');
-        $('.image-storage-upload-success, .image-storage-upload-fail, .image-storage-upload-upload, .image-storage-upload-total').text("0");
-    },
-
-    uploadImage: function(context)
-    {
-        var imgTotal = context.files.length;
-        var imgCount        = 0;
-        var imgFailCount    = 0;
-        var imgSuccessCount = 0;
-        var percentageMod     = 100 / imgTotal;
+        var fileTotal = context.files.length;
+        var fileCount        = 0;
+        var fileFailCount    = 0;
+        var fileSuccessCount = 0;
+        var percentageMod     = 100 / fileTotal;
         var failPercentage    = 0;
         var successPercentage = 0;
 
-        var imageIdsArray = [];
+        var uploadedId = [];
 
         var $fog = $('.image-storage-process-popup').show();
-        $fog.find('.image-storage-upload-total').text(imgTotal);
+        $fog.find('.image-storage-upload-total').text(fileTotal);
 
         $fog.find('.image-storage-progress-success').css('width', '1%');
 
-        for (var x = 0; x < imgTotal; x++) {
+        for (var x = 0; x < fileTotal; x++) {
             var data = new FormData();
-            data.append("image", context.files[x]);
+            data.append("file", context.files[x]);
 
             jQuery.ajax({
                 data: data,
                 type: "POST",
-                url: "/admin/image_storage/images/upload",
+                url: "/admin/image_storage/"+ImageStorage.entity+"/upload",
                 cache: false,
                 contentType: false,
                 processData: false,
                 success: function(response) {
-                    imgCount = imgCount + 1;
+                    fileCount = fileCount + 1;
 
                     if (response.status) {
                         $('.superbox').prepend(response.html);
                         ImageStorage.initSelectable();
                         ImageStorage.initEditClickEvent();
-                        imgSuccessCount = imgSuccessCount + 1;
+                        fileSuccessCount = fileSuccessCount + 1;
                         successPercentage = successPercentage + percentageMod;
 
-                        imageIdsArray.push(response.id);
+                        uploadedId.push(response.id);
 
-                        $fog.find('.image-storage-upload-upload').text(imgCount);
-                        $fog.find('.image-storage-upload-success').text(imgSuccessCount);
+                        $fog.find('.image-storage-upload-upload').text(fileCount);
+                        $fog.find('.image-storage-upload-success').text(fileSuccessCount);
                         $fog.find('.image-storage-progress-success').css('width', successPercentage +'%');
 
                     } else {
-                        imgFailCount = imgFailCount + 1;
+                        fileFailCount = fileFailCount + 1;
                         failPercentage = successPercentage + failPercentage;
                         var failWidth  = successPercentage + failPercentage;
                         $fog.find('.image-storage-progress-fail').css('width', failWidth +'%');
-                        $fog.find('.image-storage-upload-fail').text(imgFailCount);
+                        $fog.find('.image-storage-upload-fail').text(fileFailCount);
 
                         if (response.message){
                             TableBuilder.showErrorNotification(response.message);
                         }else{
-                            TableBuilder.showErrorNotification("Ошибка при загрузке изображения");
+                            TableBuilder.showErrorNotification("Ошибка при загрузке файла");
                         }
                     }
 
-                    if (imgCount == imgTotal) {
+                    if (fileCount == fileTotal) {
                         $fog.find('.image-storage-upload-finish-btn').show();
-                        if(imageIdsArray.length){
-                            ImageStorage.sendOptimizeImageRequest(imageIdsArray);
+                        if(uploadedId.length){
+                            //fixme bad way to call optimize images
+                            if(ImageStorage.entity == 'images'){
+                                ImageStorage.sendOptimizeImageRequest(uploadedId);
+                            }
                         }
                     }
                 }
@@ -601,49 +635,42 @@ var ImageStorage = {
         }
         $("#upload-image-storage-input").val("");
     },
-
-    replaceSrcImageForm: function()
-    {
-        $('#image-storage-images-sizes-tabs li').click(function(){
-            var element = $(this).find("a").attr('href');
-            var img = ($("#image-storage-tabs-content").find(element).find("img"));
-
-            if(typeof img.attr('real-src') !== typeof undefined && img.attr('real-src') !== false){
-                img.attr('src',img.attr("real-src"));
-                img.removeAttr("real-src")
-            }
-        });
-    },
-
-    replaceSingleImage: function(context, size, idImage)
+    replaceSingleFile: function(context, size, idImage)
     {
         var data = new FormData();
-        data.append("image", context.files[0]);
+        data.append("file", context.files[0]);
         data.append('size', size);
         data.append('id', idImage);
 
         jQuery.ajax({
             data: data,
             type: "POST",
-            url: "/admin/image_storage/images/replace_single_image",
+            url: "/admin/image_storage/"+ImageStorage.entity+"/replace_single",
             cache: false,
             contentType: false,
             processData: false,
             success: function(response) {
                 if (response.status) {
-                    $(context).parents(".tab-pane.active").find('.superbox-current-img').prop('src', response.src);
-                    ImageStorage.sendOptimizeImageRequest(idImage, size);
+
+                    $(context).parents(".tab-pane.active").find('.image-storage-images-sizes-content').html(response.html);
+
+                    //fixme bad way to call optimize images
+                    if(ImageStorage.entity == 'images'){
+                        ImageStorage.sendOptimizeImageRequest(idImage, size);
+                    }
                 } else {
                     if (response.message){
                         TableBuilder.showErrorNotification(response.message);
                     }else{
-                        TableBuilder.showErrorNotification("Ошибка при загрузке изображения");
+                        TableBuilder.showErrorNotification("Ошибка при загрузке файла");
                     }
                 }
             }
         });
     },
+    //end files
 
+    //images
     sendOptimizeImageRequest: function (id, size)
     {
         jQuery.ajax({
@@ -670,7 +697,7 @@ var ImageStorage = {
     uploadVideoPreview: function(context, id)
     {
         var data = new FormData();
-        data.append("image", context.files[0]);
+        data.append("file", context.files[0]);
         data.append('id', id);
 
         jQuery.ajax({

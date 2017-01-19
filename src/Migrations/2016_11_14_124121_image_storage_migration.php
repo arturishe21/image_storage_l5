@@ -107,6 +107,17 @@ class ImageStorageMigration extends Migration
             $table->foreign('id_video_gallery')->references('id')->on('vis_video_galleries')->onDelete('cascade')->onUpdate('cascade');
         });
 
+        Schema::create('vis_documents', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+            $table->increments('id');
+            $table->text('file_folder');
+            $table->text('file_source');
+            $table->string('title',255);
+            $table->string('slug',255);
+            $table->tinyInteger('is_active')->default("1");
+            $table->timestamps();
+        });
+
     }
 
     /**
@@ -124,6 +135,8 @@ class ImageStorageMigration extends Migration
         Schema::dropIfExists('vis_videos2video_galleries');
         Schema::dropIfExists('vis_video_galleries');
         Schema::dropIfExists('vis_videos');
+        Schema::dropIfExists('vis_documents');
+
 
     }
 }

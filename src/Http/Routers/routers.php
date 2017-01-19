@@ -19,7 +19,9 @@ Route::group (['middleware' => ['web']], function () {
 
             include("routers_video_galleries.php");
 
-    });
+            include("routers_documents.php");
+
+        });
 });
 
 

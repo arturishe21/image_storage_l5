@@ -7,65 +7,9 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Session;
 
-class ImagesController extends AbstractImageStorageController
+class ImagesController extends AbstractImageStorageFileController
 {
     protected $model = "Vis\\ImageStorage\\Image";
-
-    public function doUploadImage()
-    {
-        $file = Input::file('image');
-
-        $prefix = $this->model->getConfigPrefix();
-
-        $entity = $this->model;
-
-        if(!$entity->setSourceFile($file)){
-            return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
-        }
-
-        if(!$entity->setNewImageData()) {
-            return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
-        }
-
-        $html = View::make('image-storage::'. $prefix .'.partials.single_list')->with('entity', $entity)->render();
-
-        $data = array(
-            'status' => true,
-            'html'   => $html,
-            'id'     => $entity->id
-        );
-
-        $this->model->flushCache();
-
-        return Response::json($data);
-    }
-
-    public function doReplaceSingleImage()
-    {
-        $file = Input::file('image');
-        $size = Input::get('size');
-        $id   = Input::get('id');
-
-        $entity = $this->model->find($id);
-
-        if(!$entity->setSourceFile($file)){
-            return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
-        }
-
-        $entity->replaceSingleImage($size);
-
-        $entity->save();
-
-        $this->model->flushCache();
-
-        $data = array(
-            'status' => true,
-            'src'    => asset($entity->getSource($size)),
-        );
-
-        return Response::json($data);
-
-    }
 
     public function doOptimizeImage()
     {

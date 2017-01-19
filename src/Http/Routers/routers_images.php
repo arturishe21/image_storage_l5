@@ -53,14 +53,14 @@
             Route::post(
                 'images/upload', array(
                     'as' => 'upload_image',
-                    'uses' => 'ImagesController@doUploadImage'
+                    'uses' => 'ImagesController@doUpload'
                 )
             );
 
             Route::post(
-                'images/replace_single_image', array(
+                'images/replace_single', array(
                     'as' => 'replace_single_image',
-                    'uses' => 'ImagesController@doReplaceSingleImage'
+                    'uses' => 'ImagesController@doReplaceSingle'
                 )
             );
 

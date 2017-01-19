@@ -16,5 +16,15 @@
     "psr-4": {
       "Vis\\ImageStorage\\": "src/"
     }
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "php artisan migrate --path=vendor/vis/image_storage_l5/src/Migrations",
+      "php artisan vendor:publish --tag=public --force",
+      "php artisan vendor:publish --tag=image-storage-config --force"
+    ],
+    "post-update-cmd": [
+      "php artisan vendor:publish --tag=public --force"
+    ]
   }
 }

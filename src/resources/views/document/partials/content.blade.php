@@ -13,9 +13,9 @@
                 <h2> {{__cms($title)}} </h2>
             </header>
             <div class="table_center no-padding">
-                @include('image-storage::image.partials.filters_table')
-                @include('image-storage::image.partials.operations')
-                @include('image-storage::image.partials.content_table')
+                @include('image-storage::document.partials.filters_table')
+                @include('image-storage::document.partials.operations')
+                @include('image-storage::document.partials.content_table')
             </div>
         </div>
     </div>
@@ -29,7 +29,7 @@
 <script>
     //fixme entity setter
     $(document).ready(function(){
-        ImageStorage.entity = 'images';
+        ImageStorage.entity = 'documents';
         //fixme lastPage setter
         ImageStorage.last_page = {{$lastPage}};
     });

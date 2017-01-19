@@ -5,16 +5,15 @@
         <th width="25%">{{__cms("Название")}}</th>
         <th width="10%">{{__cms("Создана (от)")}}</th>
         <th width="10%">{{__cms("Создана (до)")}}</th>
-        <th width="10%">{{__cms("Связанные галереи")}}</th>
         <th width="10%">{{__cms("Связанные теги")}}</th>
         <th width="1%">
             <div class="smart-form pull-right">
                 <div class="input input-file image-storage-images">
                     <span class="button">
-                        <input type="file" name="files[]" multiple="multiple" accept="image/*" id="upload-image-storage-input" onchange="ImageStorage.uploadFiles(this);">
+                        <input type="file" name="files[]" multiple="multiple"  id="upload-image-storage-input" onchange="ImageStorage.uploadFiles(this);">
                         {{__cms("Выбрать")}}
                     </span>
-                    <input type="text" class="j-image-title" placeholder="{{__cms("Загрузить изображения")}}">
+                    <input type="text" class="j-image-title" placeholder="{{__cms("Загрузить документ")}}">
                 </div>
             </div>
         </th>
@@ -23,7 +22,7 @@
         <td>
             <div class="relative">
                 <input type="text"
-                       value="{{Session::get('image_storage_filter.image.filterByTitle')}}"
+                       value="{{Session::get('image_storage_filter.document.filterByTitle')}}"
                        name="image_storage_filter[filterByTitle]"
                        class="form-control input-small">
             </div>
@@ -32,7 +31,7 @@
             <div>
                 <input type="text"
                        id="f-datepicker-from"
-                       value="{{Session::get('image_storage_filter.image.filterByDate.from')}}"
+                       value="{{Session::get('image_storage_filter.document.filterByDate.from')}}"
                        name="image_storage_filter[filterByDate][from]"
                        class="form-control input-small datepicker" >
                 <span class="input-group-addon form-input-icon form-input-filter-icon">
@@ -44,7 +43,7 @@
             <div>
                 <input type="text"
                        id="f-datepicker-to"
-                       value="{{Session::get('image_storage_filter.image.filterByDate.to')}}"
+                       value="{{Session::get('image_storage_filter.document.filterByDate.to')}}"
                        name="image_storage_filter[filterByDate][to]"
                        class="form-control input-small datepicker" >
                 <span class="input-group-addon form-input-icon form-input-filter-icon">
@@ -53,20 +52,10 @@
             </div>
         </td>
         <td>
-            <select name="image_storage_filter[filterByGalleries][]" multiple="multiple" class="image-storage-select">
-                @foreach($relatedEntities['gallery'] as $gallery)
-                    <option value="{{$gallery->id}}"
-                            {{in_array($gallery->id,Session::get('image_storage_filter.image.filterByGalleries', array())) ? "selected" : ""}}>
-                        {{$gallery->title}}
-                    </option>
-                @endforeach
-            </select>
-        </td>
-        <td>
             <select name="image_storage_filter[filterByTags][]" multiple="multiple" class="image-storage-select">
                 @foreach($relatedEntities['tag'] as $tag)
                     <option value="{{$tag->id}}"
-                            {{in_array($tag->id,Session::get('image_storage_filter.image.filterByTags', array())) ? "selected" : ""}}>
+                            {{in_array($tag->id,Session::get('image_storage_filter.document.filterByTags', array())) ? "selected" : ""}}>
                         {{$tag->title}}
                     </option>
                 @endforeach

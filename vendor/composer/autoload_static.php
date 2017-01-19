@@ -21,17 +21,21 @@ class ComposerStaticInitb53a329f2de6d2fb9c017a4f182eef61
     );
 
     public static $classMap = array (
-        'ImageStorageMigration' => __DIR__ . '/../..' . '/src/Migrations/2016_11_14_124120_image_storage_migration.php',
-        'ImageStorageVideosMigration' => __DIR__ . '/../..' . '/src/Migrations/2016_11_21_124120_image_storage_videos_migration.php',
+        'ImageStorageMigration' => __DIR__ . '/../..' . '/src/Migrations/2016_11_14_124121_image_storage_migration.php',
         'Vis\\ImageStorage\\AbstractImageStorage' => __DIR__ . '/../..' . '/src/Models/AbstractImageStorage.php',
         'Vis\\ImageStorage\\AbstractImageStorageController' => __DIR__ . '/../..' . '/src/Http/Controllers/AbstractImageStorageController.php',
+        'Vis\\ImageStorage\\AbstractImageStorageFile' => __DIR__ . '/../..' . '/src/Models/AbstractImageStorageFile.php',
+        'Vis\\ImageStorage\\AbstractImageStorageFileController' => __DIR__ . '/../..' . '/src/Http/Controllers/AbstractImageStorageFileController.php',
         'Vis\\ImageStorage\\AbstractImageStorageGalleryController' => __DIR__ . '/../..' . '/src/Http/Controllers/AbstractImageStorageGalleryController.php',
+        'Vis\\ImageStorage\\Document' => __DIR__ . '/../..' . '/src/Models/Document.php',
+        'Vis\\ImageStorage\\DocumentsController' => __DIR__ . '/../..' . '/src/Http/Controllers/DocumentsController.php',
         'Vis\\ImageStorage\\GalleriesController' => __DIR__ . '/../..' . '/src/Http/Controllers/GalleriesController.php',
         'Vis\\ImageStorage\\Gallery' => __DIR__ . '/../..' . '/src/Models/Gallery.php',
         'Vis\\ImageStorage\\Image' => __DIR__ . '/../..' . '/src/Models/Image.php',
         'Vis\\ImageStorage\\ImagesController' => __DIR__ . '/../..' . '/src/Http/Controllers/ImagesController.php',
         'Vis\\ImageStorage\\Tag' => __DIR__ . '/../..' . '/src/Models/Tag.php',
         'Vis\\ImageStorage\\TagsController' => __DIR__ . '/../..' . '/src/Http/Controllers/TagsController.php',
+        'Vis\\ImageStorage\\UploadableFile' => __DIR__ . '/../..' . '/src/Models/Interfaces/UploadableFile.php',
         'Vis\\ImageStorage\\Video' => __DIR__ . '/../..' . '/src/Models/Video.php',
         'Vis\\ImageStorage\\VideoGalleriesController' => __DIR__ . '/../..' . '/src/Http/Controllers/VideoGalleriesController.php',
         'Vis\\ImageStorage\\VideoGallery' => __DIR__ . '/../..' . '/src/Models/VideoGallery.php',

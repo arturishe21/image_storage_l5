@@ -10,9 +10,9 @@
 <div id="image-storage-tabs-content" class="tab-content padding-10">
     @foreach ($relatedEntities['sizes'] as $ident => $info)
         <div class="tab-pane fade {{$info['default_tab'] ? 'in active':""}}" id="image-storage-images-size-{{ $ident }}">
-        <p>
-            <img {{$info['default_tab'] ? '':"real-"}}src="{{asset($entity->getSource($ident))}}" class="superbox-current-img">
-        </p>
+            <div class="image-storage-images-sizes-content">
+                @include('image-storage::image.partials.tab_content')
+            </div>
             <div class="image-storage-images-sizes-control_row">
                 <div class="pull-left button-block">
                     <a download="{{ $entity->title .'('. $info['caption'] .')' }}"
@@ -34,7 +34,7 @@
                     <form class="smart-form">
                     <div class="input input-file image-storage-images">
                         <span class="button">
-                            <input type="file" name="image" accept="image/*" onchange="ImageStorage.replaceSingleImage(this, '{{ $ident }}', '{{$entity->id}}');">
+                            <input type="file" name="image" accept="image/*" onchange="ImageStorage.replaceSingleFile(this, '{{ $ident }}', '{{$entity->id}}');">
                             {{ __cms("Выбрать")}}
                         </span>
                         <input type="text" readonly="readonly" placeholder="{{__cms("Заменить изображение")}}">
