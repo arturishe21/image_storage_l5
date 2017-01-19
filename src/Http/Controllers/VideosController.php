@@ -8,7 +8,7 @@ class VideosController extends AbstractImageStorageController
 {
     protected $model = "Vis\\ImageStorage\\Video";
 
-
+    //fixme use abstractFileController?
     public function doUploadPreviewImage()
     {
         $file = Input::file('file');
@@ -22,7 +22,7 @@ class VideosController extends AbstractImageStorageController
             return Response::json( array( 'status' => false, 'message'   => $image->getErrorMessage() ));
         }
 
-        if(!$image->setNewImageData()) {
+        if(!$image->setNewFileData()) {
             return Response::json( array( 'status' => false, 'message'   => $image->getErrorMessage() ));
         }
 
