@@ -79,7 +79,7 @@ return array(
                 'caption' => 'Основной файл',
                 'default_tab' => true,
             ),
-            'ru' => array(
+            'ua' => array(
                 'caption' => 'Файл на укр',
                 'default_tab' => false,
             ),

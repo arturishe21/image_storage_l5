@@ -67,13 +67,6 @@ composer update
                       }
                   ),
                   array(
-                      'title' => "Видеогалереи",
-                      'link'  => '/image_storage/video_galleries',
-                      'check' => function() {
-                          return true;
-                      }
-                  ),
-                  array(
                       'title' => "Документы",
                       'link'  => '/image_storage/documents',
                       'check' => function() {

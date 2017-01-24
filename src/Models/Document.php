@@ -19,6 +19,21 @@ class Document extends AbstractImageStorageFile
     protected $sizePrefix = 'file_';
     protected $prefixPath = '/storage/file-storage/';
 
+
+    //fixme temp solution for getting default field with App::getLocale
+    public function getSource($size = 'source')
+    {
+        if($size == Config::get('translations.config.def_locale')){
+            $size = 'source';
+        }
+
+        $field = $this->sizePrefix.$size;
+        $source = $this->file_folder . $this->$field;
+
+        return $source;
+    }
+
+
     public function tags()
     {
         return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
