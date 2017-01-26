@@ -15,6 +15,10 @@
 .image-storage-filters-row .image-storage-select{
     width: 190px;
 }
+.image-storage-filters-row .input-group-addon.form-input-icon.form-input-filter-icon {
+     width: 39px;
+     height: 32px;
+}
 
 .image-storage-process-popup {
     display: none;
