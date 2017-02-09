@@ -88,7 +88,6 @@ return array(
                 'caption' => 'Оригинал',
                 'default_tab' => true,
             ),
-
             'cms_preview' => array(
                 'caption' => 'Превью в ЦМС',
                 'default_tab' => false,
@@ -98,7 +97,8 @@ return array(
                     }),
                 ),
             ),
-            'extra_small' => array(
+            
+/*            'extra_small' => array(
                 'caption' => 'Очень маленькая',
                 'default_tab' => false,
                 'modify' => array(
@@ -107,7 +107,7 @@ return array(
                     }),
                     'resizeCanvas' => array(160, 80, 'center', false, 'rgba(0, 0, 0, 0)'),
                 ),
-            ),
+            ),*/
 
         ),
 
