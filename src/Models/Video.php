@@ -247,7 +247,7 @@ class Video extends AbstractImageStorage
 
     public function getPreviewImage($size = 'source'){
 
-        if($this->preview){
+        if($this->id_preview){
             $image = $this->preview->getSource($size);
         }else{
             $image = $this->getYouTubePreviewUrl();
