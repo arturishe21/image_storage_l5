@@ -155,6 +155,10 @@ class Image extends AbstractImageStorageFile
         }else{
             $sourcePath = public_path() . $this->getSource();
             $this->extension  = $this->getFileExtension($size);
+            //fixme temp solution for new size image generation
+            if(!$this->extension){
+                $this->extension = $this->getFileExtension();
+            }
         }
 
         $img = \Image::make($sourcePath);
