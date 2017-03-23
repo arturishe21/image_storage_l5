@@ -47,7 +47,7 @@ class Video extends AbstractImageStorage
 
         $relatedVideosId = self::whereHas('video_galleries', function($q)  use ($galleries){
             $q->whereIn('id_video_gallery', $galleries);
-        })->lists('id');
+        })->pluck('id');
 
         return $query->whereIn('id', $relatedVideosId);
     }

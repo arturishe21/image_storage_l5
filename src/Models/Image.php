@@ -44,8 +44,8 @@ class Image extends AbstractImageStorageFile
         }
 
         $relatedImagesIds = self::whereHas('galleries', function($q)  use ($galleries){
-                                    $q->whereIn('id_gallery', $galleries);
-                                })->lists('id');
+            $q->whereIn('id_gallery', $galleries);
+        })->pluck('id');
 
         return $query->whereIn('id', $relatedImagesIds);
     }

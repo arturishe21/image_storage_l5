@@ -174,7 +174,7 @@ abstract class AbstractImageStorage extends Model
         $relatedId = self::whereHas('tags', function($q)  use ($tags,$className){
             $q->whereIn('id_tag', $tags)
               ->where('entity_type', $className);
-        })->lists('id');
+        })->pluck('id');
 
         return $query->whereIn('id', $relatedId);
     }
