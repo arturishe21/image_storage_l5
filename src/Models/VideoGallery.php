@@ -15,7 +15,6 @@ class VideoGallery extends AbstractImageStorage
         return $this
             ->belongsToMany('Vis\ImageStorage\Video', 'vis_videos2video_galleries', 'id_video_gallery', 'id_video')
             ->orderBy('priority', 'desc')
-            ->active()
             ->withPivot('is_preview');
     }
 
@@ -26,6 +25,18 @@ class VideoGallery extends AbstractImageStorage
 
     public function afterSaveAction(){
         $this->makeRelations();
+    }
+
+    public function scopeHasVideos($query)
+    {
+        return $query->has('videos');
+    }
+
+    public function scopeHasActiveVideos($query)
+    {
+        return $query->whereHas('videos', function ($query) {
+            $query->active();
+        });
     }
 
     public function getRelatedEntities()

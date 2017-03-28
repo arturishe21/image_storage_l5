@@ -15,7 +15,6 @@ class Gallery extends AbstractImageStorage
         return $this
             ->belongsToMany('Vis\ImageStorage\Image', 'vis_images2galleries', 'id_gallery', 'id_image')
             ->orderBy('priority', 'desc')
-            ->active()
             ->withPivot('is_preview');
     }
 
@@ -26,6 +25,18 @@ class Gallery extends AbstractImageStorage
 
     public function afterSaveAction(){
         $this->makeRelations();
+    }
+
+    public function scopeHasImages($query)
+    {
+        return $query->has('images');
+    }
+
+    public function scopeHasActiveImages($query)
+    {
+        return $query->whereHas('images', function ($query) {
+            $query->active();
+        });
     }
 
     public function getRelatedEntities()
