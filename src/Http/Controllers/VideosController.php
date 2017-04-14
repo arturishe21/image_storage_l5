@@ -2,13 +2,11 @@
 
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\View;
 
 class VideosController extends AbstractImageStorageController
 {
     protected $model = "Vis\\ImageStorage\\Video";
 
-    //fixme use abstractFileController?
     public function doUploadPreviewImage()
     {
         $file = Input::file('file');
@@ -18,12 +16,12 @@ class VideosController extends AbstractImageStorageController
 
         $image = new Image;
 
-        if(!$image->setSourceFile($file)){
-            return Response::json( array( 'status' => false, 'message'   => $image->getErrorMessage() ));
+        if (!$image->setSourceFile($file)) {
+            return Response::json(array('status' => false, 'message' => $image->getErrorMessage()));
         }
 
-        if(!$image->setNewFileData()) {
-            return Response::json( array( 'status' => false, 'message'   => $image->getErrorMessage() ));
+        if (!$image->setNewFileData()) {
+            return Response::json(array('status' => false, 'message' => $image->getErrorMessage()));
         }
 
         $video->setPreviewImage($image->id);

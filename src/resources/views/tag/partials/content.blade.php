@@ -29,7 +29,6 @@
 
 
 <script>
-    //fixme entity setter
     $(document).ready(function(){
         ImageStorage.entity = 'tags';
     });

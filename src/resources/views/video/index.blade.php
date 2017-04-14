@@ -7,5 +7,3 @@
 @section('main')
     @include('image-storage::video.partials.content')
 @stop
-
-

@@ -2,12 +2,11 @@
 
 var ImageStorage = {
 
-    loaded_page: 1,
-    //fixme entity setter
-    entity: 'images',
-    last_page: false,
-    is_loading: false,
-    is_selecting: false,
+    loaded_page : 1,
+    entity       : 'images',
+    last_page    : false,
+    is_loading   : false,
+    is_selecting : false,
 
     init: function()
     {
@@ -269,6 +268,14 @@ var ImageStorage = {
         });
     },
 
+    closeModalForm: function()
+    {
+        var modalForm = $("#modal_form");
+        if(modalForm.length){
+            modalForm.modal('hide');
+        }
+    },
+
     getSelected: function()
     {
         var selected = $('.superbox-list.selected .superbox-img'),
@@ -508,10 +515,7 @@ var ImageStorage = {
                         if (response.status) {
                             TableBuilder.showSuccessNotification('Запись удалена');
                             ImageStorage.updateTableView(id);
-                            //fixme hide modal gallery popup
-                            if($(".modal-body.row").length){
-                                $("button.close").click();
-                            }
+                            ImageStorage.closeModalForm();
                         } else {
                             TableBuilder.showErrorNotification('Что-то пошло не так');
                         }
@@ -535,10 +539,7 @@ var ImageStorage = {
                 if (response.status) {
                     TableBuilder.showSuccessNotification('Сохранено');
                     ImageStorage.updateTableView(id, response.html);
-                    //fixme hide modal gallery popup
-                    if($(".modal-body.row").length){
-                        $("button.close").click();
-                    }
+                    ImageStorage.closeModalForm();
                 } else {
                     if (response.message){
                         TableBuilder.showErrorNotification(response.message);
@@ -623,11 +624,8 @@ var ImageStorage = {
 
                     if (fileCount == fileTotal) {
                         $fog.find('.image-storage-upload-finish-btn').show();
-                        if(uploadedId.length){
-                            //fixme bad way to call optimize images
-                            if(ImageStorage.entity == 'images'){
-                                ImageStorage.sendOptimizeImageRequest(uploadedId);
-                            }
+                        if (uploadedId.length && ImageStorage.entity == 'images') {
+                            ImageStorage.sendOptimizeImageRequest(uploadedId);
                         }
                     }
                 }
@@ -651,13 +649,12 @@ var ImageStorage = {
             processData: false,
             success: function(response) {
                 if (response.status) {
-
                     $(context).parents(".tab-pane.active").find('.image-storage-images-sizes-content').html(response.html);
 
-                    //fixme bad way to call optimize images
-                    if(ImageStorage.entity == 'images'){
+                    if (ImageStorage.entity == 'images') {
                         ImageStorage.sendOptimizeImageRequest(idImage, size);
                     }
+
                 } else {
                     if (response.message){
                         TableBuilder.showErrorNotification(response.message);
@@ -673,23 +670,25 @@ var ImageStorage = {
     //images
     sendOptimizeImageRequest: function (id, size)
     {
-        jQuery.ajax({
-            type: "POST",
-            url: "/admin/image_storage/images/optimize_image",
-            data: {
-                id:    id,
-                size:  size,
-            },
-            dataType: 'json',
-            /*            success: function(response) {
-             if (response.status) {
-             TableBuilder.showSuccessNotification('Изображение успешно оптимизированно');
-             } else {
-             TableBuilder.showErrorNotification('Что-то пошло не так при оптимизации изображения');
-             }
-             }
-             */
-        });
+        setTimeout(function(){
+            jQuery.ajax({
+                type: "POST",
+                url: "/admin/image_storage/images/optimize_image",
+                data: {
+                    id:    id,
+                    size:  size,
+                },
+                dataType: 'json',
+                /*success: function (response) {
+                    if (response.status) {
+                        TableBuilder.showSuccessNotification('Изображение успешно оптимизированно');
+                    } else {
+                        TableBuilder.showErrorNotification('Что-то пошло не так при оптимизации изображения');
+                    }
+                }*/
+            });
+        }, 1000)
+
     },
     //end images
 
@@ -711,11 +710,7 @@ var ImageStorage = {
                 if (response.status) {
                     TableBuilder.showSuccessNotification('Превью установлено');
                     ImageStorage.changePreviewSrc(context,response.src);
-
-                    //fixme solution for not triggering optimization before user sees preview changes on page
-                    setTimeout(function(){
-                        ImageStorage.sendOptimizeImageRequest(response.id);
-                    }, 1000)
+                    ImageStorage.sendOptimizeImageRequest(response.id);
 
                 } else {
                     if (response.message){
@@ -763,8 +758,7 @@ var ImageStorage = {
     onChangeGalleryOrder: function()
     {
         var idArray = $('.image-storage-sortable').sortable('toArray');
-        //fixme hidden input? find better decision
-        var idGallery = $('[name=gallery_id]').val();
+        var idGallery = $('.modal-body.row').data('gallery_id');
 
         jQuery.ajax({
             type: "POST",
@@ -811,8 +805,7 @@ var ImageStorage = {
     setGalleryPreview: function(preview)
     {
         var idPreview = $(preview).attr('id');
-        //fixme hidden input? find better decision
-        var idGallery = $('[name=gallery_id]').val();
+        var idGallery = $('.modal-body.row').data('gallery_id');
 
         jQuery.ajax({
             type: "POST",

@@ -8,8 +8,7 @@
         @endif
     </h4>
 </div>
-<div class="modal-body row">
-    <input type="hidden" name="gallery_id" value="{{$entity->id}}">
+<div class="modal-body row" data-gallery_id="{{$entity->id}}" >
     <div class="tb-uploaded-image-container col-xs-8">
             <ul class="dop_foto image-storage-sortable">
                 @forelse ($entity->videos as $key => $video)

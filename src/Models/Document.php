@@ -1,45 +1,34 @@
 <?php namespace Vis\ImageStorage;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
-
 
 class Document extends AbstractImageStorageFile
 {
     protected $table = 'vis_documents';
     protected $configPrefix = 'document';
-    
-    protected $sizePrefix = 'file_';
-    protected $prefixPath = '/storage/file-storage/';
 
-
-    //fixme temp solution for getting default field with App::getLocale
     public function getSource($size = 'source')
     {
-        if($size == Config::get('translations.config.def_locale')){
+        //temp solution for getting default field with App::getLocale
+        if ($size == Config::get('translations.config.def_locale')) {
             $size = 'source';
         }
 
-        $field = $this->sizePrefix.$size;
+        $field = $this->sizePrefix . $size;
         $source = $this->file_folder . $this->$field;
 
         return $source;
     }
-
 
     public function tags()
     {
         return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
     }
 
-    public function afterSaveAction(){
+    public function afterSaveAction()
+    {
         $this->makeRelations();
     }
 
@@ -62,9 +51,9 @@ class Document extends AbstractImageStorageFile
     private function makeImageTagsRelations()
     {
 
-       $tags = Input::get('relations.image-storage-tags', array());
+        $tags = Input::get('relations.image-storage-tags', array());
 
-       $this->tags()->sync($tags);
+        $this->tags()->sync($tags);
 
         self::flushCache();
         Tag::flushCache();
@@ -72,12 +61,12 @@ class Document extends AbstractImageStorageFile
 
     private function doMakeFile($size = 'source')
     {
-        $field = $this->sizePrefix.$size;
+        $field = $this->sizePrefix . $size;
 
-        if($this->sourceFile){
+        if ($this->sourceFile) {
             $this->extension = $this->sourceFile->guessExtension();
-        }else{
-            $this->extension  = $this->getFileExtension($size);
+        } else {
+            $this->extension = $this->getFileExtension($size);
         }
 
         $fileName = $this->makeFileName();
@@ -86,22 +75,22 @@ class Document extends AbstractImageStorageFile
 
         $this->sourceFile->move(public_path() . $destinationPath, $fileName);
 
-        $this->$field = $size."/".$fileName;
+        $this->$field = $size . "/" . $fileName;
     }
 
     private function doSizesVariations()
     {
         $checkColumns = $this->doCheckSchemeSizes();
 
-        if(count($checkColumns)){
+        if (count($checkColumns)) {
             $this->updateWithNewSize($checkColumns);
         }
 
-        $sourceFile = $this->sizePrefix."source";
+        $sourceFile = $this->sizePrefix . "source";
 
         $sizes = $this->getConfigSizesModifiable();
         foreach ($sizes as $size => $sizeInfo) {
-            $field = $this->sizePrefix.$size;
+            $field = $this->sizePrefix . $size;
             $this->$field = $this->$sourceFile;
         }
     }
@@ -114,7 +103,7 @@ class Document extends AbstractImageStorageFile
             $this->setFileTitle();
             $this->save();
 
-            $this->doMakeSourceFile();
+            $this->setFileFolder();
             $this->doMakeFile();
             $this->doSizesVariations();
             $this->save();
@@ -122,7 +111,7 @@ class Document extends AbstractImageStorageFile
             DB::commit();
             return true;
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
             DB::rollBack();
             return false;
@@ -138,10 +127,10 @@ class Document extends AbstractImageStorageFile
     {
         $entities = self::all()->except($this->id);
 
-        $sourceFile = $this->sizePrefix."source";
+        $sourceFile = $this->sizePrefix . "source";
 
-        foreach($sizes as $key=>$sizeName){
-            $field = $this->sizePrefix.$sizeName;
+        foreach ($sizes as $key => $sizeName) {
+            $field = $this->sizePrefix . $sizeName;
 
             foreach ($entities as $image) {
                 $image->$field = $this->$sourceFile;

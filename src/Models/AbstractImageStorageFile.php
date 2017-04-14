@@ -1,25 +1,20 @@
 <?php namespace Vis\ImageStorage;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\File;
 
-
-abstract class AbstractImageStorageFile extends AbstractImageStorage implements UploadableFile
+abstract class AbstractImageStorageFile extends AbstractImageStorage implements UploadableFileInterface
 {
-    protected $sizePrefix;
-    protected $prefixPath;
+    protected $sizePrefix = 'file_';
+    protected $prefixPath = '/storage/image-storage/';
 
     protected $extension;
     protected $uploadedFile;
     protected $sourceFile;
 
-    public function beforeSaveAction(){
-        if(!$this->doRenameFiles()){
+    public function beforeSaveAction()
+    {
+        if (!$this->doRenameFiles()) {
             return false;
         }
 
@@ -96,7 +91,7 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
 
     public function getSource($size = 'source')
     {
-        $field = $this->sizePrefix.$size;
+        $field = $this->sizePrefix . $size;
         $source = $this->file_folder . $this->$field;
 
         return $source;
@@ -136,7 +131,7 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
 
     protected function getPathForFile()
     {
-        $postfixPath = date('Y/m/d',strtotime($this->created_at)). '/'. $this->id .'/';
+        $postfixPath = date('Y/m/d', strtotime($this->created_at)) . '/' . $this->id . '/';
 
         $chunks = explode("/", $postfixPath);
 
@@ -153,13 +148,13 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
 
     public function setSourceFile($file)
     {
-        if(!$file){
+        if (!$file) {
             return false;
         }
 
         $this->uploadedFile = $file;
 
-        if($this->failsToValidateFile()){
+        if ($this->failsToValidateFile()) {
             return false;
         }
 
@@ -170,11 +165,11 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
 
     protected function setFileTitle()
     {
-        if($this->getConfigUseSourceTitle()){
+        if ($this->getConfigUseSourceTitle()) {
             $fileName = $this->sourceFile->getClientOriginalName();
             $extension = $this->sourceFile->getClientOriginalExtension();
-            $title = strstr($fileName, ".".$extension, true);
-        }else{
+            $title = strstr($fileName, "." . $extension, true);
+        } else {
             $title = md5_file($this->sourceFile->getPathName()) . '_' . time();
         }
 
@@ -185,11 +180,11 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
 
     private function failsToValidateFile()
     {
-        if($this->failsToValidateFileSize()){
+        if ($this->failsToValidateFileSize()) {
             return true;
         }
 
-        if($this->failsToValidateFileExtension()){
+        if ($this->failsToValidateFileExtension()) {
             return true;
         }
 
@@ -198,17 +193,17 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
 
     private function failsToValidateFileSize()
     {
-        if(!$this->getConfigSizeValidation()){
+        if (!$this->getConfigSizeValidation()) {
             return false;
         }
 
         $maxFileSize = $this->getConfigSizeMax();
         $uploadFileSize = $this->uploadedFile->getClientSize();
 
-        if($uploadFileSize > $maxFileSize){
-            $maxFileSizeInMB = $maxFileSize/1000000;
-            $message  =  $this->getConfigSizeMaxErrorMessage();
-            $this->errorMessage =  str_replace("[size]", $maxFileSizeInMB, $message);
+        if ($uploadFileSize > $maxFileSize) {
+            $maxFileSizeInMB = $maxFileSize / 1000000;
+            $message = $this->getConfigSizeMaxErrorMessage();
+            $this->errorMessage = str_replace("[size]", $maxFileSizeInMB, $message);
             return true;
         }
 
@@ -217,17 +212,17 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
 
     private function failsToValidateFileExtension()
     {
-        if(!$this->getConfigExtensionValidation()){
+        if (!$this->getConfigExtensionValidation()) {
             return false;
         }
 
         $allowedExtensions = $this->getConfigAllowedExtensions();
         $uploadFileExtension = $this->uploadedFile->getClientOriginalExtension();
 
-        if(!in_array($uploadFileExtension,$allowedExtensions)){
+        if (!in_array($uploadFileExtension, $allowedExtensions)) {
             $allowedExtensionsList = implode(",", $allowedExtensions);
-            $message  =  $this->getConfigExtensionsErrorMessage();
-            $this->errorMessage =  str_replace("[extension_list]", $allowedExtensionsList, $message);
+            $message = $this->getConfigExtensionsErrorMessage();
+            $this->errorMessage = str_replace("[extension_list]", $allowedExtensionsList, $message);
             return true;
         }
 
@@ -255,19 +250,14 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
             $tempPath = $tempPath . '/';
         }
 
-        $destinationPath = $prefixPath . $postfixPath . $size. '/';
+        $destinationPath = $prefixPath . $postfixPath . $size . '/';
 
         return $destinationPath;
     }
 
-    protected function doMakeSourceFile()
+    protected function setFileFolder()
     {
-        list($chunks, $postfixPath) = $this->getPathForFile();
-
-        $absolutePath =  $this->prefixPath.$postfixPath;
-
-        $this->file_folder = $absolutePath;
-
+        $this->file_folder = $this->prefixPath . $this->getPathForFile()[1];
     }
 
     protected function doDeleteFiles()
@@ -275,11 +265,11 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
         if ($this->getConfigDeleteFiles()) {
 
             //two level protection from removing the public folder
-            if($this->file_folder){
+            if ($this->file_folder) {
 
                 $fileFolder = public_path() . rtrim($this->file_folder, "/");
 
-                if(public_path() != $fileFolder){
+                if (public_path() != $fileFolder) {
 
                     File::deleteDirectory($fileFolder);
                 }
@@ -299,7 +289,7 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
 
             if (!Schema::hasColumn($this->table, $columnName)) {
 
-                Schema::table($this->table, function ($table) use ($columnName) {
+                Schema::table($this->table, function (\Illuminate\Database\Schema\Blueprint $table) use ($columnName) {
                     $table->text($columnName);
                 });
 
@@ -314,7 +304,7 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
     {
         if ($this->getConfigRenameFiles()) {
 
-            if($this->isDirty('title')){
+            if ($this->isDirty('title')) {
 
                 $sizes = $this->getConfigSizes();
 
@@ -322,14 +312,14 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
 
                     $imagePath = public_path() . $this->getSource($sizeName);
 
-                    $this->extension  = $this->getFileExtension($sizeName);
+                    $this->extension = $this->getFileExtension($sizeName);
 
-                    $newName = $sizeName ."/".$this->makeFileName();
-                    $newPath = public_path(). $this->file_folder .  $newName;
+                    $newName = $sizeName . "/" . $this->makeFileName();
+                    $newPath = public_path() . $this->file_folder . $newName;
 
-                    $field = $this->sizePrefix.$sizeName;
+                    $field = $this->sizePrefix . $sizeName;
 
-                    if(File::move($imagePath,$newPath)){
+                    if (File::move($imagePath, $newPath)) {
                         $this->$field = $newName;
                     }
                 }
@@ -337,6 +327,5 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
         }
         return true;
     }
-
 
 }

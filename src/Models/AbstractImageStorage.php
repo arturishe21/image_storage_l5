@@ -21,14 +21,14 @@ abstract class AbstractImageStorage extends Model
 
     public static function flushCache()
     {
-       $className = static::class;
-       $classObject = new $className;
+        $className = static::class;
+        $classObject = new $className;
 
-       $cacheTag = $classObject->cacheNamespace."-".$classObject->configPrefix;
+        $cacheTag = $classObject->cacheNamespace . "-" . $classObject->configPrefix;
 
-       Cache::tags($cacheTag)->flush();
+        Cache::tags($cacheTag)->flush();
     } // end flushCache
-    
+
     public function beforeSaveAction()
     {
         return true;
@@ -73,7 +73,7 @@ abstract class AbstractImageStorage extends Model
 
     public function getConfigValue($value)
     {
-        return Config::get('image-storage.'.$this->getConfigPrefix().'.'.$value);
+        return Config::get('image-storage.' . $this->getConfigPrefix() . '.' . $value);
     }
 
     public function getConfigTitle()
@@ -98,11 +98,11 @@ abstract class AbstractImageStorage extends Model
         $configFields = $this->getConfigFields();
 
         foreach ($configFields as $field => $fieldInfo) {
-            if(isset($fieldInfo['tabs'])){
+            if (isset($fieldInfo['tabs'])) {
                 foreach ($fieldInfo['tabs'] as $tab => $tabInfo) {
-                    $columnNames[] = $field.$tabInfo['postfix'];
+                    $columnNames[] = $field . $tabInfo['postfix'];
                 }
-            }else{
+            } else {
                 $columnNames[] = $field;
             }
         }
@@ -116,12 +116,12 @@ abstract class AbstractImageStorage extends Model
 
         $slugCheck = false;
 
-        while($slugCheck == false){
+        while ($slugCheck === false) {
             $slugCheckQuery = $this->where('slug', 'like', $slug)->where("id", "!=", $this->id)->count();
 
-            if($slugCheckQuery){
+            if ($slugCheckQuery) {
                 $slug = $slug . "-1";
-            }else{
+            } else {
                 $slugCheck = true;
             }
         }
@@ -140,8 +140,8 @@ abstract class AbstractImageStorage extends Model
 
         $columnNames = $this->getConfigFieldsNames();
 
-        foreach($columnNames as $key=>$columnName) {
-            $value =  isset($fields[$columnName]) ? $fields[$columnName] : false;
+        foreach ($columnNames as $key => $columnName) {
+            $value = isset($fields[$columnName]) ? $fields[$columnName] : false;
             $this->$columnName = $value;
         }
 
@@ -171,9 +171,9 @@ abstract class AbstractImageStorage extends Model
 
         $className = get_class($this);
 
-        $relatedId = self::whereHas('tags', function($q)  use ($tags,$className){
-            $q->whereIn('id_tag', $tags)
-              ->where('entity_type', $className);
+        $relatedId = self::whereHas('tags', function (\Illuminate\Database\Eloquent\Builder $query) use ($tags, $className) {
+            $query->whereIn('id_tag', $tags)
+                ->where('entity_type', $className);
         })->pluck('id');
 
         return $query->whereIn('id', $relatedId);
@@ -203,7 +203,7 @@ abstract class AbstractImageStorage extends Model
         return $query->whereBetween('created_at', array($from, $to));
     } // end scopeByTitle
 
-    public function scopeFilterByActivity($query, $activity  = array())
+    public function scopeFilterByActivity($query, $activity = array())
     {
         if (!$activity) {
             return $query;
@@ -214,16 +214,15 @@ abstract class AbstractImageStorage extends Model
 
     public function scopeFilterSearch($query)
     {
-        $filters = Session::get('image_storage_filter.'.$this->getConfigPrefix(), array());
+        $filters = Session::get('image_storage_filter.' . $this->getConfigPrefix(), array());
 
-        foreach($filters as $column => $value) {
+        foreach ($filters as $column => $value) {
             $query->$column($value);
         }
 
         return $query;
     } // end scopeSearch
 
-    //fixme find a way to use getConfigFieldsNames here
     protected function doCheckSchemeFields()
     {
         $fields = $this->getConfigFields();
@@ -231,20 +230,25 @@ abstract class AbstractImageStorage extends Model
         foreach ($fields as $field => $fieldInfo) {
             $columnNames = [];
 
-            if(isset($fieldInfo['tabs'])){
+            if (isset($fieldInfo['tabs'])) {
                 foreach ($fieldInfo['tabs'] as $tab => $tabInfo) {
-                    $columnNames[] = $field.$tabInfo['postfix'];
+                    $columnNames[] = $field . $tabInfo['postfix'];
                 }
-            }else{
+            } else {
                 $columnNames[] = $field;
             }
 
-            foreach($columnNames as $key=>$columnName){
+            foreach ($columnNames as $key => $columnName) {
                 if (!Schema::hasColumn($this->table, $columnName)) {
 
-                    @list($field, $param) = explode("|", $fieldInfo['field']);
+                    try{
+                        list($field, $param) = explode("|", $fieldInfo['field']);
+                    }
+                    catch(\Exception $e){
+                        throw new \RuntimeException($e->getMessage());
+                    }
 
-                    Schema::table($this->table, function ($table) use ($columnName, $field, $param) {
+                    Schema::table($this->table, function (\Illuminate\Database\Schema\Blueprint $table) use ($columnName, $field, $param) {
                         $field_add = $table->$field($columnName);
                         if ($param) {
                             $field_add->length($param);

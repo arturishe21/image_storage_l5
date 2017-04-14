@@ -1,7 +1,6 @@
 <?php namespace Vis\ImageStorage;
 
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Cache;
 
 class Video extends AbstractImageStorage
 {
@@ -9,13 +8,13 @@ class Video extends AbstractImageStorage
     protected $configPrefix = 'video';
 
     private $youTubeData;
-    
+
     public function preview()
     {
         return $this->belongsTo('Vis\ImageStorage\Image', 'id_preview');
     }
 
-    public function video_galleries()
+    public function videoGalleries()
     {
         return $this->belongsToMany('Vis\ImageStorage\VideoGallery', 'vis_videos2video_galleries', 'id_video', 'id_video_gallery');
     }
@@ -25,16 +24,18 @@ class Video extends AbstractImageStorage
         return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
     }
 
-    public function beforeSaveAction(){
+    public function beforeSaveAction()
+    {
 
-        if($this->failsToValidateVideo()){
+        if ($this->failsToValidateVideo()) {
             return false;
         }
 
         return true;
     }
 
-    public function afterSaveAction(){
+    public function afterSaveAction()
+    {
         $this->makeRelations();
         $this->useYouTubeApi();
     }
@@ -45,8 +46,8 @@ class Video extends AbstractImageStorage
             return $query;
         }
 
-        $relatedVideosId = self::whereHas('video_galleries', function($q)  use ($galleries){
-            $q->whereIn('id_video_gallery', $galleries);
+        $relatedVideosId = self::whereHas('videoGalleries', function (\Illuminate\Database\Eloquent\Builder $query) use ($galleries) {
+            $query->whereIn('id_video_gallery', $galleries);
         })->pluck('id');
 
         return $query->whereIn('id', $relatedVideosId);
@@ -144,25 +145,25 @@ class Video extends AbstractImageStorage
 
         $stubs = ["{id}", "{part}", "{key}"];
 
-        $replacements = [$this->getEncodedYouTubeId(),$this->getConfigYouTubeApiPart(),$this->getConfigYouTubeApiKey()];
+        $replacements = [$this->getEncodedYouTubeId(), $this->getConfigYouTubeApiPart(), $this->getConfigYouTubeApiKey()];
 
-        $url = str_replace($stubs,$replacements,$configUrl);
+        $url = str_replace($stubs, $replacements, $configUrl);
 
         return $url;
     }
 
     private function getYouTubeApiData()
     {
-        if(!$this->getConfigYouTubeUseApi()){
+        if (!$this->getConfigYouTubeUseApi()) {
             return false;
         }
 
-        if(!$this->youTubeData){
+        if (!$this->youTubeData) {
             $apiResponse = file_get_contents($this->getApiUrl());
             $apiData = json_decode($apiResponse);
 
             $youTubeData = array_shift($apiData->items);
-            if(!$youTubeData){
+            if (!$youTubeData) {
                 return false;
             }
             $this->youTubeData = $youTubeData;
@@ -173,11 +174,11 @@ class Video extends AbstractImageStorage
 
     private function getYouTubeSnippet()
     {
-        if(!$this->getYouTubeApiData()){
+        if (!$this->getYouTubeApiData()) {
             return false;
         }
 
-        if(!$this->youTubeData->snippet){
+        if (!$this->youTubeData->snippet) {
             return false;
         }
 
@@ -186,11 +187,11 @@ class Video extends AbstractImageStorage
 
     private function getYouTubeStatistics()
     {
-        if(!$this->getYouTubeApiData()){
+        if (!$this->getYouTubeApiData()) {
             return false;
         }
 
-        if(!$this->youTubeData->statistics){
+        if (!$this->youTubeData->statistics) {
             return false;
         }
 
@@ -199,37 +200,37 @@ class Video extends AbstractImageStorage
 
     public function getYouTubeTitle()
     {
-        return $this->getYouTubeSnippet() ?  $this->getYouTubeSnippet()->title : "";
+        return $this->getYouTubeSnippet() ? $this->getYouTubeSnippet()->title : "";
     }
 
     public function getYouTubeDescription()
     {
-        return $this->getYouTubeSnippet() ?  $this->getYouTubeSnippet()->description : "";
+        return $this->getYouTubeSnippet() ? $this->getYouTubeSnippet()->description : "";
     }
 
     public function getYouTubeViewCount()
     {
-        return $this->getYouTubeStatistics() ?  $this->getYouTubeStatistics()->viewCount : 0;
+        return $this->getYouTubeStatistics() ? $this->getYouTubeStatistics()->viewCount : 0;
     }
 
     public function getYouTubeLikeCount()
     {
-        return $this->getYouTubeStatistics() ?  $this->getYouTubeStatistics()->likeCount : 0;
+        return $this->getYouTubeStatistics() ? $this->getYouTubeStatistics()->likeCount : 0;
     }
 
     public function getYouTubeDislikeCount()
     {
-        return $this->getYouTubeStatistics() ?  $this->getYouTubeStatistics()->dislikeCount : 0;
+        return $this->getYouTubeStatistics() ? $this->getYouTubeStatistics()->dislikeCount : 0;
     }
 
     public function getYouTubeFavoriteCount()
     {
-        return $this->getYouTubeStatistics() ?  $this->getYouTubeStatistics()->favoriteCount : 0;
+        return $this->getYouTubeStatistics() ? $this->getYouTubeStatistics()->favoriteCount : 0;
     }
 
     public function getYouTubeCommentCount()
     {
-        return $this->getYouTubeStatistics() ?  $this->getYouTubeStatistics()->commentCount : 0;
+        return $this->getYouTubeStatistics() ? $this->getYouTubeStatistics()->commentCount : 0;
     }
 
     private function getYouTubePreviewUrl()
@@ -240,52 +241,55 @@ class Video extends AbstractImageStorage
 
         $replacements = [$this->getEncodedYouTubeId(), $this->getConfigYouTubePreviewQuality()];
 
-        $url = str_replace($stubs,$replacements,$configUrl);
+        $url = str_replace($stubs, $replacements, $configUrl);
 
         return $url;
     }
 
-    public function getPreviewImage($size = 'source'){
+    public function getPreviewImage($size = 'source')
+    {
 
-        if($this->id_preview){
+        if ($this->id_preview) {
             $image = $this->preview->getSource($size);
-        }else{
+        } else {
             $image = $this->getYouTubePreviewUrl();
         }
 
         return $image;
     }
 
-    public function setPreviewImage($id){
+    public function setPreviewImage($id)
+    {
         $this->preview()->associate($id);
         $this->save();
     }
 
-    public function unsetPreviewImage(){
+    public function unsetPreviewImage()
+    {
         $this->preview()->dissociate();
         $this->save();
     }
 
     private function setYouTubeStoreData()
     {
-        if($this->getConfigYouTubeStoreData()){
+        if ($this->getConfigYouTubeStoreData()) {
             $this->youtube_data = json_encode($this->youTubeData);
         }
     }
 
     private function setYouTubeData()
     {
-        if($this->getConfigYouTubeSetData()){
+        if ($this->getConfigYouTubeSetData()) {
 
             $columnNames = $this->getConfigFieldsNames();
 
-            foreach($columnNames as $key=>$columnName) {
-                if(strpos($columnName, 'title') !== false && !$this->$columnName){
+            foreach ($columnNames as $key => $columnName) {
+                if (strpos($columnName, 'title') !== false && !$this->$columnName) {
                     $this->$columnName = $this->getYouTubeTitle();
-                }else
-                if(strpos($columnName, 'description') !== false && !$this->$columnName){
-                    $this->$columnName = $this->getYouTubeDescription();
-                }
+                } else
+                    if (strpos($columnName, 'description') !== false && !$this->$columnName) {
+                        $this->$columnName = $this->getYouTubeDescription();
+                    }
             }
 
             $this->setSlug();
@@ -294,7 +298,7 @@ class Video extends AbstractImageStorage
 
     private function failsToValidateVideo()
     {
-        if($this->failsToValidateVideoExistence()){
+        if ($this->failsToValidateVideoExistence()) {
             return true;
         }
 
@@ -304,20 +308,20 @@ class Video extends AbstractImageStorage
     private function failsToValidateVideoExistence()
     {
 
-        if(!$this->getConfigVideoExistanceValidationEnabled()){
+        if (!$this->getConfigVideoExistanceValidationEnabled()) {
             return false;
         }
 
         $validationUrl = $this->getConfigVideoExistanceValidationUrl();
         $videoId = $this->id_youtube;
 
-        $checkUrl =  str_replace("[id_youtube]", $videoId, $validationUrl);
+        $checkUrl = str_replace("[id_youtube]", $videoId, $validationUrl);
 
         $headers = get_headers($checkUrl);
 
-        if(!(is_array($headers) ? preg_match('/^HTTP\\/\\d+\\.\\d+\\s+2\\d\\d\\s+.*$/',$headers[0]) : false)){
-            $message  =  $this->getConfigVideoExistanceValidationErrorMessage();
-            $this->errorMessage =  str_replace("[id_youtube]", $videoId, $message);
+        if (!(is_array($headers) ? preg_match('/^HTTP\\/\\d+\\.\\d+\\s+2\\d\\d\\s+.*$/', $headers[0]) : false)) {
+            $message = $this->getConfigVideoExistanceValidationErrorMessage();
+            $this->errorMessage = str_replace("[id_youtube]", $videoId, $message);
             return true;
         }
 
@@ -344,7 +348,7 @@ class Video extends AbstractImageStorage
     {
         $galleries = Input::get('relations.image-storage-galleries', array());
 
-        $this->video_galleries()->sync($galleries);
+        $this->videoGalleries()->sync($galleries);
 
         self::flushCache();
         Gallery::flushCache();
@@ -352,7 +356,7 @@ class Video extends AbstractImageStorage
 
     private function useYouTubeApi()
     {
-        if(!$this->getYouTubeApiData()){
+        if (!$this->getYouTubeApiData()) {
             return false;
         }
 

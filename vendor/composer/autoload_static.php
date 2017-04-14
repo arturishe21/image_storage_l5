@@ -35,7 +35,7 @@ class ComposerStaticInitb53a329f2de6d2fb9c017a4f182eef61
         'Vis\\ImageStorage\\ImagesController' => __DIR__ . '/../..' . '/src/Http/Controllers/ImagesController.php',
         'Vis\\ImageStorage\\Tag' => __DIR__ . '/../..' . '/src/Models/Tag.php',
         'Vis\\ImageStorage\\TagsController' => __DIR__ . '/../..' . '/src/Http/Controllers/TagsController.php',
-        'Vis\\ImageStorage\\UploadableFile' => __DIR__ . '/../..' . '/src/Models/Interfaces/UploadableFile.php',
+        'Vis\\ImageStorage\\UploadableFileInterface' => __DIR__ . '/../..' . '/src/Models/Interfaces/UploadableFileInterface.php',
         'Vis\\ImageStorage\\Video' => __DIR__ . '/../..' . '/src/Models/Video.php',
         'Vis\\ImageStorage\\VideoGalleriesController' => __DIR__ . '/../..' . '/src/Http/Controllers/VideoGalleriesController.php',
         'Vis\\ImageStorage\\VideoGallery' => __DIR__ . '/../..' . '/src/Models/VideoGallery.php',

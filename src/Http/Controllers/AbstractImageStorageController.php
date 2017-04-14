@@ -30,9 +30,9 @@ abstract class AbstractImageStorageController extends Controller
         $lastPage = $data->lastPage();
 
         if (Request::ajax()) {
-            $view = "image-storage::". $prefix .".partials.content";
+            $view = "image-storage::" . $prefix . ".partials.content";
         } else {
-            $view = "image-storage::". $prefix .".index";
+            $view = "image-storage::" . $prefix . ".index";
         }
 
         return View::make($view)
@@ -53,7 +53,7 @@ abstract class AbstractImageStorageController extends Controller
 
         $html = '';
         foreach ($entities as $entity) {
-            $html .= View::make('image-storage::'.$prefix.'.partials.single_list')->with('entity', $entity)->render();
+            $html .= View::make('image-storage::' . $prefix . '.partials.single_list')->with('entity', $entity)->render();
         }
         return Response::json(array(
             'status' => true,
@@ -91,12 +91,12 @@ abstract class AbstractImageStorageController extends Controller
     {
         $idArray = Input::get('idArray', array());
 
-        foreach ($idArray as $key => $id){
+        foreach ($idArray as $key => $id) {
 
             $entity = $this->model->find($id);
 
-            if(!$entity->beforeDeleteAction()){
-                return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
+            if (!$entity->beforeDeleteAction()) {
+                return Response::json(array('status' => false, 'message' => $entity->getErrorMessage()));
             }
 
             $entity->delete();
@@ -138,8 +138,8 @@ abstract class AbstractImageStorageController extends Controller
         $entity  = $this->model->firstOrNew(['id' => $id]);
 
         $html = View::make(
-            "image-storage::". $prefix .".partials.edit_form",
-            compact('entity','fields', 'relatedEntities')
+            "image-storage::" . $prefix . ".partials.edit_form",
+            compact('entity', 'fields', 'relatedEntities')
         )->render();
 
         return Response::json(array(
@@ -182,13 +182,13 @@ abstract class AbstractImageStorageController extends Controller
 
         $prefix = $this->model->getConfigPrefix();
 
-        if(Input::has('image_storage_filter')){
+        if (Input::has('image_storage_filter')) {
 
-            Session::put('image_storage_filter.'.$prefix, Input::get('image_storage_filter', array()));
+            Session::put('image_storage_filter.' . $prefix, Input::get('image_storage_filter', array()));
 
-        }elseif(Input::has('forget_filters')){
+        } elseif (Input::has('forget_filters')) {
 
-            Session::forget('image_storage_filter.'.$prefix);
+            Session::forget('image_storage_filter.' . $prefix);
 
         }
     }

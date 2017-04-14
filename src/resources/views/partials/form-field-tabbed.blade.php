@@ -11,7 +11,7 @@
     @foreach($field['tabs'] as $lang => $tab)
         <div class="tab-pane {{$loop->first ? 'active' : ''}}" id="e-{{$fieldName}}-{{$tab['postfix']}}-{{$loop->index}}">
             <div class="imgInfoBox-relative-block">
-                <? $tabFieldName = $fieldName.$tab['postfix'] ?>
+                <?php $tabFieldName = $fieldName.$tab['postfix'] ?>
                 <label class="input">
                     @if($field['type'] == 'text')
                         <input type="text" value="{{$entity->$tabFieldName}}" name="{{$tabFieldName}}" placeholder="{{$tab['placeholder']}}" class="dblclick-edit-input form-control input-sm unselectable">

@@ -7,5 +7,3 @@
 @section('main')
     @include('image-storage::tag.partials.content')
 @stop
-
-

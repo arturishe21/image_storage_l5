@@ -79,7 +79,7 @@ abstract class AbstractImageStorageGalleryController extends AbstractImageStorag
         $idGalleries = Input::get('idGalleries', array());
         $idArray     = Input::get('idArray', array());
 
-        foreach ($idGalleries as $key => $id){
+        foreach ($idGalleries as $key => $id) {
             $entity = $this->model->find($id);
             $entity->relateToGallery($idArray);
         }
@@ -88,6 +88,5 @@ abstract class AbstractImageStorageGalleryController extends AbstractImageStorag
             'status' => true
         ));
     }
-
 
 }

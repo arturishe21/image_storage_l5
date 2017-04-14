@@ -26,10 +26,8 @@
 <script src="{{asset('packages/vis/image-storage/js/image_storage.js')}}"></script>
 
 <script>
-    //fixme entity setter
     $(document).ready(function(){
         ImageStorage.entity = 'videos';
-        //fixme lastPage setter
         ImageStorage.last_page = {{$lastPage}};
     });
 </script>

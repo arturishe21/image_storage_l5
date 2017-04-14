@@ -5,4 +5,3 @@
     <div class="file-extension" data-ext="{{$entity->getFileExtension()}}"></div>
     <div class="file-title">{{ $entity->title }}</div>
 </div>
-

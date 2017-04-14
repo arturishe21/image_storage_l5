@@ -1,9 +1,7 @@
 <?php namespace Vis\ImageStorage;
 
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
-use Symfony\Component\Finder\Finder;
 
 class ImageStorageServiceProvider extends ServiceProvider
 {
@@ -28,10 +26,6 @@ class ImageStorageServiceProvider extends ServiceProvider
             __DIR__ . '/config' => config_path('image-storage/')
         ], 'image-storage-config');
 
-/*        $this->publishes([
-            realpath(__DIR__.'/Migrations') => $this->app->databasePath().'/migrations',
-        ]);
-*/
     }
 
     /**

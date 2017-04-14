@@ -7,5 +7,3 @@
 @section('main')
     @include('image-storage::image.partials.content')
 @stop
-
-

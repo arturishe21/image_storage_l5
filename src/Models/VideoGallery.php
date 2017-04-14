@@ -1,8 +1,5 @@
 <?php namespace Vis\ImageStorage;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Input;
 
 class VideoGallery extends AbstractImageStorage
@@ -23,7 +20,8 @@ class VideoGallery extends AbstractImageStorage
         return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
     }
 
-    public function afterSaveAction(){
+    public function afterSaveAction()
+    {
         $this->makeRelations();
     }
 
@@ -34,7 +32,7 @@ class VideoGallery extends AbstractImageStorage
 
     public function scopeHasActiveVideos($query)
     {
-        return $query->whereHas('videos', function ($query) {
+        return $query->whereHas('videos', function (\Illuminate\Database\Eloquent\Builder $query) {
             $query->active();
         });
     }
@@ -53,7 +51,8 @@ class VideoGallery extends AbstractImageStorage
         return route("vis_video_galleries_show_single", [$this->getSlug()]);
     }
 
-    private function getGalleryCurrentPreview(){
+    private function getGalleryCurrentPreview()
+    {
 
         $preview = $this->videos()->wherePivot("is_preview", "1")->first();
 
@@ -64,7 +63,7 @@ class VideoGallery extends AbstractImageStorage
     {
         $currentPreview = $this->getGalleryCurrentPreview();
 
-        if($currentPreview){
+        if ($currentPreview) {
             $this->videos()->updateExistingPivot($currentPreview->id, ["is_preview" => 0]);
         }
 

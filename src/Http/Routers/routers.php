@@ -1,12 +1,12 @@
 <?php
 
-Route::group (['middleware' => ['web']], function () {
+Route::group(['middleware' => ['web']], function () {
 
-    Route::group ([
-            'prefix'     => 'admin/image_storage',
-            'middleware' => 'auth.admin',
-            'namespace'  => 'Vis\ImageStorage'
-        ],
+    Route::group([
+        'prefix' => 'admin/image_storage',
+        'middleware' => 'auth.admin',
+        'namespace' => 'Vis\ImageStorage'
+    ],
         function () {
 
             include("routers_images.php");

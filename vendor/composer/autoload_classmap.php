@@ -20,7 +20,7 @@ return array(
     'Vis\\ImageStorage\\ImagesController' => $baseDir . '/src/Http/Controllers/ImagesController.php',
     'Vis\\ImageStorage\\Tag' => $baseDir . '/src/Models/Tag.php',
     'Vis\\ImageStorage\\TagsController' => $baseDir . '/src/Http/Controllers/TagsController.php',
-    'Vis\\ImageStorage\\UploadableFile' => $baseDir . '/src/Models/Interfaces/UploadableFile.php',
+    'Vis\\ImageStorage\\UploadableFileInterface' => $baseDir . '/src/Models/Interfaces/UploadableFileInterface.php',
     'Vis\\ImageStorage\\Video' => $baseDir . '/src/Models/Video.php',
     'Vis\\ImageStorage\\VideoGalleriesController' => $baseDir . '/src/Http/Controllers/VideoGalleriesController.php',
     'Vis\\ImageStorage\\VideoGallery' => $baseDir . '/src/Models/VideoGallery.php',

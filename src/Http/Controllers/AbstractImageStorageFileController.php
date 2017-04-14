@@ -1,11 +1,8 @@
 <?php namespace Vis\ImageStorage;
 
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Session;
 
 class AbstractImageStorageFileController extends AbstractImageStorageController
 {
@@ -17,15 +14,15 @@ class AbstractImageStorageFileController extends AbstractImageStorageController
 
         $entity = $this->model;
 
-        if(!$entity->setSourceFile($file)){
-            return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
+        if (!$entity->setSourceFile($file)) {
+            return Response::json(array('status' => false, 'message' => $entity->getErrorMessage()));
         }
 
-        if(!$entity->setNewFileData()) {
-            return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
+        if (!$entity->setNewFileData()) {
+            return Response::json(array('status' => false, 'message' => $entity->getErrorMessage()));
         }
 
-        $html = View::make('image-storage::'. $prefix .'.partials.single_list')->with('entity', $entity)->render();
+        $html = View::make('image-storage::' . $prefix . '.partials.single_list')->with('entity', $entity)->render();
 
         $data = array(
             'status' => true,
@@ -48,8 +45,8 @@ class AbstractImageStorageFileController extends AbstractImageStorageController
 
         $entity = $this->model->find($id);
 
-        if(!$entity->setSourceFile($file)){
-            return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
+        if (!$entity->setSourceFile($file)) {
+            return Response::json(array('status' => false, 'message' => $entity->getErrorMessage()));
         }
 
         $entity->replaceSingleFile($size);

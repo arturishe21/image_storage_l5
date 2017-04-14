@@ -1,8 +1,5 @@
 <?php namespace Vis\ImageStorage;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
-
 class Tag extends AbstractImageStorage
 {
     protected $table = 'vis_tags';
@@ -10,7 +7,7 @@ class Tag extends AbstractImageStorage
 
     public function images()
     {
-        return $this->morphedByMany('Vis\ImageStorage\Image',   'entity', 'vis_tags2entities', 'id_tag', 'id_entity');
+        return $this->morphedByMany('Vis\ImageStorage\Image', 'entity', 'vis_tags2entities', 'id_tag', 'id_entity');
     }
 
     public function documents()
@@ -20,7 +17,7 @@ class Tag extends AbstractImageStorage
 
     public function videos()
     {
-        return $this->morphedByMany('Vis\ImageStorage\Video',   'entity', 'vis_tags2entities', 'id_tag', 'id_entity');
+        return $this->morphedByMany('Vis\ImageStorage\Video', 'entity', 'vis_tags2entities', 'id_tag', 'id_entity');
     }
 
     public function galleries()
@@ -28,12 +25,12 @@ class Tag extends AbstractImageStorage
         return $this->morphedByMany('Vis\ImageStorage\Gallery', 'entity', 'vis_tags2entities', 'id_tag', 'id_entity');
     }
 
-    public function video_galleries()
+    public function videoGalleries()
     {
         return $this->morphedByMany('Vis\ImageStorage\VideoGallery', 'entity', 'vis_tags2entities', 'id_tag', 'id_entity');
     }
 
-    public function relateToTag($id,$type)
+    public function relateToTag($id, $type)
     {
         $this->$type()->syncWithoutDetaching($id);
 

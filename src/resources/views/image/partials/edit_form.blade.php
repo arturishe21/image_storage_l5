@@ -98,5 +98,3 @@
 
 <div class="superbox-close txt-color-white"><i class="fa fa-times fa-lg"></i></div>
 </div>
-
-

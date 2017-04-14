@@ -17,8 +17,8 @@ class ImageStorageMigration extends Migration
             $table->increments('id');
             $table->text('file_folder');
             $table->text('file_source');
-            $table->string('title',255);
-            $table->string('slug',255);
+            $table->string('title', 255);
+            $table->string('slug', 255);
             $table->text('exif_data');
             $table->tinyInteger('is_active')->default("1");
             $table->timestamp('date_time_source');
@@ -28,8 +28,8 @@ class ImageStorageMigration extends Migration
         Schema::create('vis_galleries', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->string('title',255);
-            $table->string('slug',255);
+            $table->string('title', 255);
+            $table->string('slug', 255);
             $table->timestamp('event_date');
             $table->tinyInteger('is_active');
             $table->timestamps();
@@ -52,8 +52,8 @@ class ImageStorageMigration extends Migration
         Schema::create('vis_tags', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->string('title',255);
-            $table->string('slug',255);
+            $table->string('title', 255);
+            $table->string('slug', 255);
             $table->tinyInteger('is_active');
             $table->timestamps();
         });
@@ -63,7 +63,7 @@ class ImageStorageMigration extends Migration
             $table->increments('id');
             $table->integer('id_tag')->unsigned();
             $table->integer('id_entity')->unsigned();
-            $table->string('entity_type',64);
+            $table->string('entity_type', 64);
 
             $table->foreign('id_tag')->references('id')->on('vis_tags')->onDelete('cascade')->onUpdate('cascade');
         });
@@ -72,9 +72,9 @@ class ImageStorageMigration extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->integer('id_preview')->unsigned()->nullable();
-            $table->string('id_youtube',255);
-            $table->string('title',255);
-            $table->string('slug',255);
+            $table->string('id_youtube', 255);
+            $table->string('title', 255);
+            $table->string('slug', 255);
             $table->text('description');
             $table->text('youtube_data');
             $table->tinyInteger('is_active')->default("1");
@@ -87,8 +87,8 @@ class ImageStorageMigration extends Migration
         Schema::create('vis_video_galleries', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->string('title',255);
-            $table->string('slug',255);
+            $table->string('title', 255);
+            $table->string('slug', 255);
             $table->timestamp('event_date');
             $table->tinyInteger('is_active');
             $table->timestamps();
@@ -112,8 +112,8 @@ class ImageStorageMigration extends Migration
             $table->increments('id');
             $table->text('file_folder');
             $table->text('file_source');
-            $table->string('title',255);
-            $table->string('slug',255);
+            $table->string('title', 255);
+            $table->string('slug', 255);
             $table->tinyInteger('is_active')->default("1");
             $table->timestamps();
         });

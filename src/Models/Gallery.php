@@ -1,8 +1,5 @@
 <?php namespace Vis\ImageStorage;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Input;
 
 class Gallery extends AbstractImageStorage
@@ -23,7 +20,8 @@ class Gallery extends AbstractImageStorage
         return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
     }
 
-    public function afterSaveAction(){
+    public function afterSaveAction()
+    {
         $this->makeRelations();
     }
 
@@ -34,7 +32,7 @@ class Gallery extends AbstractImageStorage
 
     public function scopeHasActiveImages($query)
     {
-        return $query->whereHas('images', function ($query) {
+        return $query->whereHas('images', function (\Illuminate\Database\Eloquent\Builder $query) {
             $query->active();
         });
     }
@@ -53,20 +51,22 @@ class Gallery extends AbstractImageStorage
         return route("vis_galleries_show_single", [$this->getSlug()]);
     }
 
-    private function getGalleryCurrentPreview(){
+    private function getGalleryCurrentPreview()
+    {
 
         $preview = $this->images()->wherePivot("is_preview", "1")->first();
 
         return $preview;
     }
 
-    public function getGalleryPreviewImage($size = 'cms_preview'){
+    public function getGalleryPreviewImage($size = 'cms_preview')
+    {
 
         $preview = $this->getGalleryCurrentPreview() ?: $this->images()->first();
 
-        if($preview){
+        if ($preview) {
             $image = $preview->getSource($size);
-        }else{
+        } else {
             $image = '/packages/vis/image-storage/img/no_image.png';
         }
 
@@ -77,7 +77,7 @@ class Gallery extends AbstractImageStorage
     {
         $currentPreview = $this->getGalleryCurrentPreview();
 
-        if($currentPreview){
+        if ($currentPreview) {
             $this->images()->updateExistingPivot($currentPreview->id, ["is_preview" => 0]);
         }
 
@@ -130,6 +130,5 @@ class Gallery extends AbstractImageStorage
         self::flushCache();
         Image::flushCache();
     }
-
 
 }

@@ -1,4 +1,3 @@
-
 В composer.json добавляем в блок require
 ```json
  "vis/image_storage_l5": "1.*"
