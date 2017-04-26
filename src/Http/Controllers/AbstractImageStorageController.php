@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\View;
+use Illuminate\Pagination\Paginator;
 
 abstract class AbstractImageStorageController extends Controller
 {
@@ -27,8 +28,6 @@ abstract class AbstractImageStorageController extends Controller
 
         $data = $this->model->filterSearch()->orderBy('id', 'DESC')->paginate($perPage);
 
-        $lastPage = $data->lastPage();
-
         if (Request::ajax()) {
             $view = "image-storage::" . $prefix . ".partials.content";
         } else {
@@ -38,26 +37,32 @@ abstract class AbstractImageStorageController extends Controller
         return View::make($view)
             ->with('title', $title)
             ->with('data', $data)
-            ->with('lastPage', $lastPage)
             ->with('relatedEntities', $relatedEntities);
     }
 
     public function doLoadMoreEndless()
     {
-        $page = Input::get('page');
-
         $perPage = $this->model->getConfigPerPage();
         $prefix  = $this->model->getConfigPrefix();
 
-        $entities = $this->model->filterSearch()->orderBy('id', 'desc')->skip($perPage * $page)->limit($perPage)->get();
+        //todo redo this pathResolver
+        Paginator::currentPathResolver(function() {
+            return str_replace("/load_more", "", Request::url());
+        });
+
+        $data = $this->model->filterSearch()->orderBy('id', 'DESC')->paginate($perPage);
 
         $html = '';
-        foreach ($entities as $entity) {
+        foreach ($data as $entity) {
             $html .= View::make('image-storage::' . $prefix . '.partials.single_list')->with('entity', $entity)->render();
         }
+
+        $pagination = View::make('image-storage::partials.pagination')->with('data', $data)->render();
+
         return Response::json(array(
             'status' => true,
-            'html'   => $html
+            'html'   => $html,
+            'pagination' => $pagination,
         ));
     }
 
@@ -150,7 +155,6 @@ abstract class AbstractImageStorageController extends Controller
 
     public function doSaveInfo()
     {
-
         $fields = Input::except('relations');
 
         $prefix = $this->model->getConfigPrefix();

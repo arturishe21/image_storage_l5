@@ -10,17 +10,21 @@
         <div class="jarviswidget jarviswidget-color-blue " id="wid-id-4" data-widget-editbutton="false" data-widget-colorbutton="false">
             <header>
                 <span class="widget-icon"> <i class="fa  fa-file-text"></i> </span>
-                <h2> {{__cms($title)}} </h2>
+                <h2> {{__cms($title)}} ({{__cms("Всего в хранилище")}}: {{$data->total()}})</h2>
             </header>
-            <div class="table_center no-padding">
+            <div class="table_center no-padding" >
                 @include('image-storage::video.partials.filters_table')
                 @include('image-storage::video.partials.operations')
                 @include('image-storage::video.partials.content_table')
+                <div class="pagination-bottom-wrapper">
+                    @include('image-storage::partials.pagination')
+                </div>
             </div>
         </div>
     </div>
 </div>
 <!-- END MAIN CONTENT -->
+
 
 <link rel="stylesheet" href="{{asset('packages/vis/image-storage/css/image_storage.css')}}">
 <script src="{{asset('packages/vis/image-storage/js/image_storage.js')}}"></script>
@@ -28,6 +32,5 @@
 <script>
     $(document).ready(function(){
         ImageStorage.entity = 'videos';
-        ImageStorage.last_page = {{$lastPage}};
     });
 </script>

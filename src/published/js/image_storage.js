@@ -2,11 +2,15 @@
 
 var ImageStorage = {
 
-    loaded_page : 1,
     entity       : 'images',
-    last_page    : false,
+
+    current_page : 1,
+    last_page    : 1,
+
     is_loading   : false,
     is_selecting : false,
+
+
 
     init: function()
     {
@@ -36,6 +40,12 @@ var ImageStorage = {
 
     initScrollEndlessEvent: function()
     {
+        $(document).scrollTop(0);
+
+        var pagination = $("#dt_basic_paginate ul.pagination");
+        ImageStorage.current_page = parseInt(pagination.find("li.active span").text());
+        ImageStorage.last_page    = parseInt(pagination.find("li:eq(-2) a").text());
+
         $(document).scroll(function() {
             if ($(document).scrollTop() + $(window).height() == $(document).height()) {
                 if ($('.image-storage-container.images-container').length) {
@@ -195,29 +205,29 @@ var ImageStorage = {
             return;
         }
 
-        if(ImageStorage.loaded_page >= ImageStorage.last_page ){
+        if(ImageStorage.current_page >= ImageStorage.last_page ){
             return;
         }
 
         TableBuilder.showPreloader();
         ImageStorage.is_loading = true;
 
+        var next_page = ImageStorage.current_page + 1;
         var data = $('#image-storage-search-form').serializeArray();
-
-        data.push({ name: 'page', value: ImageStorage.loaded_page});
 
         jQuery.ajax({
             type: "POST",
-            url: "/admin/image_storage/"+ImageStorage.entity+"/load_more",
+            url: "/admin/image_storage/"+ImageStorage.entity+"/load_more?page="+next_page,
             data: data,
             dataType: 'json',
             success: function(response) {
                 if (response.status) {
-                    ImageStorage.loaded_page = ImageStorage.loaded_page + 1;
                     $('.superbox').append(response.html);
+                    $('.dt-toolbar-footer').replaceWith(response.pagination);
                     ImageStorage.initSelectable();
                     ImageStorage.initEditClickEvent();
                     ImageStorage.is_loading = false;
+                    ImageStorage.current_page = next_page;
                     TableBuilder.hidePreloader();
                 } else {
                     TableBuilder.hidePreloader();
@@ -241,7 +251,6 @@ var ImageStorage = {
                 $('#content_admin').html(response);
                 ImageStorage.init();
                 TableBuilder.hidePreloader();
-                ImageStorage.loaded_page = 1;
             }
         });
     },
@@ -475,7 +484,6 @@ var ImageStorage = {
 
     getEditFormInTable: function(id)
     {
-
         TableBuilder.showPreloader();
 
         jQuery.ajax({
