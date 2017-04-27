@@ -43,16 +43,20 @@ var ImageStorage = {
         $(document).scrollTop(0);
 
         var pagination = $("#dt_basic_paginate ul.pagination");
-        ImageStorage.current_page = parseInt(pagination.find("li.active span").text());
-        ImageStorage.last_page    = parseInt(pagination.find("li:eq(-2) a").text());
 
-        $(document).scroll(function() {
-            if ($(document).scrollTop() + $(window).height() == $(document).height()) {
-                if ($('.image-storage-container.images-container').length) {
-                    ImageStorage.loadMore();
+        if(pagination.length){
+
+            ImageStorage.current_page = parseInt(pagination.find("li.active span").text());
+            ImageStorage.last_page    = parseInt(pagination.find("li:eq(-2) a").text());
+
+            $(document).scroll(function() {
+                if ($(document).scrollTop() + $(window).height() == $(document).height()) {
+                    if ($('.image-storage-container.images-container').length) {
+                        ImageStorage.loadMore();
+                    }
                 }
-            }
-        });
+            });
+        }
     },
 
     initEditClickEvent: function()
