@@ -15,7 +15,7 @@
         </div>
         <div>
             <span class="file-label">{{ __cms("Ссылка на файл:")}}</span>
-            <span class="clipboard-copy-target">{{asset($entity->getSource($ident))}}</span>
+            {{asset($entity->getSource($ident))}}
         </div>
     </div>
 </div>

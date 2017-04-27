@@ -160,11 +160,10 @@ var ImageStorage = {
     initCopyToClipboard: function()
     {
         $('.clipboard-copy-button').click(function(){
-            var $copyTarget = $(this).parents(".tab-pane").find(".clipboard-copy-target"),
-                copyText    = $copyTarget.text(),
+            var copyText = $(this).prev(".image-storage-btn-download").attr("href"),
                 inputStub   = "<input class='copy-input-stub' type='text' value='"+copyText+"'>";
 
-            $(inputStub).insertAfter($copyTarget).select();
+            $(inputStub).insertAfter($(this)).select();
             document.execCommand('copy');
             $(".copy-input-stub").remove();
             TableBuilder.showSuccessNotification('Скопировано в буфер');

@@ -21,6 +21,7 @@
                        class="image-storage-btn-download btn btn-default btn-sm">
                         {{ __cms("Скачать")}}
                     </a>
+                    <a class="image-storage-btn-download btn btn-default btn-sm clipboard-copy-button">{{ __cms("Копировать ссылку")}}</a>
                 </div>
 
 {{--                <div class="pull-left button-block">
