@@ -1,6 +1,6 @@
 <?php namespace Vis\ImageStorage;
 
-class Vimeo extends AbstractVideoApi
+class VimeoAPI extends AbstractVideoAPI
 {
 
 }

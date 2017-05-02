@@ -27,6 +27,7 @@ class ComposerStaticInitb53a329f2de6d2fb9c017a4f182eef61
         'Vis\\ImageStorage\\AbstractImageStorageFile' => __DIR__ . '/../..' . '/src/Models/AbstractImageStorageFile.php',
         'Vis\\ImageStorage\\AbstractImageStorageFileController' => __DIR__ . '/../..' . '/src/Http/Controllers/AbstractImageStorageFileController.php',
         'Vis\\ImageStorage\\AbstractImageStorageGalleryController' => __DIR__ . '/../..' . '/src/Http/Controllers/AbstractImageStorageGalleryController.php',
+        'Vis\\ImageStorage\\AbstractVideoAPI' => __DIR__ . '/../..' . '/src/Models/VideoApi/AbstractVideoAPI.php',
         'Vis\\ImageStorage\\Document' => __DIR__ . '/../..' . '/src/Models/Document.php',
         'Vis\\ImageStorage\\DocumentsController' => __DIR__ . '/../..' . '/src/Http/Controllers/DocumentsController.php',
         'Vis\\ImageStorage\\GalleriesController' => __DIR__ . '/../..' . '/src/Http/Controllers/GalleriesController.php',
@@ -37,9 +38,14 @@ class ComposerStaticInitb53a329f2de6d2fb9c017a4f182eef61
         'Vis\\ImageStorage\\TagsController' => __DIR__ . '/../..' . '/src/Http/Controllers/TagsController.php',
         'Vis\\ImageStorage\\UploadableFileInterface' => __DIR__ . '/../..' . '/src/Models/Interfaces/UploadableFileInterface.php',
         'Vis\\ImageStorage\\Video' => __DIR__ . '/../..' . '/src/Models/Video.php',
+        'Vis\\ImageStorage\\VideoAPIFactory' => __DIR__ . '/../..' . '/src/Models/VideoApi/VideoAPIFactory.php',
+        'Vis\\ImageStorage\\VideoAPIInterface' => __DIR__ . '/../..' . '/src/Models/Interfaces/VideoAPIInterface.php',
         'Vis\\ImageStorage\\VideoGalleriesController' => __DIR__ . '/../..' . '/src/Http/Controllers/VideoGalleriesController.php',
         'Vis\\ImageStorage\\VideoGallery' => __DIR__ . '/../..' . '/src/Models/VideoGallery.php',
         'Vis\\ImageStorage\\VideosController' => __DIR__ . '/../..' . '/src/Http/Controllers/VideosController.php',
+        'Vis\\ImageStorage\\VimeoAPI' => __DIR__ . '/../..' . '/src/Models/VideoApi/VimeoAPI.php',
+        'Vis\\ImageStorage\\Youtube' => __DIR__ . '/../..' . '/src/Models/VideoApi/Youtube.php',
+        'Vis\\ImageStorage\\YoutubeAPI' => __DIR__ . '/../..' . '/src/Models/VideoApi/YoutubeAPI.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

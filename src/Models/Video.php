@@ -7,7 +7,15 @@ class Video extends AbstractImageStorage
     protected $table = 'vis_videos';
     protected $configPrefix = 'video';
 
-    private $youTubeData;
+    public $api;
+
+    //fixme temp api setter
+    public function __construct()
+    {
+        $this->api = VideoAPIFactory::makeAPI('youtube');
+        //fixme temp api id_youtube setter
+        $this->api->setVideoId($this->id_youtube);
+    }
 
     public function preview()
     {
@@ -26,8 +34,9 @@ class Video extends AbstractImageStorage
 
     public function beforeSaveAction()
     {
-
-        if ($this->failsToValidateVideo()) {
+        //fixme temp api id_youtube setter
+        $this->api->setVideoId($this->id_youtube);
+        if (!$this->api->videoExists()) {
             return false;
         }
 
@@ -37,7 +46,7 @@ class Video extends AbstractImageStorage
     public function afterSaveAction()
     {
         $this->makeRelations();
-        $this->useYouTubeApi();
+        $this->useAPI();
     }
 
     public function scopeFilterByVideoGalleries($query, $galleries = array())
@@ -67,109 +76,6 @@ class Video extends AbstractImageStorage
     public function getUrl()
     {
         return route("vis_videos_show_single", [$this->getSlug()]);
-    }
-
-    private function getConfigYouTube()
-    {
-        return $this->getConfigValue('youtube');
-    }
-
-    private function getConfigVideoExistanceValidation()
-    {
-        return $this->getConfigYouTube()['video_existance_validation'];
-    }
-
-    private function getConfigVideoExistanceValidationEnabled()
-    {
-        return $this->getConfigVideoExistanceValidation()['enabled'];
-    }
-
-    private function getConfigVideoExistanceValidationUrl()
-    {
-        return $this->getConfigVideoExistanceValidation()['check_url'];
-    }
-
-    private function getConfigVideoExistanceValidationErrorMessage()
-    {
-        return $this->getConfigVideoExistanceValidation()['error_message'];
-    }
-
-    private function getConfigYouTubeUseApi()
-    {
-        return $this->getConfigYouTube()['use_api'];
-    }
-
-    private function getConfigYouTubeApiURL()
-    {
-        return $this->getConfigYouTube()['api_url'];
-    }
-
-    private function getConfigYouTubeApiKey()
-    {
-        return $this->getConfigYouTube()['api_key'];
-    }
-
-    private function getConfigYouTubeApiPart()
-    {
-        return $this->getConfigYouTube()['api_part'];
-    }
-
-    private function getConfigYouTubeStoreData()
-    {
-        return $this->getConfigYouTube()['store_data'];
-    }
-
-    private function getConfigYouTubeSetData()
-    {
-        return $this->getConfigYouTube()['set_data'];
-    }
-
-    private function getConfigYouTubePreviewUrl()
-    {
-        return $this->getConfigYouTube()['preview_url'];
-    }
-
-    private function getConfigYouTubePreviewQuality()
-    {
-        return $this->getConfigYouTube()['preview_quality'];
-    }
-
-    private function getEncodedYouTubeId()
-    {
-        return urlencode($this->id_youtube);
-    }
-
-    private function getApiUrl()
-    {
-        $configUrl = $this->getConfigYouTubeApiURL();
-
-        $stubs = ["{id}", "{part}", "{key}"];
-
-        $replacements = [$this->getEncodedYouTubeId(), $this->getConfigYouTubeApiPart(), $this->getConfigYouTubeApiKey()];
-
-        $url = str_replace($stubs, $replacements, $configUrl);
-
-        return $url;
-    }
-
-    private function getYouTubeApiData()
-    {
-        if (!$this->getConfigYouTubeUseApi()) {
-            return false;
-        }
-
-        if (!$this->youTubeData) {
-            $apiResponse = file_get_contents($this->getApiUrl());
-            $apiData = json_decode($apiResponse);
-
-            $youTubeData = array_shift($apiData->items);
-            if (!$youTubeData) {
-                return false;
-            }
-            $this->youTubeData = $youTubeData;
-        }
-
-        return true;
     }
 
     private function getYouTubeSnippet()
@@ -233,26 +139,14 @@ class Video extends AbstractImageStorage
         return $this->getYouTubeStatistics() ? $this->getYouTubeStatistics()->commentCount : 0;
     }
 
-    private function getYouTubePreviewUrl()
-    {
-        $configUrl = $this->getConfigYouTubePreviewUrl();
-
-        $stubs = ["{id}", "{quality}"];
-
-        $replacements = [$this->getEncodedYouTubeId(), $this->getConfigYouTubePreviewQuality()];
-
-        $url = str_replace($stubs, $replacements, $configUrl);
-
-        return $url;
-    }
-
     public function getPreviewImage($size = 'source')
     {
-
         if ($this->id_preview) {
             $image = $this->preview->getSource($size);
         } else {
-            $image = $this->getYouTubePreviewUrl();
+            //fixme temp api id_youtube setter
+            $this->api->setVideoId($this->id_youtube);
+            $image = $this->api->getPreviewUrl();
         }
 
         return $image;
@@ -270,11 +164,10 @@ class Video extends AbstractImageStorage
         $this->save();
     }
 
-    private function setYouTubeStoreData()
+
+    private function getConfigYouTubeSetData()
     {
-        if ($this->getConfigYouTubeStoreData()) {
-            $this->youtube_data = json_encode($this->youTubeData);
-        }
+        return $this->getConfigYouTube()['set_data'];
     }
 
     private function setYouTubeData()
@@ -294,38 +187,6 @@ class Video extends AbstractImageStorage
 
             $this->setSlug();
         }
-    }
-
-    private function failsToValidateVideo()
-    {
-        if ($this->failsToValidateVideoExistence()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private function failsToValidateVideoExistence()
-    {
-
-        if (!$this->getConfigVideoExistanceValidationEnabled()) {
-            return false;
-        }
-
-        $validationUrl = $this->getConfigVideoExistanceValidationUrl();
-        $videoId = $this->id_youtube;
-
-        $checkUrl = str_replace("[id_youtube]", $videoId, $validationUrl);
-
-        $headers = get_headers($checkUrl);
-
-        if (!(is_array($headers) ? preg_match('/^HTTP\\/\\d+\\.\\d+\\s+2\\d\\d\\s+.*$/', $headers[0]) : false)) {
-            $message = $this->getConfigVideoExistanceValidationErrorMessage();
-            $this->errorMessage = str_replace("[id_youtube]", $videoId, $message);
-            return true;
-        }
-
-        return false;
     }
 
     private function makeRelations()
@@ -354,14 +215,11 @@ class Video extends AbstractImageStorage
         Gallery::flushCache();
     }
 
-    private function useYouTubeApi()
+    private function useAPI()
     {
-        if (!$this->getYouTubeApiData()) {
-            return false;
-        }
+        $this->api->getData();
 
-        $this->setYouTubeStoreData();
-
+        dr($this->api->response);
         $this->setYouTubeData();
 
         $this->save();
