@@ -5,7 +5,7 @@
     <label class="label" for="{{$fieldName}}">{{__cms($field['caption'])}}</label>
     <div class="imgInfoBox-relative-block">
             @if($field['type'] == 'text')
-                <label class="input"><input type="text" value="{{$entity->$fieldName}}" name="{{$fieldName}}" placeholder="{{$field['placeholder']}}" class="dblclick-edit-input form-control input-sm unselectable"></label>
+                <label class="input"><input type="text" value="{{$entity->$fieldName}}" name="{{$fieldName}}" class="dblclick-edit-input form-control input-sm unselectable"></label>
             @elseif($field['type'] == 'textarea')
                 <label class="input"> <textarea rows="{{$field['rows'] or '3'}}"  id="{{$fieldName}}"  name="{{ $fieldName }}" class="custom-scroll imgInfoBox-textarea">{{$entity->$fieldName}}</textarea></label>
             @elseif($field['type'] == 'datetime')

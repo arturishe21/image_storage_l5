@@ -10,18 +10,7 @@ return array(
             'caption' => 'Название',
             'type' => 'text',
             'field' => 'string',
-            'tabs' => array(
-                array(
-                    'caption' => 'ru',
-                    'postfix' => '',
-                    'placeholder' => 'Название русском'
-                ),
-                array(
-                    'caption' => 'ua',
-                    'postfix' => '_ua',
-                    'placeholder' => 'Название на украинском'
-                ),
-            )
+            'tabs' => config('translations.config.languages')
         ),
         'is_active' => array(
             'caption' => 'Тег активен',
