@@ -80,9 +80,9 @@ class Image extends AbstractImageStorageFile
 
     private function setImageExifData()
     {
-        try{
-            $this->sourceFile->imageData = (exif_read_data($this->sourceFile, 0, true));        }
-        catch(\Exception $e){
+        try {
+            $this->sourceFile->imageData = (exif_read_data($this->sourceFile, 0, true));
+        } catch (\Exception $e) {
             $this->sourceFile->imageData = [];
         }
 
