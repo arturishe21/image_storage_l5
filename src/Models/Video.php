@@ -64,6 +64,11 @@ class Video extends AbstractImageStorage
         return $relatedEntities;
     }
 
+    public function getSource()
+    {
+        return $this->id_youtube;
+    }
+
     public function getUrl()
     {
         return route("vis_videos_show_single", [$this->getSlug()]);
