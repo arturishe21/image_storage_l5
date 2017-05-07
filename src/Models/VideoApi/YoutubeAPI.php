@@ -9,6 +9,11 @@ class YoutubeAPI extends AbstractVideoAPI
         return $this->getConfigAPIType()['api_part'];
     }
 
+    private function getConfigAPIPreviewQuality()
+    {
+        return $this->getConfigAPIType()['preview_quality'];
+    }
+
     public function videoExists()
     {
         $checkUrl = str_replace("[id_youtube]", $this->getEncodedVideoId(), $this->getConfigAPIExistenceUrl());
@@ -57,9 +62,76 @@ class YoutubeAPI extends AbstractVideoAPI
 
         $youTubeData = array_shift($apiData->items);
 
-        $this->response = $youTubeData;
+        $this->apiResponse = $youTubeData;
 
         return true;
     }
 
+
+
+
+
+
+
+    //fixme refactor this methods
+    private function getSnippet()
+    {
+        if (!$this->getData()) {
+            return false;
+        }
+
+        if (!$this->apiResponse->snippet) {
+            return false;
+        }
+
+        return $this->apiResponse->snippet;
+    }
+
+    private function getStatistics()
+    {
+        if (!$this->getData()) {
+            return false;
+        }
+
+        if (!$this->apiResponse->statistics) {
+            return false;
+        }
+
+        return $this->apiResponse->statistics;
+    }
+
+    public function getTitle()
+    {
+        return $this->getSnippet() ? $this->getSnippet()->title : "";
+    }
+
+    public function getDescription()
+    {
+        return $this->getSnippet() ? $this->getSnippet()->description : "";
+    }
+
+    public function getViewCount()
+    {
+        return $this->getStatistics() ? $this->getStatistics()->viewCount : 0;
+    }
+
+    public function getLikeCount()
+    {
+        return $this->getStatistics() ? $this->getStatistics()->likeCount : 0;
+    }
+
+    public function getDislikeCount()
+    {
+        return $this->getStatistics() ? $this->getStatistics()->dislikeCount : 0;
+    }
+
+    public function getFavoriteCount()
+    {
+        return $this->getStatistics() ? $this->getStatistics()->favoriteCount : 0;
+    }
+
+    public function getCommentCount()
+    {
+        return $this->getStatistics() ? $this->getStatistics()->commentCount : 0;
+    }
 }

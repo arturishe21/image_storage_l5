@@ -6,10 +6,13 @@ use Illuminate\Support\Facades\Config;
 //fixme add usage of curlClient package
 abstract class AbstractVideoAPI extends Model implements VideoAPIInterface
 {
+
+    //fixme is this variable really needed?
     protected $type;
     protected $videoId;
 
-    public $response;
+    public $errorMessage;
+    public $apiResponse;
 
     protected function getConfigAPI()
     {
@@ -19,6 +22,11 @@ abstract class AbstractVideoAPI extends Model implements VideoAPIInterface
     protected function getConfigAPIEnabled()
     {
         return $this->getConfigAPI()['enabled'];
+    }
+
+    public function getConfigAPISetData()
+    {
+        return $this->getConfigAPI()['set_data'];
     }
 
     //fixme find better name for this method
@@ -42,11 +50,6 @@ abstract class AbstractVideoAPI extends Model implements VideoAPIInterface
         return $this->getConfigAPIType()['preview_url'];
     }
 
-    protected function getConfigAPIPreviewQuality()
-    {
-        return $this->getConfigAPIType()['preview_quality'];
-    }
-
     protected function getConfigAPIURL()
     {
         return $this->getConfigAPIType()['api_url'];
@@ -60,6 +63,11 @@ abstract class AbstractVideoAPI extends Model implements VideoAPIInterface
     protected function getEncodedVideoId()
     {
         return urlencode($this->videoId);
+    }
+
+    public function getErrorMessage()
+    {
+        return $this->errorMessage;
     }
 
     public function setVideoId($id)
