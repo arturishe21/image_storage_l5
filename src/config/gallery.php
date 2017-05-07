@@ -11,35 +11,13 @@ return array(
             'caption' => 'Название',
             'type' => 'text',
             'field' => 'string',
-            'tabs' => array(
-                array(
-                    'caption' => 'ru',
-                    'postfix' => '',
-                    'placeholder' => 'Название русском'
-                ),
-                array(
-                    'caption' => 'ua',
-                    'postfix' => '_ua',
-                    'placeholder' => 'Название на украинском'
-                ),
-            )
+            'tabs' => config('translations.config.languages')
         ),
         'description' => array(
             'caption' => 'Описание',
             'type' => 'textarea',
             'field' => 'text',
-            'tabs' => array(
-                array(
-                    'caption' => 'ru',
-                    'postfix' => '',
-                    'placeholder' => 'Описание на русском'
-                ),
-                array(
-                    'caption' => 'ua',
-                    'postfix' => '_ua',
-                    'placeholder' => 'Описание на украинском'
-                ),
-            )
+            'tabs' => config('translations.config.languages')
         ),
         'event_date' => array(
             'caption' => 'Дата события',

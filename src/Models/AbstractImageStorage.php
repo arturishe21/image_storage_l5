@@ -241,17 +241,15 @@ abstract class AbstractImageStorage extends Model
             foreach ($columnNames as $key => $columnName) {
                 if (!Schema::hasColumn($this->table, $columnName)) {
 
-                    try{
-                        list($field, $param) = explode("|", $fieldInfo['field']);
-                    }
-                    catch(\Exception $e){
-                        throw new \RuntimeException($e->getMessage());
-                    }
+                    $fieldParams = explode("|", $fieldInfo['field']);
 
-                    Schema::table($this->table, function (\Illuminate\Database\Schema\Blueprint $table) use ($columnName, $field, $param) {
-                        $field_add = $table->$field($columnName);
-                        if ($param) {
-                            $field_add->length($param);
+                    $fieldType   = $fieldParams[0];
+                    $fieldLength = isset($fieldParams[1]) ? $fieldParams[1] : false;
+
+                    Schema::table($this->table, function (\Illuminate\Database\Schema\Blueprint $table) use ($columnName, $fieldType, $fieldLength) {
+                        $field_add = $table->$fieldType($columnName);
+                        if ($fieldLength) {
+                            $field_add->length($fieldLength);
                         }
                     });
                 }
