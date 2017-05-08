@@ -2,27 +2,7 @@
 
 class YoutubeAPI extends AbstractVideoAPI
 {
-    protected $configPrefix = 'youtube';
-
-    private function getConfigAPIParts()
-    {
-        return $this->getConfigAPISpecificDetails()['api_part'];
-    }
-
-    private function getConfigAPIExistenceUrl()
-    {
-        return $this->getConfigAPISpecificDetails()['video_check_url'];
-    }
-
-    private function getConfigAPIPreviewUrl()
-    {
-        return $this->getConfigAPISpecificDetails()['preview_url'];
-    }
-
-    private function getConfigAPIPreviewQuality()
-    {
-        return $this->getConfigAPISpecificDetails()['preview_quality'];
-    }
+    protected $configPrefix = 'video.api.youtube';
 
     public function videoExists()
     {

@@ -20,6 +20,8 @@ return array(
     'Vis\\ImageStorage\\ChangeableSchemeFileTrait' => $baseDir . '/src/Models/Traits/ChangeableSchemeFileTrait.php',
     'Vis\\ImageStorage\\ChangeableSchemeInterface' => $baseDir . '/src/Models/Interfaces/ChangeableSchemeInterface.php',
     'Vis\\ImageStorage\\ChangeableSchemeTrait' => $baseDir . '/src/Models/Traits/ChangeableSchemeTrait.php',
+    'Vis\\ImageStorage\\ConfigurableAPIInterface' => $baseDir . '/src/Models/Interfaces/ConfigurableAPIInterface.php',
+    'Vis\\ImageStorage\\ConfigurableAPITrait' => $baseDir . '/src/Models/Traits/ConfigurableAPITrait.php',
     'Vis\\ImageStorage\\ConfigurableFileInterface' => $baseDir . '/src/Models/Interfaces/ConfigurableFileInterface.php',
     'Vis\\ImageStorage\\ConfigurableFileTrait' => $baseDir . '/src/Models/Traits/ConfigurableFileTrait.php',
     'Vis\\ImageStorage\\ConfigurableInterface' => $baseDir . '/src/Models/Interfaces/ConfigurableInterface.php',

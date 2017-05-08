@@ -2,6 +2,9 @@
 
 interface VideoAPIInterface
 {
+    public function setVideoId($id);
+    public function getVideoId();
+
     public function videoExists();
 
     public function getPreviewUrl();

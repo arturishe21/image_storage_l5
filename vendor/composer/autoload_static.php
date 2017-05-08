@@ -35,6 +35,8 @@ class ComposerStaticInitb53a329f2de6d2fb9c017a4f182eef61
         'Vis\\ImageStorage\\ChangeableSchemeFileTrait' => __DIR__ . '/../..' . '/src/Models/Traits/ChangeableSchemeFileTrait.php',
         'Vis\\ImageStorage\\ChangeableSchemeInterface' => __DIR__ . '/../..' . '/src/Models/Interfaces/ChangeableSchemeInterface.php',
         'Vis\\ImageStorage\\ChangeableSchemeTrait' => __DIR__ . '/../..' . '/src/Models/Traits/ChangeableSchemeTrait.php',
+        'Vis\\ImageStorage\\ConfigurableAPIInterface' => __DIR__ . '/../..' . '/src/Models/Interfaces/ConfigurableAPIInterface.php',
+        'Vis\\ImageStorage\\ConfigurableAPITrait' => __DIR__ . '/../..' . '/src/Models/Traits/ConfigurableAPITrait.php',
         'Vis\\ImageStorage\\ConfigurableFileInterface' => __DIR__ . '/../..' . '/src/Models/Interfaces/ConfigurableFileInterface.php',
         'Vis\\ImageStorage\\ConfigurableFileTrait' => __DIR__ . '/../..' . '/src/Models/Traits/ConfigurableFileTrait.php',
         'Vis\\ImageStorage\\ConfigurableInterface' => __DIR__ . '/../..' . '/src/Models/Interfaces/ConfigurableInterface.php',
