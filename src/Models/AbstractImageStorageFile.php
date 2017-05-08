@@ -1,10 +1,12 @@
 <?php namespace Vis\ImageStorage;
 
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\File;
 
-abstract class AbstractImageStorageFile extends AbstractImageStorage implements UploadableFileInterface
+abstract class AbstractImageStorageFile extends AbstractImageStorage implements UploadableFileInterface, ConfigurableFileInterface, ChangeableSchemeFileInterface
 {
+    use ConfigurableFileTrait,
+        ChangeableSchemeFileTrait;
+
     protected $sizePrefix = 'file_';
     protected $prefixPath = '/storage/image-storage/';
 
@@ -24,69 +26,6 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
     public function afterDeleteAction()
     {
         $this->doDeleteFiles();
-    }
-
-    protected function getConfigUseSourceTitle()
-    {
-        return $this->getConfigValue('source_title');
-    }
-
-    protected function getConfigDeleteFiles()
-    {
-        return $this->getConfigValue('delete_files');
-    }
-
-    protected function getConfigRenameFiles()
-    {
-        return $this->getConfigValue('rename_files');
-    }
-
-    protected function getConfigSizeValidation()
-    {
-        return $this->getConfigValue('size_validation.enabled');
-    }
-
-    protected function getConfigSizeMax()
-    {
-        return $this->getConfigValue('size_validation.max_size');
-    }
-
-    protected function getConfigSizeMaxErrorMessage()
-    {
-        return $this->getConfigValue('size_validation.error_message');
-    }
-
-    protected function getConfigExtensionValidation()
-    {
-        return $this->getConfigValue('extension_validation.enabled');
-    }
-
-    protected function getConfigAllowedExtensions()
-    {
-        return $this->getConfigValue('extension_validation.allowed_extensions');
-    }
-
-    protected function getConfigExtensionsErrorMessage()
-    {
-        return $this->getConfigValue('extension_validation.error_message');
-    }
-
-    public function getConfigSizes()
-    {
-        return $this->getConfigValue('sizes');
-    }
-
-    protected function getConfigSizesModifiable()
-    {
-        $allSizes = $this->getConfigSizes();
-        unset($allSizes['source']);
-        return $allSizes;
-    }
-
-    protected function getConfigSizeInfo($size)
-    {
-        $allSizes = $this->getConfigSizes();
-        return $allSizes[$size];
     }
 
     public function getSource($size = 'source')
@@ -262,69 +201,52 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
 
     protected function doDeleteFiles()
     {
-        if ($this->getConfigDeleteFiles()) {
-
-            //two level protection from removing the public folder
-            if ($this->file_folder) {
-
-                $fileFolder = public_path() . rtrim($this->file_folder, "/");
-
-                if (public_path() != $fileFolder) {
-
-                    File::deleteDirectory($fileFolder);
-                }
-            }
+        if (!$this->getConfigDeleteFiles()) {
+            return false;
         }
+
+        if (!$this->file_folder) {
+            return false;
+        }
+
+        $fileFolder = public_path() . rtrim($this->file_folder, "/");
+
+        if (public_path() == $fileFolder) {
+            return false;
+        }
+
+        File::deleteDirectory($fileFolder);
+
+        return true;
     }
 
-    protected function doCheckSchemeSizes()
+    protected function doRenameFiles()
     {
-        $sizes = $this->getConfigSizes();
+        if (!$this->getConfigRenameFiles()) {
+            return true;
+        }
+        if (!$this->isDirty('title')) {
+            return true;
+        }
 
-        $newSizes = [];
+        $sizes = $this->getConfigSizes();
 
         foreach ($sizes as $sizeName => $sizeInfo) {
 
-            $columnName = $this->sizePrefix . $sizeName;
+            $imagePath = public_path() . $this->getSource($sizeName);
 
-            if (!Schema::hasColumn($this->table, $columnName)) {
+            $this->extension = $this->getFileExtension($sizeName);
 
-                Schema::table($this->table, function (\Illuminate\Database\Schema\Blueprint $table) use ($columnName) {
-                    $table->text($columnName);
-                });
+            $newName = $sizeName . "/" . $this->makeFileName();
+            $newPath = public_path() . $this->file_folder . $newName;
 
-                $newSizes[] = $sizeName;
+            $field = $this->sizePrefix . $sizeName;
+
+            if (File::move($imagePath, $newPath)) {
+                $this->$field = $newName;
             }
         }
 
-        return $newSizes;
-    }
-
-    public function doRenameFiles()
-    {
-        if ($this->getConfigRenameFiles()) {
-
-            if ($this->isDirty('title')) {
-
-                $sizes = $this->getConfigSizes();
-
-                foreach ($sizes as $sizeName => $sizeInfo) {
-
-                    $imagePath = public_path() . $this->getSource($sizeName);
-
-                    $this->extension = $this->getFileExtension($sizeName);
-
-                    $newName = $sizeName . "/" . $this->makeFileName();
-                    $newPath = public_path() . $this->file_folder . $newName;
-
-                    $field = $this->sizePrefix . $sizeName;
-
-                    if (File::move($imagePath, $newPath)) {
-                        $this->$field = $newName;
-                    }
-                }
-            }
-        }
         return true;
     }
 

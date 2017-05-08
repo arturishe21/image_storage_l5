@@ -2,7 +2,6 @@
 
 interface UploadableFileInterface
 {
-
     public function setSourceFile($file);
 
     public function setNewFileData();

@@ -17,7 +17,7 @@ abstract class AbstractImageStorageGalleryController extends AbstractImageStorag
         return Response::json(array(
             'status' => true
         ));
-    } // end doChangeGalleryImagesPriority
+    }
 
     public function doDeleteToGalleryRelation()
     {

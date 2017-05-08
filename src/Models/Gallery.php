@@ -98,7 +98,7 @@ class Gallery extends AbstractImageStorage
 
         self::flushCache();
         Image::flushCache();
-    } // end tags
+    }
 
     public function deleteToGalleryRelation($id)
     {
