@@ -27,19 +27,6 @@ class Image extends AbstractImageStorageFile
         $this->makeRelations();
     }
 
-    public function scopeFilterByGalleries($query, $galleries = array())
-    {
-        if (!$galleries) {
-            return $query;
-        }
-
-        $relatedImagesIds = self::whereHas('galleries', function (\Illuminate\Database\Eloquent\Builder $query) use ($galleries) {
-            $query->whereIn('id_gallery', $galleries);
-        })->pluck('id');
-
-        return $query->whereIn('id', $relatedImagesIds);
-    }
-
     public function getRelatedEntities()
     {
         $relatedEntities = [];
@@ -56,21 +43,6 @@ class Image extends AbstractImageStorageFile
     public function getUrl()
     {
         return route("vis_images_show_single", [$this->getSlug()]);
-    }
-
-    private function getConfigOptimization()
-    {
-        return $this->getConfigValue('optimization');
-    }
-
-    private function getConfigQuality()
-    {
-        return $this->getConfigValue('quality');
-    }
-
-    private function getConfigStoreEXIF()
-    {
-        return $this->getConfigValue('store_exif');
     }
 
     protected function makeFileName()
@@ -117,7 +89,6 @@ class Image extends AbstractImageStorageFile
 
     private function makeImageTagsRelations()
     {
-
         $tags = Input::get('relations.image-storage-tags', array());
 
         $this->tags()->sync($tags);

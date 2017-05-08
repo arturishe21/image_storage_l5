@@ -40,19 +40,6 @@ class Video extends AbstractImageStorage
         $this->useYouTubeApi();
     }
 
-    public function scopeFilterByVideoGalleries($query, $galleries = array())
-    {
-        if (!$galleries) {
-            return $query;
-        }
-
-        $relatedVideosId = self::whereHas('videoGalleries', function (\Illuminate\Database\Eloquent\Builder $query) use ($galleries) {
-            $query->whereIn('id_video_gallery', $galleries);
-        })->pluck('id');
-
-        return $query->whereIn('id', $relatedVideosId);
-    }
-
     public function getRelatedEntities()
     {
         $relatedEntities = [];
