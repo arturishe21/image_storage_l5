@@ -8,6 +8,9 @@
       "email": "k.gluschenko@vis-design.com"
     }
   ],
+  "require": {
+    "vis/curl_client_l5": "1.*"
+  },
   "autoload": {
     "classmap": [
       "src/Models",

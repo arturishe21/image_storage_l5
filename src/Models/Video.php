@@ -7,13 +7,17 @@ class Video extends AbstractImageStorage
     protected $table = 'vis_videos';
     protected $configPrefix = 'video';
 
-    //fixme still wrong solution for getting api object
-    protected $appends  = ['api'];
-    public function getApiAttribute()
+    protected $api;
+
+    //fixme define api types and id_api
+    public function api()
     {
-        $api = VideoAPIFactory::makeAPI('youtube');
-        $api->setVideoId($this->id_youtube);
-        return $api;
+        if (!$this->api) {
+            $this->api = VideoAPIFactory::makeAPI('youtube');
+            $this->api->setVideoId($this->id_youtube);
+        }
+
+        return $this->api;
     }
 
     public function preview()
@@ -33,8 +37,8 @@ class Video extends AbstractImageStorage
 
     public function beforeSaveAction()
     {
-        if (!$this->api->videoExists()) {
-            $this->errorMessage = $this->api->getErrorMessage();
+        if (!$this->api()->videoExists()) {
+            $this->errorMessage = $this->api()->getExistenceErrorMessage();
             return false;
         }
 
@@ -86,7 +90,7 @@ class Video extends AbstractImageStorage
         if ($this->id_preview) {
             $image = $this->preview->getSource($size);
         } else {
-            $image = $this->api->getPreviewUrl();
+            $image = $this->api()->getPreviewUrl();
         }
 
         return $image;
@@ -132,7 +136,7 @@ class Video extends AbstractImageStorage
 
     private function useApiData()
     {
-        if (!$this->api->getConfigAPISetData()) {
+        if (!$this->api()->getConfigAPISetData()) {
             return false;
         }
 
@@ -140,9 +144,9 @@ class Video extends AbstractImageStorage
 
         foreach ($columnNames as $key => $columnName) {
             if (strpos($columnName, 'title') !== false && !$this->$columnName) {
-                $this->$columnName = $this->api->getTitle();
+                $this->$columnName = $this->api()->getTitle();
             } elseif (strpos($columnName, 'description') !== false && !$this->$columnName) {
-                $this->$columnName = $this->api->getDescription();
+                $this->$columnName = $this->api()->getDescription();
             }
         }
 

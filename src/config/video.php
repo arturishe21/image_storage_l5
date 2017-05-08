@@ -9,29 +9,32 @@ return array(
         //enable or disable api requests
         'enabled'    => true,
 
+        // enables caching of API results, leave 0 to disable caching
+        'cache_minutes' => 60,
+
         // use api data to fill in title & description
         'set_data'   => true,
 
-        'youtube' => array(
-            //check if video exists on youtube. works without api_key
-            'video_existence_validation' => array(
-                'check_url' => 'https://www.youtube.com/oembed?format=json&url=http://www.youtube.com/watch?v=[id_youtube]',
-                'error_message' => "Не удалось найти видео на YouTube с идентификатором: [id_youtube]"
-            ),
+        'video_existence_error' => "Не удалось найти видео на {type} с идентификатором: {id}",
 
+        'youtube' => array(
+
+            //check if video exists on youtube. works without api_key
+            'video_check_url' => 'https://www.youtube.com/oembed',
+
+            //gets preview image of video in defined quality. works without api_key
             'preview_url' => 'https://img.youtube.com/vi/{id}/{quality}.jpg',
 
-            //possible values: 1, 2, 3, default, hqdefault, maxresdefault
+            //possible values: 0, 1, 2, 3, default, default, mqdefault, hqdefault, sddefault, maxresdefault
             'preview_quality' => 'maxresdefault',
 
             //https://developers.google.com/youtube/v3/docs/videos/list
-            'api_url' => 'https://www.googleapis.com/youtube/v3/videos?id={id}&part={part}&key={key}',
+            'api_url' => 'https://www.googleapis.com/youtube/v3/videos',
 
             'api_part' => 'snippet,statistics',
 
             //https://developers.google.com/youtube/v3/getting-started
             'api_key' => 'AIzaSyDWPTTGEANYwXwAk8QMg9bQTzzBatmhxbc',
-
         ),
     ),
 

@@ -2,26 +2,40 @@
 
 class YoutubeAPI extends AbstractVideoAPI
 {
-    protected $type = 'youtube';
+    protected $configPrefix = 'youtube';
 
     private function getConfigAPIParts()
     {
-        return $this->getConfigAPIType()['api_part'];
+        return $this->getConfigAPISpecificDetails()['api_part'];
+    }
+
+    private function getConfigAPIExistenceUrl()
+    {
+        return $this->getConfigAPISpecificDetails()['video_check_url'];
+    }
+
+    private function getConfigAPIPreviewUrl()
+    {
+        return $this->getConfigAPISpecificDetails()['preview_url'];
     }
 
     private function getConfigAPIPreviewQuality()
     {
-        return $this->getConfigAPIType()['preview_quality'];
+        return $this->getConfigAPISpecificDetails()['preview_quality'];
     }
 
     public function videoExists()
     {
-        $checkUrl = str_replace("[id_youtube]", $this->getEncodedVideoId(), $this->getConfigAPIExistenceUrl());
-        $headers  = get_headers($checkUrl);
+        $url = $this->getConfigAPIExistenceUrl();
 
-        if (!(is_array($headers) ? preg_match('/^HTTP\\/\\d+\\.\\d+\\s+2\\d\\d\\s+.*$/', $headers[0]) : false)) {
-            //fixme pass errormessage?
-            $this->errorMessage = str_replace("[id_youtube]", $this->getEncodedVideoId(), $this->getConfigAPIExistenceError());
+        $queryParams = [
+            'format' => 'json',
+            'url'    => 'http://www.youtube.com/watch?v=' . $this->getVideoId()
+        ];
+
+        $this->curl->setRequestUrl($url, $queryParams)->doCurlRequest();
+
+        if (!$this->curl->isSuccessful()) {
             return false;
         }
 
@@ -32,72 +46,56 @@ class YoutubeAPI extends AbstractVideoAPI
     {
         $stubs = ["{id}", "{quality}"];
 
-        $replacements = [$this->getEncodedVideoId(), $this->getConfigAPIPreviewQuality()];
+        $replacements = [$this->getVideoId(), $this->getConfigAPIPreviewQuality()];
 
         $url = str_replace($stubs, $replacements, $this->getConfigAPIPreviewUrl());
 
         return $url;
     }
 
-    public function getAPIUrl()
-    {
-        $stubs = ["{id}", "{part}", "{key}"];
+    public function requestApiData(){
 
-        $replacements = [$this->getEncodedVideoId(), $this->getConfigAPIParts(), $this->getConfigAPIKey()];
+        $queryParams = [
+            'id'    => $this->getVideoId(),
+            'part'  => $this->getConfigAPIParts(),
+            'key'   => $this->getConfigAPIKey()
+        ];
 
-        $url = str_replace($stubs, $replacements, $this->getConfigAPIURL());
+        $this->curl->setRequestUrl($this->getConfigAPIURL(), $queryParams)->doCurlRequest();
 
-        return $url;
-    }
-
-    //fixme refactor this method and add Caching
-    public function getData()
-    {
-        if (!$this->getConfigAPIEnabled()) {
+        if (!$this->curl->isSuccessful()) {
             return false;
         }
 
-        $apiResponse = file_get_contents($this->getAPIUrl());
-        $apiData = json_decode($apiResponse);
+        $apiData = json_decode($this->curl->getCurlResponseBody());
 
-        $youTubeData = array_shift($apiData->items);
-
-        $this->apiResponse = $youTubeData;
-
-        return true;
+        return array_shift($apiData->items);
     }
 
-
-
-
-
-
-
-    //fixme refactor this methods
     private function getSnippet()
     {
-        if (!$this->getData()) {
+        if (!$this->getAPIData()) {
             return false;
         }
 
-        if (!$this->apiResponse->snippet) {
+        if (!$this->getApiResponse()->snippet) {
             return false;
         }
 
-        return $this->apiResponse->snippet;
+        return $this->getApiResponse()->snippet;
     }
 
     private function getStatistics()
     {
-        if (!$this->getData()) {
+        if (!$this->getAPIData()) {
             return false;
         }
 
-        if (!$this->apiResponse->statistics) {
+        if (!$this->getApiResponse()->statistics) {
             return false;
         }
 
-        return $this->apiResponse->statistics;
+        return $this->getApiResponse()->statistics;
     }
 
     public function getTitle()
