@@ -21,6 +21,7 @@ class ComposerStaticInitb53a329f2de6d2fb9c017a4f182eef61
     );
 
     public static $classMap = array (
+        'ApiPatchMigration' => __DIR__ . '/../..' . '/src/Migrations/2017_05_14_174400_api_patch_migration.php',
         'ImageStorageMigration' => __DIR__ . '/../..' . '/src/Migrations/2016_11_14_124121_image_storage_migration.php',
         'Vis\\ImageStorage\\AbstractImageStorage' => __DIR__ . '/../..' . '/src/Models/AbstractImageStorage.php',
         'Vis\\ImageStorage\\AbstractImageStorageController' => __DIR__ . '/../..' . '/src/Http/Controllers/AbstractImageStorageController.php',

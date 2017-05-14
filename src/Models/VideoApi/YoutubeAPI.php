@@ -2,7 +2,7 @@
 
 class YoutubeAPI extends AbstractVideoAPI
 {
-    protected $configPrefix = 'video_api.youtube';
+    protected $configPrefix = 'video_api.providers.youtube';
 
     public function videoExists()
     {
@@ -13,9 +13,9 @@ class YoutubeAPI extends AbstractVideoAPI
             'url'    => 'http://www.youtube.com/watch?v=' . $this->getVideoId()
         ];
 
-        $this->curl->setRequestUrl($url, $queryParams)->doCurlRequest();
+        $this->curl()->setRequestUrl($url, $queryParams)->doCurlRequest();
 
-        if (!$this->curl->isSuccessful()) {
+        if (!$this->curl()->isSuccessful()) {
             return false;
         }
 
@@ -41,19 +41,18 @@ class YoutubeAPI extends AbstractVideoAPI
             'key'   => $this->getConfigAPIKey()
         ];
 
-        $this->curl->setRequestUrl($this->getConfigAPIURL(), $queryParams)->doCurlRequest();
+        $this->curl()->setRequestUrl($this->getConfigAPIURL(), $queryParams)->doCurlRequest();
 
-        if (!$this->curl->isSuccessful()) {
+        if (!$this->curl()->isSuccessful()) {
             return false;
         }
 
-        $apiData = json_decode($this->curl->getCurlResponseBody());
+        $apiData = json_decode($this->curl()->getCurlResponseBody());
 
         return array_shift($apiData->items);
     }
 
     //todo rewrite to ??(coalesce) operator
-
     public function getTitle()
     {
         return isset($this->getApiResponse()->snippet->title) ? $this->getApiResponse()->snippet->title : "";

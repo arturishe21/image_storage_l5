@@ -3,15 +3,21 @@ return array(
     'title' => "Видео",
 
     'per_page' => 40,
-
-    //Only text\textarea\checkbox\datetime fields are supported for now
+    
+    //Only text\textarea\checkbox\datetime\select fields are supported for now
     'fields' => array(
-        'id_youtube' => array(
+        'api_provider' => array(
+            'caption' => 'Видео сервис',
+            'type' => 'select',
+            'options' => config('image-storage.video_api.provider_names')
+        ),
+        'api_id' => array(
             'caption' => 'Идентификатор видео',
             'type' => 'text',
             'field' => 'string',
             'placeholder' => 'Идентификатор видео',
         ),
+
         'title' => array(
             'caption' => 'Название',
             'type' => 'text',

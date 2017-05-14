@@ -55,4 +55,6 @@ trait ConfigurableAPITrait
         return $this->getConfigValue('preview_quality');
     }
 
+
+
 }

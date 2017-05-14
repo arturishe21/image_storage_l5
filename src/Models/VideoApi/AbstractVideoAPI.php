@@ -13,13 +13,17 @@ abstract class AbstractVideoAPI extends Model implements VideoAPIInterface, Conf
     protected $curl;
     public $apiResponse;
 
-    public function __construct()
+    public function curl()
     {
-        $this->curl = New CurlClient();
-        $this->curl->setRequestHeader([
-            'Accept'       => 'application/json',
-            'Content-Type' => 'application/json'
-        ]);
+        if (!$this->curl) {
+            $this->curl = New CurlClient();
+            $this->curl->setRequestHeader([
+                'Accept'       => 'application/json',
+                'Content-Type' => 'application/json'
+            ]);
+        }
+
+        return $this->curl;
     }
 
     public function setVideoId($id)
@@ -32,6 +36,17 @@ abstract class AbstractVideoAPI extends Model implements VideoAPIInterface, Conf
         return $this->videoId;
     }
 
+    //fixme add getWatchUrl and getEmbedUrl. getConfigWatchUrl&getConfigEmbedUrl Interface&Trait + do in actual config
+    public function getWatchUrl()
+    {
+
+    }
+
+    public function getEmbedUrl()
+    {
+
+    }
+
     public function getApiResponse()
     {
         if (!$this->getConfigAPIEnabled()) {
@@ -39,13 +54,7 @@ abstract class AbstractVideoAPI extends Model implements VideoAPIInterface, Conf
         }
 
         if (!$this->apiResponse) {
-            $tag       = $this->getConfigNamespace() . '.video';
-            $cacheName = $this->getConfigPrefix() . "." . $this->getVideoId();
-            $minutes   = $this->getConfigAPICacheMinutes();
-
-            $this->apiResponse = Cache::tags($tag)->remember($cacheName, $minutes, function () {
-                return $this->requestApiData();
-            });
+            $this->apiResponse = $this->getConfigAPICacheMinutes() === false ? $this->requestApiData() : $this->handleCacheApiResponse();
         }
 
         return $this->apiResponse;
@@ -55,12 +64,22 @@ abstract class AbstractVideoAPI extends Model implements VideoAPIInterface, Conf
     {
         $stubs = ["{id}", "{type}"];
 
-        //fixme proper get_class method
-        $replacements = [$this->getVideoId(), get_class($this)];
+        $replacements = [$this->getVideoId(), class_basename($this)];
 
         $message = str_replace($stubs, $replacements, $this->getConfigApiVideoExistenceError());
 
         return $message;
+    }
+
+    protected function handleCacheApiResponse()
+    {
+        $tag       = $this->getConfigNamespace() . '.video';
+        $cacheName = $this->getConfigPrefix() . "." . $this->getVideoId();
+        $minutes   = $this->getConfigAPICacheMinutes();
+
+        $this->apiResponse = Cache::tags($tag)->remember($cacheName, $minutes, function () {
+            return $this->requestApiData();
+        });
     }
 
 }

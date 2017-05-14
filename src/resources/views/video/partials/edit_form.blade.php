@@ -12,8 +12,9 @@
 
 <div id="image-storage-tabs-content" class="tab-content padding-10">
         <div class="tab-pane fade in active" id="image-storage-video">
+            <?//fixme add vimeo player here ?>
             @if($entity->id)
-                <iframe class="image-storage-video-iframe superbox-current-img" src="https://www.youtube.com/embed/{{$entity->id_youtube}}" frameborder="0" allowfullscreen></iframe>
+                <iframe class="image-storage-video-iframe superbox-current-img" src="https://www.youtube.com/embed/{{$entity->api_id}}" frameborder="0" allowfullscreen></iframe>
             @endif
         </div>
         @if($entity->id)

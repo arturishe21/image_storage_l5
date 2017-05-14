@@ -12,7 +12,7 @@ class VideoAPIFactory extends Model
             case 'vimeo':
                 return new VimeoAPI();
             default:
-                throw new \InvalidArgumentException("Supported API type should be provided");
+                throw new \InvalidArgumentException("Supported API provider should be called");
         }
     }
 }

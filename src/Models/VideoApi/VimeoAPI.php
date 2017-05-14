@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Cache;
 
 class VimeoAPI extends AbstractVideoAPI
 {
-    protected $configPrefix = 'video_api.vimeo';
+    protected $configPrefix = 'video_api.providers.vimeo';
 
     public function videoExists()
     {
@@ -14,9 +14,9 @@ class VimeoAPI extends AbstractVideoAPI
             'url'    => 'https://vimeo.com/' . $this->getVideoId()
         ];
 
-        $this->curl->setRequestUrl($url, $queryParams)->doCurlRequest();
+        $this->curl()->setRequestUrl($url, $queryParams)->doCurlRequest();
 
-        if (!$this->curl->isSuccessful()) {
+        if (!$this->curl()->isSuccessful()) {
             return false;
         }
 
@@ -36,13 +36,13 @@ class VimeoAPI extends AbstractVideoAPI
                 'url' => 'https://vimeo.com/' . $this->getVideoId()
             ];
 
-            $this->curl->setRequestUrl($url, $queryParams)->doCurlRequest();
+            $this->curl()->setRequestUrl($url, $queryParams)->doCurlRequest();
 
-            if (!$this->curl->isSuccessful()) {
+            if (!$this->curl()->isSuccessful()) {
                 return false;
             }
 
-            $result = json_decode($this->curl->getCurlResponseBody());
+            $result = json_decode($this->curl()->getCurlResponseBody());
 
             preg_match('~video/(.*?)_~', $result->thumbnail_url, $imageId);
 
@@ -65,15 +65,15 @@ class VimeoAPI extends AbstractVideoAPI
 
         $fields = ['fields' => $this->getConfigAPIParts()];
 
-        $this->curl
+        $this->curl()
             ->setRequestHeader('Authorization', 'Bearer ' . $this->getConfigAPIKey())
             ->setRequestUrl($url . $this->getVideoId(), $fields)->doCurlRequest();
 
-        if (!$this->curl->isSuccessful()) {
+        if (!$this->curl()->isSuccessful()) {
             return false;
         }
 
-        $apiData = json_decode($this->curl->getCurlResponseBody());
+        $apiData = json_decode($this->curl()->getCurlResponseBody());
 
         return $apiData;
     }

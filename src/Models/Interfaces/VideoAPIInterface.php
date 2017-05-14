@@ -6,10 +6,12 @@ interface VideoAPIInterface
     public function getVideoId();
 
     public function videoExists();
+    public function requestApiData();
+
+    public function getWatchUrl();
+    public function getEmbedUrl();
 
     public function getPreviewUrl();
-
-    public function requestApiData();
 
     public function getTitle();
     public function getDescription();
