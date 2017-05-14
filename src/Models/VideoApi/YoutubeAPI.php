@@ -2,7 +2,7 @@
 
 class YoutubeAPI extends AbstractVideoAPI
 {
-    protected $configPrefix = 'video.api.youtube';
+    protected $configPrefix = 'video_api.youtube';
 
     public function videoExists()
     {
@@ -33,8 +33,8 @@ class YoutubeAPI extends AbstractVideoAPI
         return $url;
     }
 
-    public function requestApiData(){
-
+    public function requestApiData()
+    {
         $queryParams = [
             'id'    => $this->getVideoId(),
             'part'  => $this->getConfigAPIParts(),
@@ -52,64 +52,40 @@ class YoutubeAPI extends AbstractVideoAPI
         return array_shift($apiData->items);
     }
 
-    private function getSnippet()
-    {
-        if (!$this->getAPIData()) {
-            return false;
-        }
-
-        if (!$this->getApiResponse()->snippet) {
-            return false;
-        }
-
-        return $this->getApiResponse()->snippet;
-    }
-
-    private function getStatistics()
-    {
-        if (!$this->getAPIData()) {
-            return false;
-        }
-
-        if (!$this->getApiResponse()->statistics) {
-            return false;
-        }
-
-        return $this->getApiResponse()->statistics;
-    }
+    //todo rewrite to ??(coalesce) operator
 
     public function getTitle()
     {
-        return $this->getSnippet() ? $this->getSnippet()->title : "";
+        return isset($this->getApiResponse()->snippet->title) ? $this->getApiResponse()->snippet->title : "";
     }
 
     public function getDescription()
     {
-        return $this->getSnippet() ? $this->getSnippet()->description : "";
+        return isset($this->getApiResponse()->snippet->description) ? $this->getApiResponse()->snippet->description : "";
     }
 
     public function getViewCount()
     {
-        return $this->getStatistics() ? $this->getStatistics()->viewCount : 0;
+        return isset($this->getApiResponse()->statistics->viewCount) ? $this->getApiResponse()->statistics->viewCount : 0;
     }
 
     public function getLikeCount()
     {
-        return $this->getStatistics() ? $this->getStatistics()->likeCount : 0;
+        return isset($this->getApiResponse()->statistics->likeCount) ? $this->getApiResponse()->statistics->likeCount : 0;
     }
 
     public function getDislikeCount()
     {
-        return $this->getStatistics() ? $this->getStatistics()->dislikeCount : 0;
+        return isset($this->getApiResponse()->statistics->dislikeCount) ? $this->getApiResponse()->statistics->dislikeCount : 0;
     }
 
     public function getFavoriteCount()
     {
-        return $this->getStatistics() ? $this->getStatistics()->favoriteCount : 0;
+        return isset($this->getApiResponse()->statistics->favoriteCount) ? $this->getApiResponse()->statistics->favoriteCount : 0;
     }
 
     public function getCommentCount()
     {
-        return $this->getStatistics() ? $this->getStatistics()->commentCount : 0;
+        return isset($this->getApiResponse()->statistics->commentCount) ? $this->getApiResponse()->statistics->commentCount : 0;
     }
 }

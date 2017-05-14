@@ -4,26 +4,25 @@ trait ConfigurableAPITrait
 {
     use ConfigurableTrait;
 
-    //fixme
+    //todo refactor this 4 methods
     public function getConfigAPIEnabled()
     {
-        return config('image-storage.video.api.enabled');
-    }
-    //fixme
-    public function getConfigAPICacheMinutes()
-    {
-        return config('image-storage.video.api.cache_minutes');
-    }
-    //fixme
-    public function getConfigAPISetData()
-    {
-        return config('image-storage.video.api.set_data');
+        return config($this->getConfigNamespace() . '.' . 'video_api.enabled');
     }
 
-    //fixme
+    public function getConfigAPICacheMinutes()
+    {
+        return config($this->getConfigNamespace() . '.' . 'video_api.cache_minutes');
+    }
+
+    public function getConfigAPISetData()
+    {
+        return config($this->getConfigNamespace() . '.' . 'video_api.set_data');
+    }
+
     public function getConfigApiVideoExistenceError()
     {
-        return config('image-storage.video.api.video_existence_error');
+        return config($this->getConfigNamespace() . '.' . 'video_api.video_existence_error');
     }
 
     public function getConfigAPIURL()
@@ -43,7 +42,7 @@ trait ConfigurableAPITrait
 
     public function getConfigAPIExistenceUrl()
     {
-        return $this->getConfigValue('video_check_url');
+        return $this->getConfigValue('video_existence_url');
     }
 
     public function getConfigAPIPreviewUrl()

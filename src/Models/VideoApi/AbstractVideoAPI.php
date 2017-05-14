@@ -32,7 +32,7 @@ abstract class AbstractVideoAPI extends Model implements VideoAPIInterface, Conf
         return $this->videoId;
     }
 
-    public function getAPIData()
+    public function getApiResponse()
     {
         if (!$this->getConfigAPIEnabled()) {
             return false;
@@ -48,11 +48,6 @@ abstract class AbstractVideoAPI extends Model implements VideoAPIInterface, Conf
             });
         }
 
-        return true;
-    }
-
-    public function getApiResponse()
-    {
         return $this->apiResponse;
     }
 
@@ -60,9 +55,10 @@ abstract class AbstractVideoAPI extends Model implements VideoAPIInterface, Conf
     {
         $stubs = ["{id}", "{type}"];
 
-        $replacements = [$this->getVideoId(), static::class];
+        //fixme proper get_class method
+        $replacements = [$this->getVideoId(), get_class($this)];
 
-        $message = str_replace($stubs, $replacements, $this->getConfigAPI()['video_existence_error']);
+        $message = str_replace($stubs, $replacements, $this->getConfigApiVideoExistenceError());
 
         return $message;
     }

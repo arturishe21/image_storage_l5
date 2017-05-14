@@ -13,8 +13,11 @@ class Video extends AbstractImageStorage
     public function api()
     {
         if (!$this->api) {
+            $this->api = VideoAPIFactory::makeAPI('vimeo');
+            $this->api->setVideoId(209263699);
+/*
             $this->api = VideoAPIFactory::makeAPI('youtube');
-            $this->api->setVideoId($this->id_youtube);
+            $this->api->setVideoId($this->id_youtube);*/
         }
 
         return $this->api;
