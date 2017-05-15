@@ -1,24 +1,26 @@
 <?php namespace Vis\ImageStorage;
 
+use Illuminate\Database\Eloquent\Builder;
+
 interface FilterableInterface
 {
-    public function scopeActive($query);
+    public function scopeActive(Builder $query);
 
-    public function scopeSlug($query, $slug);
+    public function scopeSlug(Builder $query, $slug);
 
-    public function scopeById($query, $order = "desc");
+    public function scopeById(Builder $query, $order = "desc");
 
-    public function scopeFilterByTitle($query, $title);
+    public function scopeFilterByTitle(Builder $query, $title);
 
-    public function scopeFilterByActivity($query, $activity = array());
+    public function scopeFilterByActivity(Builder $query, $activity = array());
 
-    public function scopeFilterByDate($query, $date);
+    public function scopeFilterByDate(Builder $query, $date);
 
-    public function scopeFilterByTags($query, $tags = array());
+    public function scopeFilterByTags(Builder $query, $tags = array());
 
-    public function scopeFilterByGalleries($query, $galleries = array());
+    public function scopeFilterByGalleries(Builder $query, $galleries = array());
 
-    public function scopeFilterByVideoGalleries($query, $galleries = array());
+    public function scopeFilterByVideoGalleries(Builder $query, $galleries = array());
 
-    public function scopeFilterSearch($query);
+    public function scopeFilterSearch(Builder $query);
 }

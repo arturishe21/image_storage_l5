@@ -4,7 +4,6 @@ return array(
 
     'per_page' => 20,
 
-    //Only text\textarea\checkbox\datetime fields are supported for now
     'fields' => array(
         'title' => array(
             'caption' => 'Название',

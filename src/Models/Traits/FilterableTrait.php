@@ -1,25 +1,26 @@
 <?php namespace Vis\ImageStorage;
 
 use Illuminate\Support\Facades\Session;
+use Illuminate\Database\Eloquent\Builder;
 
 trait FilterableTrait
 {
-    public function scopeActive($query)
+    public function scopeActive(Builder $query)
     {
         return $query->where('is_active', '1');
     }
 
-    public function scopeSlug($query, $slug)
+    public function scopeSlug(Builder $query, $slug)
     {
         return $query->where('slug', $slug);
     }
 
-    public function scopeById($query, $order = "desc")
+    public function scopeById(Builder $query, $order = "desc")
     {
         return $query->orderBy('id', $order);
     }
 
-    public function scopeFilterByTitle($query, $title)
+    public function scopeFilterByTitle(Builder $query, $title)
     {
         if (!$title) {
             return $query;
@@ -28,7 +29,7 @@ trait FilterableTrait
         return $query->where('title', 'like', '%' . $title . '%');
     }
 
-    public function scopeFilterByActivity($query, $activity = array())
+    public function scopeFilterByActivity(Builder $query, $activity = array())
     {
         if (!$activity) {
             return $query;
@@ -37,7 +38,7 @@ trait FilterableTrait
         return $query->whereIn('is_active', $activity);
     }
 
-    public function scopeFilterByDate($query, $date)
+    public function scopeFilterByDate(Builder $query, $date)
     {
         if (!$date) {
             return $query;
@@ -52,7 +53,7 @@ trait FilterableTrait
         return $query->whereBetween('created_at', array($from, $to));
     }
 
-    public function scopeFilterByTags($query, $tags = array())
+    public function scopeFilterByTags(Builder $query, $tags = array())
     {
         if (!$tags) {
             return $query;
@@ -60,7 +61,7 @@ trait FilterableTrait
 
         $className = get_class($this);
 
-        $relatedId = self::whereHas('tags', function (\Illuminate\Database\Eloquent\Builder $query) use ($tags, $className) {
+        $relatedId = self::whereHas('tags', function (Builder  $query) use ($tags, $className) {
             $query->whereIn('id_tag', $tags)
                 ->where('entity_type', $className);
         })->pluck('id');
@@ -68,33 +69,33 @@ trait FilterableTrait
         return $query->whereIn('id', $relatedId);
     }
 
-    public function scopeFilterByGalleries($query, $galleries = array())
+    public function scopeFilterByGalleries(Builder $query, $galleries = array())
     {
         if (!$galleries) {
             return $query;
         }
 
-        $relatedImagesIds = self::whereHas('galleries', function (\Illuminate\Database\Eloquent\Builder $query) use ($galleries) {
+        $relatedImagesIds = self::whereHas('galleries', function (Builder $query) use ($galleries) {
             $query->whereIn('id_gallery', $galleries);
         })->pluck('id');
 
         return $query->whereIn('id', $relatedImagesIds);
     }
 
-    public function scopeFilterByVideoGalleries($query, $galleries = array())
+    public function scopeFilterByVideoGalleries(Builder $query, $galleries = array())
     {
         if (!$galleries) {
             return $query;
         }
 
-        $relatedVideosId = self::whereHas('videoGalleries', function (\Illuminate\Database\Eloquent\Builder $query) use ($galleries) {
+        $relatedVideosId = self::whereHas('videoGalleries', function (Builder $query) use ($galleries) {
             $query->whereIn('id_video_gallery', $galleries);
         })->pluck('id');
 
         return $query->whereIn('id', $relatedVideosId);
     }
 
-    public function scopeFilterSearch($query)
+    public function scopeFilterSearch(Builder $query)
     {
         $filters = Session::get('image_storage_filter.' . $this->getConfigPrefix(), array());
 

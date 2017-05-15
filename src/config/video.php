@@ -4,7 +4,6 @@ return array(
 
     'per_page' => 40,
     
-    //Only text\textarea\checkbox\datetime\select fields are supported for now
     'fields' => array(
         'api_provider' => array(
             'caption' => 'Видео сервис',

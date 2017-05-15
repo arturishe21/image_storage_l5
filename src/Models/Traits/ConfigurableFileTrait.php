@@ -79,4 +79,5 @@ trait ConfigurableFileTrait
         $allSizes = $this->getConfigSizes();
         return $allSizes[$size];
     }
+
 }

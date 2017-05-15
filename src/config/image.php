@@ -35,7 +35,6 @@ return array(
     /* rename files upon renaming entry title in database */
     'rename_files' => true,
 
-    //Only text\textarea\checkbox\datetime fields are supported for now
     'fields' => array(
         'title' => array(
             'caption' => 'Название',
