@@ -36,20 +36,25 @@ abstract class AbstractVideoAPI extends Model implements VideoAPIInterface, Conf
         return $this->videoId;
     }
 
-    public function getWatchUrl()
+    protected function buildVideoUrl($url, array $urlParams = [])
     {
-        return $this->getConfigWatchUrl() . $this->getVideoId();
+        $url = $url . $this->getVideoId();
+
+        if (count($urlParams)) {
+            $url .= (strpos($url, "?") ? "&" : "?") . http_build_query($urlParams);
+        }
+
+        return $url;
+    }
+
+    public function getWatchUrl(array $urlParams = [])
+    {
+        return $this->buildVideoUrl($this->getConfigWatchUrl(), $urlParams);
     }
 
     public function getEmbedUrl(array $urlParams = [])
     {
-        $embedUrl = $this->getConfigEmbedUrl() . $this->getVideoId();
-
-        if (count($urlParams)) {
-            $embedUrl .= '?' . http_build_query($urlParams);
-        }
-
-        return $embedUrl;
+        return $this->buildVideoUrl($this->getConfigEmbedUrl(), $urlParams);
     }
 
     public function getApiResponse()
