@@ -10,15 +10,19 @@ interface ConfigurableAPIInterface
 
     public function getConfigApiVideoExistenceError();
 
-    public function getConfigAPIURL();
-
-    public function getConfigAPIKey();
-
-    public function getConfigAPIParts();
-
     public function getConfigAPIExistenceUrl();
 
     public function getConfigAPIPreviewUrl();
 
     public function getConfigAPIPreviewQuality();
+
+    public function getConfigWatchUrl();
+
+    public function getConfigEmbedUrl();
+
+    public function getConfigAPIURL();
+
+    public function getConfigAPIKey();
+
+    public function getConfigAPIParts();
 }

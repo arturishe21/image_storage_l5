@@ -36,15 +36,20 @@ abstract class AbstractVideoAPI extends Model implements VideoAPIInterface, Conf
         return $this->videoId;
     }
 
-    //fixme add getWatchUrl and getEmbedUrl. getConfigWatchUrl&getConfigEmbedUrl Interface&Trait + do in actual config
     public function getWatchUrl()
     {
-
+        return $this->getConfigWatchUrl() . $this->getVideoId();
     }
 
-    public function getEmbedUrl()
+    public function getEmbedUrl(array $urlParams = [])
     {
+        $embedUrl = $this->getConfigEmbedUrl() . $this->getVideoId();
 
+        if (count($urlParams)) {
+            $embedUrl .= '?' . http_build_query($urlParams);
+        }
+
+        return $embedUrl;
     }
 
     public function getApiResponse()

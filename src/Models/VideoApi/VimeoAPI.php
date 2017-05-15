@@ -11,7 +11,7 @@ class VimeoAPI extends AbstractVideoAPI
         $url = $this->getConfigAPIExistenceUrl();
 
         $queryParams = [
-            'url'    => 'https://vimeo.com/' . $this->getVideoId()
+            'url'    => $this->getWatchUrl()
         ];
 
         $this->curl()->setRequestUrl($url, $queryParams)->doCurlRequest();
@@ -33,7 +33,7 @@ class VimeoAPI extends AbstractVideoAPI
             $url = $this->getConfigAPIExistenceUrl();
 
             $queryParams = [
-                'url' => 'https://vimeo.com/' . $this->getVideoId()
+                'url' => $this->getWatchUrl()
             ];
 
             $this->curl()->setRequestUrl($url, $queryParams)->doCurlRequest();

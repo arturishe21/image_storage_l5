@@ -32,6 +32,10 @@ return array(
             //possible values: 0, 1, 2, 3, default, default, mqdefault, hqdefault, sddefault, maxresdefault
             'preview_quality' => 'maxresdefault',
 
+            'watch_url' => 'https://www.youtube.com/watch?v=',
+
+            'embed_url' => 'https://www.youtube.com/embed/',
+
             //https://developers.google.com/youtube/v3/docs/videos/list
             'api_url' => 'https://www.googleapis.com/youtube/v3/videos',
 
@@ -52,6 +56,10 @@ return array(
 
             //possible values: 100, 200, 295, 640, 960, 1280
             'preview_quality' => '1280',
+
+            'watch_url' => 'https://vimeo.com/',
+
+            'embed_url' => 'https://player.vimeo.com/video/',
 
             //https://developer.vimeo.com/api/start
             'api_url' => 'https://api.vimeo.com/videos/',

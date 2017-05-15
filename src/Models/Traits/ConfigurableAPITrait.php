@@ -25,21 +25,6 @@ trait ConfigurableAPITrait
         return config($this->getConfigNamespace() . '.' . 'video_api.video_existence_error');
     }
 
-    public function getConfigAPIURL()
-    {
-        return $this->getConfigValue('api_url');
-    }
-
-    public function getConfigAPIKey()
-    {
-        return $this->getConfigValue('api_key');
-    }
-
-    public function getConfigAPIParts()
-    {
-        return $this->getConfigValue('api_part');
-    }
-
     public function getConfigAPIExistenceUrl()
     {
         return $this->getConfigValue('video_existence_url');
@@ -55,6 +40,29 @@ trait ConfigurableAPITrait
         return $this->getConfigValue('preview_quality');
     }
 
+    public function getConfigWatchUrl()
+    {
+        return $this->getConfigValue('watch_url');
+    }
 
+    public function getConfigEmbedUrl()
+    {
+        return $this->getConfigValue('embed_url');
+    }
+
+    public function getConfigAPIURL()
+    {
+        return $this->getConfigValue('api_url');
+    }
+
+    public function getConfigAPIKey()
+    {
+        return $this->getConfigValue('api_key');
+    }
+
+    public function getConfigAPIParts()
+    {
+        return $this->getConfigValue('api_part');
+    }
 
 }

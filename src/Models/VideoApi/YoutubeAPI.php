@@ -10,7 +10,7 @@ class YoutubeAPI extends AbstractVideoAPI
 
         $queryParams = [
             'format' => 'json',
-            'url'    => 'http://www.youtube.com/watch?v=' . $this->getVideoId()
+            'url'    => $this->getWatchUrl()
         ];
 
         $this->curl()->setRequestUrl($url, $queryParams)->doCurlRequest();

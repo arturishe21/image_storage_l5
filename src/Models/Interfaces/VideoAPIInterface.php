@@ -9,7 +9,7 @@ interface VideoAPIInterface
     public function requestApiData();
 
     public function getWatchUrl();
-    public function getEmbedUrl();
+    public function getEmbedUrl(array $urlParams);
 
     public function getPreviewUrl();
 
