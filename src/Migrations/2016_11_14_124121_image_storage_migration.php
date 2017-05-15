@@ -72,11 +72,11 @@ class ImageStorageMigration extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->integer('id_preview')->unsigned()->nullable();
-            $table->string('id_youtube', 255);
+            $table->string('api_id', 255);
+            $table->string('api_provider', 32);
             $table->string('title', 255);
             $table->string('slug', 255);
             $table->text('description');
-            $table->text('youtube_data');
             $table->tinyInteger('is_active')->default("1");
             $table->timestamps();
 

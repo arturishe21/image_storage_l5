@@ -45,7 +45,6 @@ abstract class AbstractImageStorageController extends Controller
         $perPage = $this->model->getConfigPerPage();
         $prefix  = $this->model->getConfigPrefix();
 
-        //todo redo this pathResolver
         Paginator::currentPathResolver(function() {
             return str_replace("/load_more", "", Request::url());
         });

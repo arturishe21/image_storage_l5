@@ -4,25 +4,24 @@ trait ConfigurableAPITrait
 {
     use ConfigurableTrait;
 
-    //todo refactor this 4 methods
     public function getConfigAPIEnabled()
     {
-        return config($this->getConfigNamespace() . '.' . 'video_api.enabled');
+        return config($this->getConfigNamespace() . '.video_api.enabled');
     }
 
     public function getConfigAPICacheMinutes()
     {
-        return config($this->getConfigNamespace() . '.' . 'video_api.cache_minutes');
+        return config($this->getConfigNamespace() . '.video_api.cache_minutes');
     }
 
     public function getConfigAPISetData()
     {
-        return config($this->getConfigNamespace() . '.' . 'video_api.set_data');
+        return config($this->getConfigNamespace() . '.video_api.set_data');
     }
 
     public function getConfigApiVideoExistenceError()
     {
-        return config($this->getConfigNamespace() . '.' . 'video_api.video_existence_error');
+        return config($this->getConfigNamespace() . '.video_api.video_existence_error');
     }
 
     public function getConfigAPIExistenceUrl()

@@ -6,7 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'ApiPatchMigration' => $baseDir . '/src/Migrations/2017_05_14_174400_api_patch_migration.php',
     'ImageStorageMigration' => $baseDir . '/src/Migrations/2016_11_14_124121_image_storage_migration.php',
     'Vis\\ImageStorage\\AbstractImageStorage' => $baseDir . '/src/Models/AbstractImageStorage.php',
     'Vis\\ImageStorage\\AbstractImageStorageController' => $baseDir . '/src/Http/Controllers/AbstractImageStorageController.php',
@@ -14,7 +13,6 @@ return array(
     'Vis\\ImageStorage\\AbstractImageStorageFileController' => $baseDir . '/src/Http/Controllers/AbstractImageStorageFileController.php',
     'Vis\\ImageStorage\\AbstractImageStorageGalleryController' => $baseDir . '/src/Http/Controllers/AbstractImageStorageGalleryController.php',
     'Vis\\ImageStorage\\AbstractVideoAPI' => $baseDir . '/src/Models/VideoApi/AbstractVideoAPI.php',
-    'Vis\\ImageStorage\\CacheFlushTrait' => $baseDir . '/src/Models/Traits/CacheFlushTrait.php',
     'Vis\\ImageStorage\\CacheableInterface' => $baseDir . '/src/Models/Interfaces/CacheableInterface.php',
     'Vis\\ImageStorage\\CacheableTrait' => $baseDir . '/src/Models/Traits/CacheableTrait.php',
     'Vis\\ImageStorage\\ChangeableSchemeFileInterface' => $baseDir . '/src/Models/Interfaces/ChangeableSchemeFileInterface.php',

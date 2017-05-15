@@ -13,7 +13,7 @@ return array(
 
     'video_existence_error' => "Не удалось найти видео на {type} с идентификатором: {id}",
 
-    //todo redo this property?
+    //used in provider select at edit_form
     'provider_names' => array(
         'youtube' => 'Youtube',
         'vimeo'   => 'Vimeo',
