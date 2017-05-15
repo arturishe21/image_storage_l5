@@ -82,9 +82,11 @@ abstract class AbstractVideoAPI extends Model implements VideoAPIInterface, Conf
         $cacheName = $this->getConfigPrefix() . "." . $this->getVideoId();
         $minutes   = $this->getConfigAPICacheMinutes();
 
-        $this->apiResponse = Cache::tags($tag)->remember($cacheName, $minutes, function () {
+        $apiResponse = Cache::tags($tag)->remember($cacheName, $minutes, function () {
             return $this->requestApiData();
         });
+
+        return $apiResponse;
     }
 
 }
