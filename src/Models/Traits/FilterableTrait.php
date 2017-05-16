@@ -10,8 +10,12 @@ trait FilterableTrait
         return $query->where('is_active', '1');
     }
 
-    public function scopeSlug(Builder $query, $slug)
+    public function scopeSlug(Builder $query, $slug = '')
     {
+        if (!$slug) {
+            return $query;
+        }
+
         return $query->where('slug', $slug);
     }
 
@@ -20,7 +24,7 @@ trait FilterableTrait
         return $query->orderBy('id', $order);
     }
 
-    public function scopeFilterByTitle(Builder $query, $title)
+    public function scopeFilterByTitle(Builder $query, $title = '')
     {
         if (!$title) {
             return $query;
@@ -29,7 +33,7 @@ trait FilterableTrait
         return $query->where('title', 'like', '%' . $title . '%');
     }
 
-    public function scopeFilterByActivity(Builder $query, $activity = array())
+    public function scopeFilterByActivity(Builder $query, array $activity = [])
     {
         if (!$activity) {
             return $query;
@@ -38,7 +42,7 @@ trait FilterableTrait
         return $query->whereIn('is_active', $activity);
     }
 
-    public function scopeFilterByDate(Builder $query, $date)
+    public function scopeFilterByDate(Builder $query, array $date = [])
     {
         if (!$date) {
             return $query;
@@ -53,7 +57,7 @@ trait FilterableTrait
         return $query->whereBetween('created_at', array($from, $to));
     }
 
-    public function scopeFilterByTags(Builder $query, $tags = array())
+    public function scopeFilterByTags(Builder $query, array $tags = [])
     {
         if (!$tags) {
             return $query;
@@ -67,32 +71,6 @@ trait FilterableTrait
         })->pluck('id');
 
         return $query->whereIn('id', $relatedId);
-    }
-
-    public function scopeFilterByGalleries(Builder $query, $galleries = array())
-    {
-        if (!$galleries) {
-            return $query;
-        }
-
-        $relatedImagesIds = self::whereHas('galleries', function (Builder $query) use ($galleries) {
-            $query->whereIn('id_gallery', $galleries);
-        })->pluck('id');
-
-        return $query->whereIn('id', $relatedImagesIds);
-    }
-
-    public function scopeFilterByVideoGalleries(Builder $query, $galleries = array())
-    {
-        if (!$galleries) {
-            return $query;
-        }
-
-        $relatedVideosId = self::whereHas('videoGalleries', function (Builder $query) use ($galleries) {
-            $query->whereIn('id_video_gallery', $galleries);
-        })->pluck('id');
-
-        return $query->whereIn('id', $relatedVideosId);
     }
 
     public function scopeFilterSearch(Builder $query)

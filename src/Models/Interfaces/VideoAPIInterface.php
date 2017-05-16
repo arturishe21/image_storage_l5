@@ -8,8 +8,8 @@ interface VideoAPIInterface
     public function videoExists();
     public function requestApiData();
 
-    public function getWatchUrl(array $urlParams);
-    public function getEmbedUrl(array $urlParams);
+    public function getWatchUrl(array $urlParams = []);
+    public function getEmbedUrl(array $urlParams = []);
 
     public function getPreviewUrl();
 

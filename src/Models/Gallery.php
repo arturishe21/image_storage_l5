@@ -1,6 +1,7 @@
 <?php namespace Vis\ImageStorage;
 
 use Illuminate\Support\Facades\Input;
+use Illuminate\Database\Eloquent\Builder;
 
 class Gallery extends AbstractImageStorage
 {
@@ -20,21 +21,21 @@ class Gallery extends AbstractImageStorage
         return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
     }
 
-    public function afterSaveAction()
-    {
-        $this->makeRelations();
-    }
-
-    public function scopeHasImages($query)
+    public function scopeHasImages(Builder $query)
     {
         return $query->has('images');
     }
 
-    public function scopeHasActiveImages($query)
+    public function scopeHasActiveImages(Builder $query)
     {
-        return $query->whereHas('images', function (\Illuminate\Database\Eloquent\Builder $query) {
+        return $query->whereHas('images', function (Builder $query) {
             $query->active();
         });
+    }
+
+    public function afterSaveAction()
+    {
+        $this->makeRelations();
     }
 
     public function getRelatedEntities()

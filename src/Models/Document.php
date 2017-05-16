@@ -132,9 +132,9 @@ class Document extends AbstractImageStorageFile
         foreach ($sizes as $key => $sizeName) {
             $field = $this->sizePrefix . $sizeName;
 
-            foreach ($entities as $image) {
-                $image->$field = $this->$sourceFile;
-                $image->save();
+            foreach ($entities as $document) {
+                $document->$field = $document->$sourceFile;
+                $document->save();
             }
         }
 

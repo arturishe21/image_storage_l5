@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
 use Vis\Builder\OptmizationImg;
 
 class Image extends AbstractImageStorageFile
@@ -20,6 +21,19 @@ class Image extends AbstractImageStorageFile
     public function tags()
     {
         return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
+    }
+
+    public function scopeFilterByGalleries(Builder $query, array $galleries = [])
+    {
+        if (!$galleries) {
+            return $query;
+        }
+
+        $relatedImagesIds = self::whereHas('galleries', function (Builder $query) use ($galleries) {
+            $query->whereIn('id_gallery', $galleries);
+        })->pluck('id');
+
+        return $query->whereIn('id', $relatedImagesIds);
     }
 
     public function afterSaveAction()
@@ -218,6 +232,7 @@ class Image extends AbstractImageStorageFile
     private function updateWithNewSize($sizes)
     {
         $images = self::all()->except($this->id);
+
         foreach ($sizes as $key => $sizeName) {
             foreach ($images as $image) {
                 $image->doMakeFile($sizeName);

@@ -1,6 +1,7 @@
 <?php namespace Vis\ImageStorage;
 
 use Illuminate\Support\Facades\Input;
+use Illuminate\Database\Eloquent\Builder;
 
 class Video extends AbstractImageStorage
 {
@@ -32,6 +33,19 @@ class Video extends AbstractImageStorage
     public function tags()
     {
         return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
+    }
+
+    public function scopeFilterByVideoGalleries(Builder $query, array $galleries = [])
+    {
+        if (!$galleries) {
+            return $query;
+        }
+
+        $relatedVideosId = self::whereHas('videoGalleries', function (Builder $query) use ($galleries) {
+            $query->whereIn('id_video_gallery', $galleries);
+        })->pluck('id');
+
+        return $query->whereIn('id', $relatedVideosId);
     }
 
     public function beforeSaveAction()
