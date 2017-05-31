@@ -43,7 +43,7 @@
    php artisan migrate --path=vendor/vis/image_storage_l5/src/Migrations
 ```
 
-Публикуем конфиги, js, css, images
+Публикуем config, js, css, images
 ```json
     php artisan vendor:publish --provider="Vis\ImageStorage\ImageStorageServiceProvider" --force
 ```
