@@ -130,6 +130,7 @@ var ImageStorage = {
         $selectable.selectable({
             distance: 5,
             filter: '.superbox-list',
+            cancel: '.image-storage-popup',
             selected: function (event, ui) {
                 $(ui.selected).addClass('selected');
                 ImageStorage.checkSelected();

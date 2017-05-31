@@ -15,7 +15,7 @@ return array(
         ),
         'description' => array(
             'caption' => 'Описание',
-            'type' => 'textarea',
+            'type' => 'wysiwyg',
             'field' => 'text',
             'tabs' => config('translations.config.languages')
 
