@@ -17,6 +17,7 @@ class ImageStorageMigration extends Migration
             $table->increments('id');
             $table->text('file_folder');
             $table->text('file_source');
+            $table->text('file_cms_preview');
             $table->string('title', 255);
             $table->string('slug', 255);
             $table->text('exif_data');
