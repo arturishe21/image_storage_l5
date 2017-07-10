@@ -66,17 +66,21 @@ class Image extends AbstractImageStorageFile
 
     private function setImageExifData()
     {
+        if (!$this->getConfigStoreEXIF()) {
+            return false;
+        }
+
         try {
-            $this->sourceFile->imageData = (exif_read_data($this->sourceFile, 0, true));
+            $this->sourceFile->imageData = exif_read_data($this->sourceFile, 0, true);
         } catch (\Exception $e) {
             $this->sourceFile->imageData = [];
         }
 
         $this->setExifDate();
 
-        if ($this->getConfigStoreEXIF()) {
-            $this->exif_data = json_encode($this->sourceFile->imageData);
-        }
+        $this->exif_data = json_encode($this->sourceFile->imageData);
+
+        return true;
     }
 
     private function setExifDate()
