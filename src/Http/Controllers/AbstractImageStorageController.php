@@ -140,9 +140,7 @@ abstract class AbstractImageStorageController extends Controller
         $relatedEntities = $this->model->getRelatedEntities();
 
         $entity  = $this->model->firstOrNew(['id' => $id]);
-
-        //dr($entity);
-
+        
         $html = View::make(
             "image-storage::" . $prefix . ".partials.edit_form",
             compact('entity', 'fields', 'relatedEntities')
