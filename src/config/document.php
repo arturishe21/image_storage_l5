@@ -21,10 +21,10 @@ return array(
     'source_title' => true,
 
     /* delete files upon deleting entry from database */
-    'delete_files' => true,
+    'delete_files' => false,
 
     /* rename files upon renaming entry title in database */
-    'rename_files' => true,
+    'rename_files' => false,
 
     'fields' => array(
         'title' => array(
