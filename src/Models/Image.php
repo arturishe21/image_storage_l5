@@ -180,20 +180,6 @@ class Image extends AbstractImageStorageFile
         $this->$field = $size . "/" . $fileName;
     }
 
-    private function doSizesVariations()
-    {
-        $checkColumns = $this->doCheckSchemeSizes();
-
-        if (count($checkColumns)) {
-            $this->updateWithNewSize($checkColumns);
-        }
-
-        $sizes = $this->getConfigSizesModifiable();
-        foreach ($sizes as $size => $sizeInfo) {
-            $this->doMakeFile($size);
-        }
-    }
-
     public function setNewFileData()
     {
         DB::beginTransaction();
@@ -218,6 +204,11 @@ class Image extends AbstractImageStorageFile
         }
     }
 
+    protected function doSizeVariation($sizeName)
+    {
+        $this->doMakeFile($sizeName);
+    }
+
     public function replaceSingleFile($size)
     {
         $this->doMakeFile($size);
@@ -233,16 +224,6 @@ class Image extends AbstractImageStorageFile
         }
     }
 
-    private function updateWithNewSize($sizes)
-    {
-        $images = self::all()->except($this->id);
 
-        foreach ($sizes as $key => $sizeName) {
-            foreach ($images as $image) {
-                $image->doMakeFile($sizeName);
-                $image->save();
-            }
-        }
-    }
 
 }

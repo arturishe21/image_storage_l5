@@ -63,4 +63,12 @@ if (Request::ajax()) {
             'uses' => 'DocumentsController@doReplaceSingle'
         )
     );
+
+    Route::post(
+        'documents/update_new_size', array(
+            'as' => 'update_new_size_documents',
+            'uses' => 'DocumentsController@doUpdateNewSize'
+        )
+    );
+
 }

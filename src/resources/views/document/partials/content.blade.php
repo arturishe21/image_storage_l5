@@ -11,6 +11,7 @@
             <header>
                 <span class="widget-icon"> <i class="fa  fa-file-text"></i> </span>
                 <h2> {{__cms($title)}} ({{__cms("Всего в хранилище")}}: {{$data->total()}})</h2>
+                <a onclick="ImageStorage.doUpdateNewSize()" href="javascript:void(0);" class="btn btn-success pull-right new-size-button">{{__cms('Сгенерировать файлы нового размера')}}</a>
             </header>
             <div class="table_center no-padding">
                 @include('image-storage::document.partials.filters_table')

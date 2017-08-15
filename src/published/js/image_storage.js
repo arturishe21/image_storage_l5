@@ -466,6 +466,25 @@ var ImageStorage = {
         });
 
     },
+
+    doUpdateNewSize: function(){
+
+        TableBuilder.showPreloader();
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/admin/image_storage/"+ImageStorage.entity+"/update_new_size",
+            success: function(response) {
+                if (response.status) {
+                    TableBuilder.showSuccessNotification('Записи изменены');
+                    TableBuilder.hidePreloader();
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                    TableBuilder.hidePreloader();
+                }
+            }
+        });
+    },
     //end common in pages with grid view
 
     //common in pages with table view

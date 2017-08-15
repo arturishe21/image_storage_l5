@@ -68,4 +68,15 @@ class AbstractImageStorageFileController extends AbstractImageStorageController
         return Response::json($data);
 
     }
+
+    public function doUpdateNewSize()
+    {
+        $this->model->doCheckSchemeSizes();
+        $this->model->doUpdateSizes();
+
+        return Response::json([
+            'status' => true,
+        ]);
+    }
+
 }

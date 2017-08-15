@@ -9,8 +9,6 @@ trait ChangeableSchemeFileTrait
     {
         $sizes = $this->getConfigSizes();
 
-        $newSizes = [];
-
         foreach ($sizes as $sizeName => $sizeInfo) {
 
             $columnName = $this->sizePrefix . $sizeName;
@@ -20,11 +18,24 @@ trait ChangeableSchemeFileTrait
                 Schema::table($this->table, function (Blueprint $table) use ($columnName) {
                     $table->text($columnName);
                 });
-
-                $newSizes[] = $sizeName;
             }
         }
+    }
 
-        return $newSizes;
+    public function doUpdateSizes()
+    {
+        $sizes = $this->getConfigSizesModifiable();
+
+        foreach ($sizes as $sizeName => $sizeInfo) {
+
+            $columnName = $this->sizePrefix . $sizeName;
+
+            $entities = $this->where($columnName, '=', '')->get();
+
+            foreach ($entities as $key => $entity) {
+                $entity->doSizeVariation($sizeName);
+                $entity->save();
+            }
+        }
     }
 }

@@ -3,4 +3,7 @@
 interface ChangeableSchemeFileInterface
 {
     public function doCheckSchemeFields();
+
+    public function doUpdateSizes();
+
 }

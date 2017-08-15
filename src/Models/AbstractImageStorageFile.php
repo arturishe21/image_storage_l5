@@ -250,4 +250,16 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
         return true;
     }
 
+    protected function doSizesVariations()
+    {
+        $this->doCheckSchemeSizes();
+
+        $sizes = $this->getConfigSizesModifiable();
+        foreach ($sizes as $size => $sizeInfo) {
+            $this->doSizeVariation($size);
+        }
+    }
+
+    abstract protected function doSizeVariation($sizeName);
+
 }

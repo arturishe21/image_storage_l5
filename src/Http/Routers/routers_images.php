@@ -70,4 +70,12 @@ if (Request::ajax()) {
             'uses' => 'ImagesController@doOptimizeImage'
         )
     );
+
+    Route::post(
+        'images/update_new_size', array(
+            'as' => 'update_new_size_image',
+            'uses' => 'ImagesController@doUpdateNewSize'
+        )
+    );
+
 }

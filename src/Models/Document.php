@@ -78,23 +78,6 @@ class Document extends AbstractImageStorageFile
         $this->$field = $size . "/" . $fileName;
     }
 
-    private function doSizesVariations()
-    {
-        $checkColumns = $this->doCheckSchemeSizes();
-
-        if (count($checkColumns)) {
-            $this->updateWithNewSize($checkColumns);
-        }
-
-        $sourceFile = $this->sizePrefix . "source";
-
-        $sizes = $this->getConfigSizesModifiable();
-        foreach ($sizes as $size => $sizeInfo) {
-            $field = $this->sizePrefix . $size;
-            $this->$field = $this->$sourceFile;
-        }
-    }
-
     public function setNewFileData()
     {
         DB::beginTransaction();
@@ -118,25 +101,16 @@ class Document extends AbstractImageStorageFile
         }
     }
 
+    protected function doSizeVariation($sizeName)
+    {
+        $sourceFile = $this->sizePrefix . "source";
+        $field = $this->sizePrefix . $sizeName;
+        $this->$field = $this->$sourceFile;
+    }
+
     public function replaceSingleFile($size)
     {
         $this->doMakeFile($size);
     }
 
-    private function updateWithNewSize($sizes)
-    {
-        $entities = self::all()->except($this->id);
-
-        $sourceFile = $this->sizePrefix . "source";
-
-        foreach ($sizes as $key => $sizeName) {
-            $field = $this->sizePrefix . $sizeName;
-
-            foreach ($entities as $document) {
-                $document->$field = $document->$sourceFile;
-                $document->save();
-            }
-        }
-
-    }
 }
