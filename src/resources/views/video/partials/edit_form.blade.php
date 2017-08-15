@@ -11,7 +11,7 @@
 </ul>
 
 <div id="image-storage-tabs-content" class="tab-content padding-10">
-        <div class="tab-pane fade in active" id="image-storage-video">
+        <div class="tab-pane fade in active image-storage-video-iframe-wrapper" id="image-storage-video">
             @if($entity->id)
                 <iframe class="image-storage-video-iframe superbox-current-img" src="{{$entity->api()->getEmbedUrl()}}" frameborder="0" allowfullscreen></iframe>
             @endif
