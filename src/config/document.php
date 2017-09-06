@@ -26,6 +26,9 @@ return array(
     /* rename files upon renaming entry title in database */
     'rename_files' => false,
 
+    /* displays or hides generate new size button in cms */
+    'display_generate_new_size_button' => true,
+
     'fields' => array(
         'title' => array(
             'caption' => 'Название',
