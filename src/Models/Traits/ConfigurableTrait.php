@@ -1,7 +1,5 @@
 <?php namespace Vis\ImageStorage;
 
-use Illuminate\Support\Facades\Config;
-
 trait ConfigurableTrait
 {
     protected $configNamespace = "image-storage";
@@ -19,7 +17,7 @@ trait ConfigurableTrait
 
     public function getConfigValue($value)
     {
-        return Config::get($this->getConfigNamespace() . '.' . $this->getConfigPrefix() . '.' . $value);
+        return config($this->getConfigNamespace() . '.' . $this->getConfigPrefix() . '.' . $value);
     }
 
     public function getConfigTitle()

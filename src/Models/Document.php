@@ -12,7 +12,7 @@ class Document extends AbstractImageStorageFile
     public function getSource($size = 'source')
     {
         //temp solution for getting default field with App::getLocale
-        if ($size == Config::get('translations.config.def_locale')) {
+        if ($size == config('translations.config.def_locale')) {
             $size = 'source';
         }
 
