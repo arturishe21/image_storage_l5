@@ -42,7 +42,7 @@ return array(
             'api_part' => 'snippet,statistics',
 
             //https://developers.google.com/youtube/v3/getting-started
-            'api_key' => 'AIzaSyDWPTTGEANYwXwAk8QMg9bQTzzBatmhxbc',
+            'api_key' => '',
         ),
 
         'vimeo' => array(
@@ -68,7 +68,7 @@ return array(
             'api_part' => 'name,description,duration, stats.plays, metadata.connections.comments.total, metadata.connections.likes.total',
 
             //https://developer.vimeo.com/apps/new -> Generate a new Access Token
-            'api_key' => 'fdac2059a4a4dabba7e882089608a7e1',
+            'api_key' => '',
         ),
     ),
 );
