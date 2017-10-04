@@ -65,8 +65,6 @@ abstract class AbstractImageStorageGalleryController extends AbstractImageStorag
 
         $entity->save();
 
-        $entity->afterSaveAction();
-
         $entity->relateToGallery($idArray);
 
         return Response::json(array(

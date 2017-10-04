@@ -1,6 +1,5 @@
 <?php namespace Vis\ImageStorage;
 
-use Illuminate\Support\Facades\Input;
 use Illuminate\Database\Eloquent\Builder;
 
 class Video extends AbstractImageStorage
@@ -9,6 +8,18 @@ class Video extends AbstractImageStorage
     protected $configPrefix = 'video';
 
     protected $api;
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function (Video $item) {
+            if (!$item->videoExists()) {
+                return false;
+            }
+            $item->useApiData();
+        });
+    }
 
     public function api()
     {
@@ -48,7 +59,7 @@ class Video extends AbstractImageStorage
         return $query->whereIn('id', $relatedVideosId);
     }
 
-    public function beforeSaveAction()
+    public function videoExists()
     {
         if (!$this->api()->videoExists()) {
             $this->errorMessage = $this->api()->getExistenceErrorMessage();
@@ -58,10 +69,23 @@ class Video extends AbstractImageStorage
         return true;
     }
 
-    public function afterSaveAction()
+    protected function useApiData()
     {
-        $this->makeRelations();
-        $this->useApiData();
+        if (!$this->api()->getConfigAPISetData()) {
+            return false;
+        }
+
+        $columnNames = $this->getConfigFieldsNames();
+
+        foreach ($columnNames as $key => $columnName) {
+            if (strpos($columnName, 'title') !== false && !$this->$columnName) {
+                $this->$columnName = $this->api()->getTitle();
+            } elseif (strpos($columnName, 'description') !== false && !$this->$columnName) {
+                $this->$columnName = $this->api()->getDescription();
+            }
+        }
+
+        $this->setSlug();
     }
 
     public function getRelatedEntities()
@@ -108,49 +132,4 @@ class Video extends AbstractImageStorage
         $this->save();
     }
 
-    private function makeRelations()
-    {
-        $this->makeVideoTagsRelations();
-        $this->makeVideoGalleriesRelations();
-    }
-
-    private function makeVideoTagsRelations()
-    {
-        $tags = Input::get('relations.image-storage-tags', array());
-
-        $this->tags()->sync($tags);
-
-        self::flushCache();
-        Tag::flushCache();
-    }
-
-    private function makeVideoGalleriesRelations()
-    {
-        $galleries = Input::get('relations.image-storage-galleries', array());
-
-        $this->videoGalleries()->sync($galleries);
-
-        self::flushCache();
-        Gallery::flushCache();
-    }
-
-    private function useApiData()
-    {
-        if (!$this->api()->getConfigAPISetData()) {
-            return false;
-        }
-
-        $columnNames = $this->getConfigFieldsNames();
-
-        foreach ($columnNames as $key => $columnName) {
-            if (strpos($columnName, 'title') !== false && !$this->$columnName) {
-                $this->$columnName = $this->api()->getTitle();
-            } elseif (strpos($columnName, 'description') !== false && !$this->$columnName) {
-                $this->$columnName = $this->api()->getDescription();
-            }
-        }
-
-        $this->setSlug();
-        $this->save();
-    }
 }

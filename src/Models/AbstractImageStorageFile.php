@@ -2,10 +2,10 @@
 
 use Illuminate\Support\Facades\File;
 
-abstract class AbstractImageStorageFile extends AbstractImageStorage implements UploadableFileInterface, ConfigurableFileInterface, ChangeableSchemeFileInterface
+abstract class AbstractImageStorageFile extends AbstractImageStorage implements ChangeableSchemeFileInterface, ConfigurableFileInterface, UploadableFileInterface
 {
-    use ConfigurableFileTrait,
-        ChangeableSchemeFileTrait;
+    use ChangeableSchemeFileTrait,
+        ConfigurableFileTrait;
 
     protected $sizePrefix = 'file_';
     protected $prefixPath = '/storage/image-storage/';
@@ -14,18 +14,20 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
     protected $uploadedFile;
     protected $sourceFile;
 
-    public function beforeSaveAction()
+    protected static function boot()
     {
-        if (!$this->doRenameFiles()) {
-            return false;
-        }
+        parent::boot();
 
-        return true;
-    }
+        static::saving(function (AbstractImageStorageFile $item) {
+            if (!$item->doRenameFiles()) {
+                return false;
+            }
+        });
 
-    public function afterDeleteAction()
-    {
-        $this->doDeleteFiles();
+        static::deleted(function (AbstractImageStorageFile $item) {
+            $item->doDeleteFiles();
+        });
+
     }
 
     public function getSource($size = 'source')

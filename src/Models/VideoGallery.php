@@ -1,6 +1,5 @@
 <?php namespace Vis\ImageStorage;
 
-use Illuminate\Support\Facades\Input;
 use Illuminate\Database\Eloquent\Builder;
 
 class VideoGallery extends AbstractImageStorage
@@ -33,11 +32,6 @@ class VideoGallery extends AbstractImageStorage
         });
     }
 
-    public function afterSaveAction()
-    {
-        $this->makeRelations();
-    }
-
     public function getRelatedEntities()
     {
         $relatedEntities = [];
@@ -54,7 +48,6 @@ class VideoGallery extends AbstractImageStorage
 
     private function getGalleryCurrentPreview()
     {
-
         $preview = $this->videos()->wherePivot("is_preview", "1")->first();
 
         return $preview;
@@ -93,21 +86,6 @@ class VideoGallery extends AbstractImageStorage
 
         self::flushCache();
         Video::flushCache();
-    }
-
-    private function makeRelations()
-    {
-        $this->makeGalleryTagsRelations();
-    }
-
-    private function makeGalleryTagsRelations()
-    {
-        $tags = Input::get('relations.image-storage-tags', array());
-
-        $this->tags()->sync($tags);
-
-        self::flushCache();
-        Tag::flushCache();
     }
 
     public function relateToGallery($idArray)

@@ -1,6 +1,5 @@
 <?php namespace Vis\ImageStorage;
 
-use Illuminate\Support\Facades\Input;
 use Illuminate\Database\Eloquent\Builder;
 
 class Gallery extends AbstractImageStorage
@@ -31,11 +30,6 @@ class Gallery extends AbstractImageStorage
         return $query->whereHas('images', function (Builder $query) {
             $query->active();
         });
-    }
-
-    public function afterSaveAction()
-    {
-        $this->makeRelations();
     }
 
     public function getRelatedEntities()
@@ -107,21 +101,6 @@ class Gallery extends AbstractImageStorage
 
         self::flushCache();
         Image::flushCache();
-    }
-
-    private function makeRelations()
-    {
-        $this->makeGalleryTagsRelations();
-    }
-
-    private function makeGalleryTagsRelations()
-    {
-        $tags = Input::get('relations.image-storage-tags', array());
-
-        $this->tags()->sync($tags);
-
-        self::flushCache();
-        Tag::flushCache();
     }
 
     public function relateToGallery($idArray)

@@ -22,7 +22,7 @@ abstract class AbstractImageStorageController extends Controller
         $this->setSearchInput();
 
         $perPage         = $this->model->getConfigPerPage();
-        $title           = $this->model->getConfigTitle();
+        $title           = __cms("Медиахранилище") . " - " .$this->model->getConfigTitle();
         $prefix          = $this->model->getConfigPrefix();
         $relatedEntities = $this->model->getRelatedEntities();
 
@@ -71,17 +71,12 @@ abstract class AbstractImageStorageController extends Controller
 
         $entity = $this->model->find($id);
 
-        if(!$entity->beforeDeleteAction()){
-
-            return Response::json( array(
+        if (!$entity->delete()) {
+            return Response::json(array(
                 'status' => false,
-                'message'   => $entity->getErrorMessage()
+                'message' => $entity->getErrorMessage()
             ));
         }
-
-        $entity->delete();
-
-        $entity->afterDeleteAction();
 
         $this->model->flushCache();
 
@@ -99,13 +94,14 @@ abstract class AbstractImageStorageController extends Controller
 
             $entity = $this->model->find($id);
 
-            if (!$entity->beforeDeleteAction()) {
-                return Response::json(array('status' => false, 'message' => $entity->getErrorMessage()));
+            if (!$entity->delete()) {
+                return Response::json([
+                    'status' => false,
+                    'message' => $entity->getErrorMessage()
+                ]);
             }
 
             $entity->delete();
-
-            $entity->afterDeleteAction();
         }
 
         $this->model->flushCache();
@@ -162,13 +158,9 @@ abstract class AbstractImageStorageController extends Controller
 
         $entity->setFields($fields);
 
-        if(!$entity->beforeSaveAction()){
-            return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
+        if (!$entity->save()) {
+            return Response::json(array('status' => false, 'message' => $entity->getErrorMessage()));
         }
-
-        $entity->save();
-
-        $entity->afterSaveAction();
 
         $html = View::make('image-storage::'. $prefix .'.partials.single_list')->with('entity', $entity)->render();
 

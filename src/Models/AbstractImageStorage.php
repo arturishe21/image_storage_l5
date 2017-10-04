@@ -1,46 +1,66 @@
 <?php namespace Vis\ImageStorage;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Input;
 
-abstract class AbstractImageStorage extends Model implements ConfigurableInterface, CacheableInterface, FilterableInterface, ChangeableSchemeInterface
+abstract class AbstractImageStorage extends Model implements CacheableInterface, ChangeableSchemeInterface, ConfigurableInterface, FilterableInterface
 {
     use \Vis\Builder\Helpers\Traits\TranslateTrait,
         \Vis\Builder\Helpers\Traits\SeoTrait,
 
-        ConfigurableTrait,
         CacheableTrait,
-        FilterableTrait,
-        ChangeableSchemeTrait;
+        ChangeableSchemeTrait,
+        ConfigurableTrait,
+        FilterableTrait;
 
     protected $table;
-    protected $errorMessage;
     protected $fillable = ['id'];
 
-    public function beforeSaveAction()
+    protected static function boot()
     {
-        return true;
+        parent::boot();
+
+        //fixme move this to trait
+        static::saved(function (AbstractImageStorage $item) {
+            $item->makeRelations();
+        });
     }
 
-    public function beforeDeleteAction()
-    {
-        return true;
-    }
+    //fixme move to errorTrait
 
-    public function afterSaveAction()
-    {
-        return true;
-    }
-
-    public function afterDeleteAction()
-    {
-        return true;
-    }
+    protected $errorMessage;
 
     public function getErrorMessage()
     {
         return $this->errorMessage;
     }
+    //use this function instead of simple assign
+    public function setErrorMessage(string $errorMessage)
+    {
+        $this->errorMessage = $errorMessage;
+    }
 
+    protected function makeRelations()
+    {
+        //fixme this should be defines as model property ?
+        $relations = ['documents', 'galleries', 'images', 'videos', 'videoGalleries', 'tags'];
+
+        foreach ($relations as $relation) {
+            if (method_exists($this, $relation)) {
+                //fixme will clear all relations if they are not passed
+                $relatedEntities = (array)Input::get('relations.image-storage-' . $relation);
+                $relatedClassName = get_class($this->$relation()->getRelated());
+
+                if ($this->$relation()->sync($relatedEntities)) {
+                    //fixme add to saved method?
+                    self::flushCache();
+                    $relatedClassName::flushCache();
+                }
+            }
+        }
+    }
+
+    //fixme refactor this method
     public function getRelatedEntities()
     {
         $relatedEntities = [];
@@ -72,6 +92,7 @@ abstract class AbstractImageStorage extends Model implements ConfigurableInterfa
         return $slug;
     }
 
+    //fixme think about extracting this method to boot
     public function setSlug()
     {
         $this->slug = $this->getUniqueSlug();

@@ -1,7 +1,5 @@
 <?php namespace Vis\ImageStorage;
 
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
 
 class Document extends AbstractImageStorageFile
@@ -9,27 +7,9 @@ class Document extends AbstractImageStorageFile
     protected $table = 'vis_documents';
     protected $configPrefix = 'document';
 
-    public function getSource($size = 'source')
-    {
-        //temp solution for getting default field with App::getLocale
-        if ($size == config('translations.config.def_locale')) {
-            $size = 'source';
-        }
-
-        $field = $this->sizePrefix . $size;
-        $source = $this->file_folder . $this->$field;
-
-        return $source;
-    }
-
     public function tags()
     {
         return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
-    }
-
-    public function afterSaveAction()
-    {
-        $this->makeRelations();
     }
 
     public function getRelatedEntities()
@@ -41,22 +21,6 @@ class Document extends AbstractImageStorageFile
         $relatedEntities['tag'] = Tag::active()->byId()->get();
 
         return $relatedEntities;
-    }
-
-    private function makeRelations()
-    {
-        $this->makeImageTagsRelations();
-    }
-
-    private function makeImageTagsRelations()
-    {
-
-        $tags = Input::get('relations.image-storage-tags', array());
-
-        $this->tags()->sync($tags);
-
-        self::flushCache();
-        Tag::flushCache();
     }
 
     private function doMakeFile($size = 'source')
@@ -111,6 +75,19 @@ class Document extends AbstractImageStorageFile
     public function replaceSingleFile($size)
     {
         $this->doMakeFile($size);
+    }
+
+    public function getSource($size = 'source')
+    {
+        //temp solution for getting default field with App::getLocale
+        if ($size == config('translations.config.def_locale')) {
+            $size = 'source';
+        }
+
+        $field = $this->sizePrefix . $size;
+        $source = $this->file_folder . $this->$field;
+
+        return $source;
     }
 
 }

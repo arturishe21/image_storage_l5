@@ -1,6 +1,5 @@
 <?php namespace Vis\ImageStorage;
 
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 use Vis\Builder\OptmizationImg;
@@ -34,11 +33,6 @@ class Image extends AbstractImageStorageFile
         })->pluck('id');
 
         return $query->whereIn('id', $relatedImagesIds);
-    }
-
-    public function afterSaveAction()
-    {
-        $this->makeRelations();
     }
 
     public function getRelatedEntities()
@@ -97,32 +91,6 @@ class Image extends AbstractImageStorageFile
         if ($this->getConfigOptimization()) {
             OptmizationImg::run("/" . $imagePath);
         }
-    }
-
-    private function makeRelations()
-    {
-        $this->makeImageTagsRelations();
-        $this->makeImageGalleriesRelations();
-    }
-
-    private function makeImageTagsRelations()
-    {
-        $tags = Input::get('relations.image-storage-tags', array());
-
-        $this->tags()->sync($tags);
-
-        self::flushCache();
-        Tag::flushCache();
-    }
-
-    private function makeImageGalleriesRelations()
-    {
-        $galleries = Input::get('relations.image-storage-galleries', array());
-
-        $this->galleries()->sync($galleries);
-
-        self::flushCache();
-        Gallery::flushCache();
     }
 
     private function setExtension($size)
