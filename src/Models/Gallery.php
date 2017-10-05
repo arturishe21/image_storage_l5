@@ -59,7 +59,7 @@ class Gallery extends AbstractImageStorage
 
         return $image;
     }
-
+    
     public function setPreview($preview)
     {
         $currentPreview = $this->getGalleryCurrentPreview();
@@ -69,9 +69,7 @@ class Gallery extends AbstractImageStorage
         }
 
         $this->images()->updateExistingPivot($preview, ["is_preview" => 1]);
-
-        self::flushCache();
-        Image::flushCache();
+        $this->flushCacheBoth('images');
     }
 
     public function changeGalleryOrder($idArray)
@@ -83,24 +81,19 @@ class Gallery extends AbstractImageStorage
             $priority--;
         }
 
-        self::flushCache();
-        Image::flushCache();
+        $this->flushCacheBoth('images');
     }
 
     public function deleteToGalleryRelation($id)
     {
         $this->images()->detach($id);
-
-        self::flushCache();
-        Image::flushCache();
+        $this->flushCacheBoth('images');
     }
 
     public function relateToGallery($idArray)
     {
         $this->images()->syncWithoutDetaching($idArray);
-
-        self::flushCache();
-        Image::flushCache();
+        $this->flushCacheBoth('images');
     }
-
+    
 }

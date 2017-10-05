@@ -47,14 +47,9 @@ trait RelatableTrait
         foreach ($this->getRelatableList() as $relation) {
             if ($this->relationExists($relation)) {
                 $relatedClassName = $this->getRelationClassName($relation);
-                //fixme will clear all relations if they are not passed
                 $relatedEntities = (array)request('relations.image-storage-' . $relation);
-
-                if ($this->$relation()->sync($relatedEntities)) {
-                    //fixme add to saved method?
-                    self::flushCache();
-                    $relatedClassName::flushCache();
-                }
+                $this->$relation()->sync($relatedEntities);
+                $relatedClassName::flushCache();
             }
         }
     }

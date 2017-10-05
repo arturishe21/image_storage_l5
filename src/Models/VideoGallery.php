@@ -54,9 +54,7 @@ class VideoGallery extends AbstractImageStorage
         }
 
         $this->videos()->updateExistingPivot($preview, ["is_preview" => 1]);
-
-        self::flushCache();
-        Video::flushCache();
+        $this->flushCacheBoth('videos');
     }
 
     public function changeGalleryOrder($idArray)
@@ -67,25 +65,19 @@ class VideoGallery extends AbstractImageStorage
             $this->videos()->updateExistingPivot($id, ['priority' => $priority]);
             $priority--;
         }
-
-        self::flushCache();
-        Video::flushCache();
+        $this->flushCacheBoth('videos');
     }
 
     public function deleteToGalleryRelation($id)
     {
         $this->videos()->detach($id);
-
-        self::flushCache();
-        Video::flushCache();
+        $this->flushCacheBoth('videos');
     }
 
     public function relateToGallery($idArray)
     {
         $this->videos()->syncWithoutDetaching($idArray);
-
-        self::flushCache();
-        Video::flushCache();
+        $this->flushCacheBoth('videos');
     }
 
 }

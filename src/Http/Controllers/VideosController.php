@@ -32,8 +32,6 @@ class VideosController extends AbstractImageStorageController
             'id'     => $image->id
         );
 
-        $this->model->flushCache();
-
         return Response::json($data);
     }
 
@@ -50,8 +48,6 @@ class VideosController extends AbstractImageStorageController
             'src'    => $video->getPreviewImage(),
             'id'     => $video->id
         );
-
-        $this->model->flushCache();
 
         return Response::json($data);
     }

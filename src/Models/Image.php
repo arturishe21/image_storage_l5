@@ -180,6 +180,4 @@ class Image extends AbstractImageStorageFile
         }
     }
 
-
-
 }

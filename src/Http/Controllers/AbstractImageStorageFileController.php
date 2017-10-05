@@ -30,8 +30,6 @@ class AbstractImageStorageFileController extends AbstractImageStorageController
             'id'     => $entity->id
         );
 
-        $this->model->flushCache();
-
         return Response::json($data);
     }
 
@@ -52,8 +50,6 @@ class AbstractImageStorageFileController extends AbstractImageStorageController
         $entity->replaceSingleFile($size);
 
         $entity->save();
-
-        $this->model->flushCache();
 
         $html = View::make('image-storage::'. $prefix .'.partials.tab_content')
             ->with('entity', $entity)

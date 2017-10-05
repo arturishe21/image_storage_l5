@@ -17,8 +17,6 @@ class ImagesController extends AbstractImageStorageFileController
             $image->optimizeImage($size);
         }
 
-        $this->model->flushCache();
-
         return Response::json(array(
             'status' => true,
         ));

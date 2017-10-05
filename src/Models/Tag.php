@@ -34,11 +34,6 @@ class Tag extends AbstractImageStorage
     {
         $this->$type()->syncWithoutDetaching($id);
 
-        $relatedClass = $this->$type()->getRelated();
-        $relatedClassName = get_class($relatedClass);
-
-        self::flushCache();
-        $relatedClassName::flushCache();
-
+        $this->flushCacheBoth($type);
     }
 }

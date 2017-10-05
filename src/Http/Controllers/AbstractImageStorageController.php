@@ -78,8 +78,6 @@ abstract class AbstractImageStorageController extends Controller
             ));
         }
 
-        $this->model->flushCache();
-
         return Response::json(array(
             'id'     => $id,
             'status' => true
@@ -104,8 +102,6 @@ abstract class AbstractImageStorageController extends Controller
             $entity->delete();
         }
 
-        $this->model->flushCache();
-
         return Response::json(array(
             'status' => true
         ));
@@ -119,8 +115,6 @@ abstract class AbstractImageStorageController extends Controller
 
         $this->model->whereIn('id', $idArray)
                     ->update(['is_active' => $activity]);
-
-        $this->model->flushCache();
 
         return Response::json(array(
             'status' => true
@@ -163,8 +157,6 @@ abstract class AbstractImageStorageController extends Controller
         }
 
         $html = View::make('image-storage::'. $prefix .'.partials.single_list')->with('entity', $entity)->render();
-
-        $this->model->flushCache();
 
         return Response::json(array(
             'html'   => $html,
