@@ -2,11 +2,11 @@
 
 use Illuminate\Database\Eloquent\Builder;
 
+//fixme define abstract ImageStorageGallery
 class Gallery extends AbstractImageStorage
 {
     protected $table = 'vis_galleries';
     protected $configPrefix = 'gallery';
-    protected $relatableList = ['tags'];
 
     public function images()
     {
@@ -14,11 +14,6 @@ class Gallery extends AbstractImageStorage
             ->belongsToMany('Vis\ImageStorage\Image', 'vis_images2galleries', 'id_gallery', 'id_image')
             ->orderBy('priority', 'desc')
             ->withPivot('is_preview');
-    }
-
-    public function tags()
-    {
-        return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
     }
 
     public function scopeHasImages(Builder $query)
@@ -40,31 +35,19 @@ class Gallery extends AbstractImageStorage
 
     private function getGalleryCurrentPreview()
     {
-
-        $preview = $this->images()->wherePivot("is_preview", "1")->first();
-
-        return $preview;
+        return $this->images()->wherePivot("is_preview", "1")->first();
     }
 
     public function getGalleryPreviewImage($size = 'cms_preview')
     {
-
         $preview = $this->getGalleryCurrentPreview() ?: $this->images()->first();
 
-        if ($preview) {
-            $image = $preview->getSource($size);
-        } else {
-            $image = '/packages/vis/image-storage/img/no_image.png';
-        }
-
-        return $image;
+        return $preview ? $preview->getSource($size) : '/packages/vis/image-storage/img/no_image.png';
     }
     
     public function setPreview($preview)
     {
-        $currentPreview = $this->getGalleryCurrentPreview();
-
-        if ($currentPreview) {
+        if ($currentPreview = $this->getGalleryCurrentPreview()) {
             $this->images()->updateExistingPivot($currentPreview->id, ["is_preview" => 0]);
         }
 
@@ -95,5 +78,5 @@ class Gallery extends AbstractImageStorage
         $this->images()->syncWithoutDetaching($idArray);
         $this->flushCacheBoth('images');
     }
-    
+
 }

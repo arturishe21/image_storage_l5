@@ -6,12 +6,6 @@ class Document extends AbstractImageStorageFile
 {
     protected $table = 'vis_documents';
     protected $configPrefix = 'document';
-    protected $relatableList = ['tags'];
-
-    public function tags()
-    {
-        return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
-    }
 
     private function doMakeFile($size = 'source')
     {

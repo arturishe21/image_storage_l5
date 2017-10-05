@@ -17,6 +17,11 @@ abstract class AbstractImageStorage extends Model implements CacheableInterface,
     protected $table;
     protected $fillable = ['id'];
 
+    public function tags()
+    {
+        return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
+    }
+
     //fixme move to errorTrait
 
     protected $errorMessage;
@@ -74,5 +79,7 @@ abstract class AbstractImageStorage extends Model implements CacheableInterface,
 
         $this->setSlug();
     }
+
+
 
 }

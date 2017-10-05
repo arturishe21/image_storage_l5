@@ -6,7 +6,6 @@ class VideoGallery extends AbstractImageStorage
 {
     protected $table = 'vis_video_galleries';
     protected $configPrefix = 'video_gallery';
-    protected $relatableList = ['tags'];
 
     public function videos()
     {
@@ -14,11 +13,6 @@ class VideoGallery extends AbstractImageStorage
             ->belongsToMany('Vis\ImageStorage\Video', 'vis_videos2video_galleries', 'id_video_gallery', 'id_video')
             ->orderBy('priority', 'desc')
             ->withPivot('is_preview');
-    }
-
-    public function tags()
-    {
-        return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
     }
 
     public function scopeHasVideos($query)

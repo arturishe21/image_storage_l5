@@ -43,11 +43,6 @@ class Video extends AbstractImageStorage
         return $this->belongsToMany('Vis\ImageStorage\VideoGallery', 'vis_videos2video_galleries', 'id_video', 'id_video_gallery');
     }
 
-    public function tags()
-    {
-        return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
-    }
-
     public function scopeFilterByVideoGalleries(Builder $query, array $galleries = [])
     {
         if (!$galleries) {

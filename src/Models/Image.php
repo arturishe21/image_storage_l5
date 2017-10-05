@@ -18,11 +18,6 @@ class Image extends AbstractImageStorageFile
         return $this->belongsToMany('Vis\ImageStorage\Gallery', 'vis_images2galleries', 'id_image', 'id_gallery');
     }
 
-    public function tags()
-    {
-        return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
-    }
-
     public function scopeFilterByGalleries(Builder $query, array $galleries = [])
     {
         if (!$galleries) {

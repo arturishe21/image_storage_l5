@@ -4,7 +4,7 @@ namespace Vis\ImageStorage;
 
 trait RelatableTrait
 {
-    protected $relatableList = [];
+    protected $relatableList = ['tags'];
 
     protected static function bootRelatableTrait()
     {
