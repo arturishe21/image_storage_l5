@@ -54,7 +54,7 @@
         </td>
         <td>
             <select name="image_storage_filter[filterByGalleries][]" multiple="multiple" class="image-storage-select">
-                @foreach($relatedEntities['gallery'] as $gallery)
+                @foreach($relatedEntities['galleries'] as $gallery)
                     <option value="{{$gallery->id}}"
                             {{in_array($gallery->id,Session::get('image_storage_filter.image.filterByGalleries', array())) ? "selected" : ""}}>
                         {{$gallery->title}}
@@ -64,7 +64,7 @@
         </td>
         <td>
             <select name="image_storage_filter[filterByTags][]" multiple="multiple" class="image-storage-select">
-                @foreach($relatedEntities['tag'] as $tag)
+                @foreach($relatedEntities['tags'] as $tag)
                     <option value="{{$tag->id}}"
                             {{in_array($tag->id,Session::get('image_storage_filter.image.filterByTags', array())) ? "selected" : ""}}>
                         {{$tag->title}}

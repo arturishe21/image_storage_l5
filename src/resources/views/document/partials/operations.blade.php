@@ -5,7 +5,7 @@
         <div class="col-md-8">
             <div class="input-group">
                 <select name="relations[image-storage-tags][]" multiple="multiple" class="image-storage-operations-input image-storage-select">
-                    @foreach($relatedEntities['tag'] as $tag)
+                    @foreach($relatedEntities['tags'] as $tag)
                         <option value="{{ $tag->id }}">{{ $tag->title }}</option>
                     @endforeach
                 </select>

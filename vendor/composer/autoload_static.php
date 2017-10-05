@@ -48,6 +48,8 @@ class ComposerStaticInitb53a329f2de6d2fb9c017a4f182eef61
         'Vis\\ImageStorage\\Gallery' => __DIR__ . '/../..' . '/src/Models/Gallery.php',
         'Vis\\ImageStorage\\Image' => __DIR__ . '/../..' . '/src/Models/Image.php',
         'Vis\\ImageStorage\\ImagesController' => __DIR__ . '/../..' . '/src/Http/Controllers/ImagesController.php',
+        'Vis\\ImageStorage\\RelatableInterface' => __DIR__ . '/../..' . '/src/Models/Interfaces/RelatableInterface.php',
+        'Vis\\ImageStorage\\RelatableTrait' => __DIR__ . '/../..' . '/src/Models/Traits/RelatableTrait.php',
         'Vis\\ImageStorage\\Tag' => __DIR__ . '/../..' . '/src/Models/Tag.php',
         'Vis\\ImageStorage\\TagsController' => __DIR__ . '/../..' . '/src/Http/Controllers/TagsController.php',
         'Vis\\ImageStorage\\UploadableFileInterface' => __DIR__ . '/../..' . '/src/Models/Interfaces/UploadableFileInterface.php',

@@ -53,7 +53,7 @@
         </td>
         <td>
             <select name="image_storage_filter[filterByTags][]" multiple="multiple" class="image-storage-select">
-                @foreach($relatedEntities['tag'] as $tag)
+                @foreach($relatedEntities['tags'] as $tag)
                     <option value="{{$tag->id}}"
                             {{in_array($tag->id,Session::get('image_storage_filter.document.filterByTags', array())) ? "selected" : ""}}>
                         {{$tag->title}}

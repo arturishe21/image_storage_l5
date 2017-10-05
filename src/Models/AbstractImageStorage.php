@@ -1,9 +1,8 @@
 <?php namespace Vis\ImageStorage;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Input;
 
-abstract class AbstractImageStorage extends Model implements CacheableInterface, ChangeableSchemeInterface, ConfigurableInterface, FilterableInterface
+abstract class AbstractImageStorage extends Model implements CacheableInterface, ChangeableSchemeInterface, ConfigurableInterface, FilterableInterface, RelatableInterface
 {
     use \Vis\Builder\Helpers\Traits\TranslateTrait,
         \Vis\Builder\Helpers\Traits\SeoTrait,
@@ -11,20 +10,12 @@ abstract class AbstractImageStorage extends Model implements CacheableInterface,
         CacheableTrait,
         ChangeableSchemeTrait,
         ConfigurableTrait,
-        FilterableTrait;
+        FilterableTrait,
+
+        RelatableTrait;
 
     protected $table;
     protected $fillable = ['id'];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        //fixme move this to trait
-        static::saved(function (AbstractImageStorage $item) {
-            $item->makeRelations();
-        });
-    }
 
     //fixme move to errorTrait
 
@@ -38,34 +29,6 @@ abstract class AbstractImageStorage extends Model implements CacheableInterface,
     public function setErrorMessage(string $errorMessage)
     {
         $this->errorMessage = $errorMessage;
-    }
-
-    protected function makeRelations()
-    {
-        //fixme this should be defines as model property ?
-        $relations = ['documents', 'galleries', 'images', 'videos', 'videoGalleries', 'tags'];
-
-        foreach ($relations as $relation) {
-            if (method_exists($this, $relation)) {
-                //fixme will clear all relations if they are not passed
-                $relatedEntities = (array)Input::get('relations.image-storage-' . $relation);
-                $relatedClassName = get_class($this->$relation()->getRelated());
-
-                if ($this->$relation()->sync($relatedEntities)) {
-                    //fixme add to saved method?
-                    self::flushCache();
-                    $relatedClassName::flushCache();
-                }
-            }
-        }
-    }
-
-    //fixme refactor this method
-    public function getRelatedEntities()
-    {
-        $relatedEntities = [];
-
-        return $relatedEntities;
     }
 
     public function getSlug()

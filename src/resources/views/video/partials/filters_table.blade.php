@@ -48,17 +48,17 @@
         </td>
         <td>
             <select name="image_storage_filter[filterByVideoGalleries][]" multiple="multiple" class="image-storage-select">
-                @foreach($relatedEntities['video_gallery'] as $video_gallery)
-                    <option value="{{$video_gallery->id}}"
-                            {{in_array($video_gallery->id,Session::get('image_storage_filter.video.filterByVideoGalleries', array())) ? "selected" : ""}}>
-                        {{$video_gallery->title}}
+                @foreach($relatedEntities['videoGalleries'] as $videoGallery)
+                    <option value="{{$videoGallery->id}}"
+                            {{in_array($videoGallery->id,Session::get('image_storage_filter.video.filterByVideoGalleries', array())) ? "selected" : ""}}>
+                        {{$videoGallery->title}}
                     </option>
                 @endforeach
             </select>
         </td>
         <td>
             <select name="image_storage_filter[filterByTags][]" multiple="multiple" class="image-storage-select">
-                @foreach($relatedEntities['tag'] as $tag)
+                @foreach($relatedEntities['tags'] as $tag)
                     <option value="{{$tag->id}}"
                             {{in_array($tag->id,Session::get('image_storage_filter.video.filterByTags', array())) ? "selected" : ""}}>
                         {{$tag->title}}

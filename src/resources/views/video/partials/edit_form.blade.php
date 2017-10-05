@@ -83,14 +83,14 @@
             <fieldset>
                 <section><label>{{__cms('Видеогалереи')}}</label>
                     <select name="relations[image-storage-videoGalleries][]" multiple class="imgInfoBox-select image-storage-select">
-                        @foreach ($relatedEntities['video_gallery'] as $gallery)
+                        @foreach ($relatedEntities['videoGalleries'] as $gallery)
                             <option {{$entity->videoGalleries->contains($gallery->id) ? 'selected="selected"' : ''}} value="{{$gallery->id}}">{{$gallery->title}}</option>
                         @endforeach
                  </select>
                 </section>
                 <section><label>{{__cms('Теги')}}</label>
                     <select name="relations[image-storage-tags][]" multiple class="imgInfoBox-select image-storage-select">
-                        @foreach ($relatedEntities['tag'] as $tag)
+                        @foreach ($relatedEntities['tags'] as $tag)
                             <option {{$entity->tags->contains($tag->id) ? 'selected="selected"' : ''}} value="{{$tag->id}}">{{$tag->title}}</option>
                         @endforeach
                     </select>

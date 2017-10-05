@@ -8,6 +8,7 @@ class Image extends AbstractImageStorageFile
 {
     protected $table = 'vis_images';
     protected $configPrefix = 'image';
+    protected $relatableList = ['galleries', 'tags'];
 
     protected $imageData;
     protected $sourcePath;
@@ -33,19 +34,6 @@ class Image extends AbstractImageStorageFile
         })->pluck('id');
 
         return $query->whereIn('id', $relatedImagesIds);
-    }
-
-    public function getRelatedEntities()
-    {
-        $relatedEntities = [];
-
-        $relatedEntities['tag'] = Tag::active()->orderId()->get();
-
-        $relatedEntities['gallery'] = Gallery::active()->orderId()->get();
-
-        $relatedEntities['sizes'] = $this->getConfigSizes();
-
-        return $relatedEntities;
     }
 
     public function getUrl()

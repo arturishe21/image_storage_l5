@@ -6,6 +6,7 @@ class Gallery extends AbstractImageStorage
 {
     protected $table = 'vis_galleries';
     protected $configPrefix = 'gallery';
+    protected $relatableList = ['tags'];
 
     public function images()
     {
@@ -30,15 +31,6 @@ class Gallery extends AbstractImageStorage
         return $query->whereHas('images', function (Builder $query) {
             $query->active();
         });
-    }
-
-    public function getRelatedEntities()
-    {
-        $relatedEntities = [];
-
-        $relatedEntities['tag'] = Tag::active()->orderId()->get();
-
-        return $relatedEntities;
     }
 
     public function getUrl()

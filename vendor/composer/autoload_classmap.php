@@ -33,6 +33,8 @@ return array(
     'Vis\\ImageStorage\\Gallery' => $baseDir . '/src/Models/Gallery.php',
     'Vis\\ImageStorage\\Image' => $baseDir . '/src/Models/Image.php',
     'Vis\\ImageStorage\\ImagesController' => $baseDir . '/src/Http/Controllers/ImagesController.php',
+    'Vis\\ImageStorage\\RelatableInterface' => $baseDir . '/src/Models/Interfaces/RelatableInterface.php',
+    'Vis\\ImageStorage\\RelatableTrait' => $baseDir . '/src/Models/Traits/RelatableTrait.php',
     'Vis\\ImageStorage\\Tag' => $baseDir . '/src/Models/Tag.php',
     'Vis\\ImageStorage\\TagsController' => $baseDir . '/src/Http/Controllers/TagsController.php',
     'Vis\\ImageStorage\\UploadableFileInterface' => $baseDir . '/src/Models/Interfaces/UploadableFileInterface.php',

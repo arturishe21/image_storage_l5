@@ -51,7 +51,7 @@
                 <fieldset>
                  <section><label>{{__cms('Теги')}}</label>
                         <select name="relations[image-storage-tags][]" multiple class="imgInfoBox-select image-storage-select">
-                            @foreach ($relatedEntities['tag'] as $tag)
+                            @foreach ($relatedEntities['tags'] as $tag)
                                 <option {{$entity->tags->contains($tag->id) ? 'selected="selected"' : ''}} value="{{$tag->id}}">{{$tag->title}}</option>
                             @endforeach
                         </select>

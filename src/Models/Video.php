@@ -6,6 +6,7 @@ class Video extends AbstractImageStorage
 {
     protected $table = 'vis_videos';
     protected $configPrefix = 'video';
+    protected $relatableList = ['videoGalleries', 'tags'];
 
     protected $api;
 
@@ -17,6 +18,7 @@ class Video extends AbstractImageStorage
             if (!$item->videoExists()) {
                 return false;
             }
+
             $item->useApiData();
         });
     }
@@ -86,17 +88,6 @@ class Video extends AbstractImageStorage
         }
 
         $this->setSlug();
-    }
-
-    public function getRelatedEntities()
-    {
-        $relatedEntities = [];
-
-        $relatedEntities['tag'] = Tag::active()->orderId()->get();
-
-        $relatedEntities['video_gallery'] = VideoGallery::active()->orderId()->get();
-
-        return $relatedEntities;
     }
 
     public function getSource()

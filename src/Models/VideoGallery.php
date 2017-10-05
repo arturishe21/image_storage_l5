@@ -6,6 +6,7 @@ class VideoGallery extends AbstractImageStorage
 {
     protected $table = 'vis_video_galleries';
     protected $configPrefix = 'video_gallery';
+    protected $relatableList = ['tags'];
 
     public function videos()
     {
@@ -30,15 +31,6 @@ class VideoGallery extends AbstractImageStorage
         return $query->whereHas('videos', function (Builder $query) {
             $query->active();
         });
-    }
-
-    public function getRelatedEntities()
-    {
-        $relatedEntities = [];
-
-        $relatedEntities['tag'] = Tag::active()->orderId()->get();
-
-        return $relatedEntities;
     }
 
     public function getUrl()

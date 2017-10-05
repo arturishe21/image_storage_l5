@@ -1,6 +1,6 @@
 <div class="superbox-show image-storage-popup">
 <ul id="image-storage-images-sizes-tabs" class="nav nav-tabs bordered">
-    @foreach ($relatedEntities['sizes'] as $ident => $info)
+    @foreach ($entity->getConfigSizes() as $ident => $info)
         <li class="{{$info['default_tab'] ? 'active':""}}">
             <a style="color: #000000 !important;" href="#image-storage-images-size-{{ $ident }}" data-toggle="tab">{{ __cms($info['caption']) }}</a>
         </li>
@@ -8,7 +8,7 @@
 </ul>
 
 <div id="image-storage-tabs-content" class="tab-content padding-10">
-    @foreach ($relatedEntities['sizes'] as $ident => $info)
+    @foreach ($entity->getConfigSizes() as $ident => $info)
         <div class="tab-pane fade {{$info['default_tab'] ? 'in active':""}}" id="image-storage-images-size-{{ $ident }}">
             <div class="image-storage-images-sizes-content">
                 @include('image-storage::document.partials.tab_content')
@@ -64,7 +64,7 @@
                 </section>
                 <section><label>{{__cms('Теги')}}</label>
                     <select name="relations[image-storage-tags][]" multiple class="imgInfoBox-select image-storage-select">
-                        @foreach ($relatedEntities['tag'] as $tag)
+                        @foreach ($relatedEntities['tags'] as $tag)
                             <option {{$entity->tags->contains($tag->id) ? 'selected="selected"' : ''}} value="{{$tag->id}}">{{$tag->title}}</option>
                         @endforeach
                     </select>
