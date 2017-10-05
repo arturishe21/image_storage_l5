@@ -18,10 +18,8 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
     {
         parent::boot();
 
-        static::saving(function (AbstractImageStorageFile $item) {
-            if (!$item->doRenameFiles()) {
-                return false;
-            }
+        static::updating(function (AbstractImageStorageFile $item) {
+           $item->doRenameFiles();
         });
 
         static::deleted(function (AbstractImageStorageFile $item) {
@@ -204,7 +202,7 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
     protected function doDeleteFiles()
     {
         if (!$this->getConfigDeleteFiles()) {
-            return false;
+            return true;
         }
 
         if (!$this->file_folder) {
