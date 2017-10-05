@@ -6,9 +6,9 @@ interface FilterableInterface
 {
     public function scopeActive(Builder $query);
 
-    public function scopeSlug(Builder $query, $slug = '');
+    public function scopeOrderId(Builder $query, $order = "desc");
 
-    public function scopeById(Builder $query, $order = "desc");
+    public function scopeFilterBySlug(Builder $query, $slug = '');
 
     public function scopeFilterByTitle(Builder $query, $title = '');
 

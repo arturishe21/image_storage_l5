@@ -10,18 +10,18 @@ trait FilterableTrait
         return $query->where('is_active', '1');
     }
 
-    public function scopeSlug(Builder $query, $slug = '')
+    public function scopeOrderId(Builder $query, $order = "desc")
+    {
+        return $query->orderBy('id', $order);
+    }
+
+    public function scopeFilterBySlug(Builder $query, $slug = '')
     {
         if (!$slug) {
             return $query;
         }
 
         return $query->where('slug', $slug);
-    }
-
-    public function scopeById(Builder $query, $order = "desc")
-    {
-        return $query->orderBy('id', $order);
     }
 
     public function scopeFilterByTitle(Builder $query, $title = '')
@@ -63,11 +63,8 @@ trait FilterableTrait
             return $query;
         }
 
-        $className = get_class($this);
-
-        $relatedId = self::whereHas('tags', function (Builder  $query) use ($tags, $className) {
-            $query->whereIn('id_tag', $tags)
-                ->where('entity_type', $className);
+        $relatedId = self::whereHas('tags', function (Builder  $query) use ($tags) {
+            $query->whereIn('id_tag', $tags);
         })->pluck('id');
 
         return $query->whereIn('id', $relatedId);
@@ -78,7 +75,9 @@ trait FilterableTrait
         $filters = Session::get('image_storage_filter.' . $this->getConfigPrefix(), array());
 
         foreach ($filters as $column => $value) {
-            $query->$column($value);
+            if (!method_exists($this, $column)) {
+                $query->$column($value);
+            }
         }
 
         return $query;

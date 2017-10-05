@@ -352,7 +352,7 @@
 Общие scope фильтры для всех моделей (\Models\Traits\FilterableTrait.php)</br>
 Фильтр сортировки по id.
 ```php
-    public function scopeById(Builder $query, $order = "desc")
+    public function scopeOrderId(Builder $query, $order = "desc")
 ```  
 
 Фильтр выведения только активных записей.

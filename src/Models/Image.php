@@ -39,9 +39,9 @@ class Image extends AbstractImageStorageFile
     {
         $relatedEntities = [];
 
-        $relatedEntities['tag'] = Tag::active()->byId()->get();
+        $relatedEntities['tag'] = Tag::active()->orderId()->get();
 
-        $relatedEntities['gallery'] = Gallery::active()->byId()->get();
+        $relatedEntities['gallery'] = Gallery::active()->orderId()->get();
 
         $relatedEntities['sizes'] = $this->getConfigSizes();
 

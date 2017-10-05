@@ -36,7 +36,7 @@ class VideoGallery extends AbstractImageStorage
     {
         $relatedEntities = [];
 
-        $relatedEntities['tag'] = Tag::active()->byId()->get();
+        $relatedEntities['tag'] = Tag::active()->orderId()->get();
 
         return $relatedEntities;
     }
