@@ -32,6 +32,7 @@ return array(
     'Vis\\ImageStorage\\FilterableTrait' => $baseDir . '/src/Models/Traits/FilterableTrait.php',
     'Vis\\ImageStorage\\GalleriesController' => $baseDir . '/src/Http/Controllers/GalleriesController.php',
     'Vis\\ImageStorage\\Gallery' => $baseDir . '/src/Models/Gallery.php',
+    'Vis\\ImageStorage\\GalleryInterface' => $baseDir . '/src/Models/Interfaces/GalleryInterface.php',
     'Vis\\ImageStorage\\Image' => $baseDir . '/src/Models/Image.php',
     'Vis\\ImageStorage\\ImagesController' => $baseDir . '/src/Http/Controllers/ImagesController.php',
     'Vis\\ImageStorage\\RelatableInterface' => $baseDir . '/src/Models/Interfaces/RelatableInterface.php',

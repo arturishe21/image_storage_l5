@@ -19,14 +19,14 @@ abstract class AbstractImageStorageGalleryController extends AbstractImageStorag
         ));
     }
 
-    public function doDeleteToGalleryRelation()
+    public function doDetachToGallery()
     {
         $idGallery = Input::get('idGallery');
         $idRelated = Input::get('id');
 
         $entity = $this->model->find($idGallery);
 
-        $entity->deleteToGalleryRelation($idRelated);
+        $entity->detachToGallery($idRelated);
 
         return Response::json(array(
             'status' => true
@@ -59,11 +59,9 @@ abstract class AbstractImageStorageGalleryController extends AbstractImageStorag
 
         $entity->setFields($fields);
 
-        if(!$entity->beforeSaveAction()){
+        if(!$entity->save()){
             return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
         }
-
-        $entity->save();
 
         $entity->relateToGallery($idArray);
 

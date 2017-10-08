@@ -39,7 +39,7 @@ if (Request::ajax()) {
     Route::post(
         'galleries/delete_relation', array(
             'as' => 'delete_image_relation',
-            'uses' => 'GalleriesController@doDeleteToGalleryRelation'
+            'uses' => 'GalleriesController@doDetachToGallery'
         )
     );
 

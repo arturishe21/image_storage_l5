@@ -31,11 +31,6 @@ class Image extends AbstractImageStorageFile
         return $query->whereIn('id', $relatedImagesIds);
     }
 
-    public function getUrl()
-    {
-        return route("vis_images_show_single", [$this->getSlug()]);
-    }
-
     protected function makeFileName()
     {
         return $this->getSlug() . "_" . time() . "." . $this->extension;

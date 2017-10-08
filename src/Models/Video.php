@@ -90,11 +90,6 @@ class Video extends AbstractImageStorage
         return $this->api_id;
     }
 
-    public function getUrl()
-    {
-        return route("vis_videos_show_single", [$this->getSlug()]);
-    }
-
     public function getPreviewImage($size = 'source')
     {
         if ($this->id_preview) {

@@ -2,29 +2,41 @@
 
 use Illuminate\Database\Eloquent\Builder;
 
-class AbstractImageStorageGallery extends AbstractImageStorage
+class AbstractImageStorageGallery extends AbstractImageStorage implements GalleryInterface
 {
+    protected $galleryRelation = '';
 
-    public function getGalleryCurrentPreview()
+    public function getGalleryRelation()
     {
-        return $this->images()->wherePivot("is_preview", "1")->first();
+        return $this->{$this->galleryRelation}();
     }
 
-    public function getGalleryPreviewImage($size = 'cms_preview')
+    public function scopeHasRelated(Builder $query)
     {
-        $preview = $this->getGalleryCurrentPreview() ?: $this->images()->first();
+        return $query->has($this->galleryRelation);
+    }
 
-        return $preview ? $preview->getSource($size) : '/packages/vis/image-storage/img/no_image.png';
+    public function scopeHasRelatedActive(Builder $query)
+    {
+        return $query->whereHas($this->galleryRelation, function (Builder $query) {
+            $query->active();
+        });
+    }
+
+    public function getPreview()
+    {
+        return $this->getGalleryRelation()->wherePivot("is_preview", "1")->first();
     }
 
     public function setPreview($preview)
     {
-        if ($currentPreview = $this->getGalleryCurrentPreview()) {
-            $this->images()->updateExistingPivot($currentPreview->id, ["is_preview" => 0]);
+        if ($currentPreview = $this->getPreview()) {
+            $this->getGalleryRelation()->updateExistingPivot($currentPreview->id, ["is_preview" => 0]);
         }
 
-        $this->images()->updateExistingPivot($preview, ["is_preview" => 1]);
-        $this->flushCacheRelation($this->images()->getRelated());
+        $this->getGalleryRelation()->updateExistingPivot($preview, ["is_preview" => 1]);
+
+        $this->flushCacheRelation($this->getGalleryRelation()->getRelated());
     }
 
     public function changeGalleryOrder($idArray)
@@ -32,22 +44,25 @@ class AbstractImageStorageGallery extends AbstractImageStorage
         $priority = count($idArray);
 
         foreach ($idArray as $id) {
-            $this->images()->updateExistingPivot($id, ['priority' => $priority]);
+            $this->getGalleryRelation()->updateExistingPivot($id, ['priority' => $priority]);
             $priority--;
         }
 
-        $this->flushCacheRelation($this->images()->getRelated());
-    }
-
-    public function deleteToGalleryRelation($id)
-    {
-        $this->images()->detach($id);
-        $this->flushCacheRelation($this->images()->getRelated());
+        $this->flushCacheRelation($this->getGalleryRelation()->getRelated());
     }
 
     public function relateToGallery($idArray)
     {
-        $this->images()->syncWithoutDetaching($idArray);
-        $this->flushCacheRelation($this->images()->getRelated());
+        $this->getGalleryRelation()->syncWithoutDetaching($idArray);
+
+        $this->flushCacheRelation($this->getGalleryRelation()->getRelated());
     }
+
+    public function detachToGallery($id)
+    {
+        $this->getGalleryRelation()->detach($id);
+
+        $this->flushCacheRelation($this->getGalleryRelation()->getRelated());
+    }
+
 }

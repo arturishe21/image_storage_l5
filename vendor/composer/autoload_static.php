@@ -47,6 +47,7 @@ class ComposerStaticInitb53a329f2de6d2fb9c017a4f182eef61
         'Vis\\ImageStorage\\FilterableTrait' => __DIR__ . '/../..' . '/src/Models/Traits/FilterableTrait.php',
         'Vis\\ImageStorage\\GalleriesController' => __DIR__ . '/../..' . '/src/Http/Controllers/GalleriesController.php',
         'Vis\\ImageStorage\\Gallery' => __DIR__ . '/../..' . '/src/Models/Gallery.php',
+        'Vis\\ImageStorage\\GalleryInterface' => __DIR__ . '/../..' . '/src/Models/Interfaces/GalleryInterface.php',
         'Vis\\ImageStorage\\Image' => __DIR__ . '/../..' . '/src/Models/Image.php',
         'Vis\\ImageStorage\\ImagesController' => __DIR__ . '/../..' . '/src/Http/Controllers/ImagesController.php',
         'Vis\\ImageStorage\\RelatableInterface' => __DIR__ . '/../..' . '/src/Models/Interfaces/RelatableInterface.php',
