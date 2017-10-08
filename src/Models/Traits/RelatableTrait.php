@@ -13,6 +13,11 @@ trait RelatableTrait
         });
     }
 
+    public function tags()
+    {
+        return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
+    }
+
     public function getRelatableList(): array
     {
         return $this->relatableList;
@@ -23,9 +28,14 @@ trait RelatableTrait
         return method_exists($this, $relation);
     }
 
+    public function getRelatedClass($relation)
+    {
+       return $this->$relation()->getRelated();
+    }
+
     public function getRelationClassName($relation): string
     {
-        return get_class($this->$relation()->getRelated());
+        return get_class($this->getRelatedClass($relation));
     }
 
     public function getRelatedEntities(): array
@@ -46,10 +56,12 @@ trait RelatableTrait
     {
         foreach ($this->getRelatableList() as $relation) {
             if ($this->relationExists($relation)) {
-                $relatedClassName = $this->getRelationClassName($relation);
                 $relatedEntities = (array)request('relations.image-storage-' . $relation);
                 $this->$relation()->sync($relatedEntities);
-                $relatedClassName::flushCache();
+
+                //fixme add clear cache
+                $this->flushCache();
+                $this->flushCacheRelation($this->getRelatedClass($relation));
             }
         }
     }

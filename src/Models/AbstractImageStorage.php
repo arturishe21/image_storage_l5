@@ -2,7 +2,13 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-abstract class AbstractImageStorage extends Model implements CacheableInterface, ChangeableSchemeInterface, ConfigurableInterface, FilterableInterface, RelatableInterface
+abstract class AbstractImageStorage extends Model implements
+    CacheableInterface,
+    ChangeableSchemeInterface,
+    ConfigurableInterface,
+    FilterableInterface,
+    RelatableInterface,
+    URLableInterface
 {
     use \Vis\Builder\Helpers\Traits\TranslateTrait,
         \Vis\Builder\Helpers\Traits\SeoTrait,
@@ -11,16 +17,11 @@ abstract class AbstractImageStorage extends Model implements CacheableInterface,
         ChangeableSchemeTrait,
         ConfigurableTrait,
         FilterableTrait,
-
-        RelatableTrait;
+        RelatableTrait,
+        URLableTrait;
 
     protected $table;
     protected $fillable = ['id'];
-
-    public function tags()
-    {
-        return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
-    }
 
     //fixme move to errorTrait
 

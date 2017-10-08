@@ -108,12 +108,14 @@ class Video extends AbstractImageStorage
 
     public function setPreviewImage($id)
     {
+        //fixme inline this?
         $this->preview()->associate($id);
         $this->save();
     }
 
     public function unsetPreviewImage()
     {
+        //fixme inline this?
         $this->preview()->dissociate();
         $this->save();
     }

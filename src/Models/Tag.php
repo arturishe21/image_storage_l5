@@ -33,7 +33,6 @@ class Tag extends AbstractImageStorage
     public function relateToTag($id, $type)
     {
         $this->$type()->syncWithoutDetaching($id);
-
-        $this->flushCacheBoth($type);
+        $this->flushCacheRelation($this->$type()->getRelated());
     }
 }

@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Builder;
 
-class VideoGallery extends AbstractImageStorage
+class VideoGallery extends AbstractImageStorageGallery
 {
     protected $table = 'vis_video_galleries';
     protected $configPrefix = 'video_gallery';
@@ -48,7 +48,7 @@ class VideoGallery extends AbstractImageStorage
         }
 
         $this->videos()->updateExistingPivot($preview, ["is_preview" => 1]);
-        $this->flushCacheBoth('videos');
+        $this->flushCacheRelation($this->videos()->getRelated());
     }
 
     public function changeGalleryOrder($idArray)
@@ -59,19 +59,19 @@ class VideoGallery extends AbstractImageStorage
             $this->videos()->updateExistingPivot($id, ['priority' => $priority]);
             $priority--;
         }
-        $this->flushCacheBoth('videos');
+        $this->flushCacheRelation($this->videos()->getRelated());
     }
 
     public function deleteToGalleryRelation($id)
     {
         $this->videos()->detach($id);
-        $this->flushCacheBoth('videos');
+        $this->flushCacheRelation($this->videos()->getRelated());
     }
 
     public function relateToGallery($idArray)
     {
         $this->videos()->syncWithoutDetaching($idArray);
-        $this->flushCacheBoth('videos');
+        $this->flushCacheRelation($this->videos()->getRelated());
     }
 
 }

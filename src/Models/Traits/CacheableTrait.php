@@ -7,32 +7,23 @@ trait CacheableTrait
     protected static function bootCacheableTrait()
     {
         static::saved(function (CacheableInterface $item) {
-            $item::flushCache();
+            $item->flushCache();
         });
         static::deleted(function (CacheableInterface $item) {
-            $item::flushCache();
+            $item->flushCache();
         });
     }
 
-    public static function flushCache()
+    public function flushCache()
     {
-        $className = static::class;
-        $classObject = new $className;
-
-        $cacheTag = $classObject->getConfigNamespace() . '.' . $classObject->getConfigPrefix();
-
+        $cacheTag = $this->getConfigNamespace() . '.' . $this->getConfigPrefix();
         Cache::tags($cacheTag)->flush();
     }
 
-    public function flushCacheBoth(string $relation)
+    public function flushCacheRelation(CacheableInterface $relation)
     {
-        if (method_exists($this, $relation)) {
-            $relatedClass = $this->$relation()->getRelated();
-            $relatedClassName = get_class($relatedClass);
-
-            $relatedClassName::flushCache();
-            self::flushCache();
-        }
+        $this->flushCache();
+        $relation->flushCache();
     }
 
 }
