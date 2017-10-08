@@ -99,6 +99,7 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
 
         $this->sourceFile = $this->uploadedFile;
         unset($this->uploadedFile);
+
         return true;
     }
 
@@ -113,8 +114,6 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
         }
 
         $this->title = $title;
-        $this->setSlug();
-
     }
 
     private function failsToValidateFile()
@@ -142,7 +141,8 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
         if ($uploadFileSize > $maxFileSize) {
             $maxFileSizeInMB = $maxFileSize / 1000000;
             $message = $this->getConfigSizeMaxErrorMessage();
-            $this->errorMessage = str_replace("[size]", $maxFileSizeInMB, $message);
+            $errorMessage = str_replace("[size]", $maxFileSizeInMB, $message);
+            $this->setErrorMessage($errorMessage);
             return true;
         }
 
@@ -161,7 +161,8 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
         if (!in_array($uploadFileExtension, $allowedExtensions)) {
             $allowedExtensionsList = implode(",", $allowedExtensions);
             $message = $this->getConfigExtensionsErrorMessage();
-            $this->errorMessage = str_replace("[extension_list]", $allowedExtensionsList, $message);
+            $errorMessage = str_replace("[extension_list]", $allowedExtensionsList, $message);
+            $this->setErrorMessage($errorMessage);
             return true;
         }
 

@@ -22,6 +22,7 @@ trait CacheableTrait
 
     public function flushCacheRelation(CacheableInterface $relation)
     {
+        //fixme this method calling should be optimized
         $this->flushCache();
         $relation->flushCache();
     }

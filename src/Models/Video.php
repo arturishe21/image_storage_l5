@@ -20,6 +20,7 @@ class Video extends AbstractImageStorage
             }
 
             $item->useApiData();
+            $item->setSlug();
         });
     }
 
@@ -59,7 +60,8 @@ class Video extends AbstractImageStorage
     public function videoExists()
     {
         if (!$this->api()->videoExists()) {
-            $this->errorMessage = $this->api()->getExistenceErrorMessage();
+            $errorMessage = $this->api()->getExistenceErrorMessage();
+            $this->setErrorMessage($errorMessage);
             return false;
         }
 
@@ -81,8 +83,6 @@ class Video extends AbstractImageStorage
                 $this->$columnName = $this->api()->getDescription();
             }
         }
-
-        $this->setSlug();
     }
 
     public function getSource()
