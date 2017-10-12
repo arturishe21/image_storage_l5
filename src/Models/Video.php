@@ -92,27 +92,17 @@ class Video extends AbstractImageStorage
 
     public function getPreviewImage($size = 'source')
     {
-        if ($this->id_preview) {
-            $image = $this->preview->getSource($size);
-        } else {
-            $image = $this->api()->getPreviewUrl();
-        }
-
-        return $image;
+        return $this->id_preview ? $this->preview->getSource($size) : $this->api()->getPreviewUrl();
     }
 
     public function setPreviewImage($id)
     {
-        //fixme inline this?
-        $this->preview()->associate($id);
-        $this->save();
+        $this->preview()->associate($id)->save();
     }
 
     public function unsetPreviewImage()
     {
-        //fixme inline this?
-        $this->preview()->dissociate();
-        $this->save();
+        $this->preview()->dissociate()->save();
     }
 
 }
