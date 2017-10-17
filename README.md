@@ -3,12 +3,13 @@
 
 Разделы
 1. [Установка](#Установка)
-2. [Настройка конфигов](#Настройка-конфигов)
+2. [VIS-CMS](#VIS-CMS)
+3. [Настройка конфигов](#Настройка-конфигов)
     1. [Конфиг изображений](#Конфиг-изображений)
     2. [Конфиг документов](#Конфиг-документов)
     3. [Конфиг видео](#Конфиг-видео)
         * [Конфиг видео API](#Конфиг-видео-api)
-3. [Спецификация и примеры](#Спецификация-и-примеры)
+4. [Спецификация и примеры](#Спецификация-и-примеры)
     1. [Общая спецификация](#Общая-спецификация)
     3. [Использование изображений](#Использование-изображений)
     4. [Использование фотогалереи](#Использование-фотогалереи)
@@ -17,8 +18,8 @@
         * [Использование видео API](#Использование-видео-api)
     7. [Использование видеогалереи](#Использование-видеогалереи)
     8. [Использование тэгов](#Использование-тэгов)
-4. [Кэширование](#Кэширование)
-5. [Особенности управление в VIS CMS](#Особенности-управление-в-vis-cms)
+5. [Кэширование](#Кэширование)
+6. [Особенности управление в VIS CMS](#Особенности-управление-в-vis-cms)
     1. [Общее управление](#Общее-управление)
     2. [Общее управление для изображений, видео и документов](#Общее-управление-для-изображений-видео-и-документов)
         1. [Управление изображениями](#Управление-изображениями)
@@ -48,58 +49,69 @@
     php artisan vendor:publish --provider="Vis\ImageStorage\ImageStorageServiceProvider" --force
 ```
 
+## VIS-CMS
 В файле config/builder/admin.php в массив menu в настройки добавляем
 ```php
     array(
       'title' => 'Медиахранилище',
       'icon'  => 'picture-o',
       'check' => function() {
-          return true;
+          return Sentinel::hasAccess('admin.image_storage.view');
       },
       'submenu' => array(
           array(
               'title' => "Изображения",
               'link'  => '/image_storage/images',
               'check' => function() {
-                  return true;
+                  return Sentinel::hasAccess('admin.image_storage.view');
               }
           ),
           array(
               'title' => "Галереи",
               'link'  => '/image_storage/galleries',
               'check' => function() {
-                  return true;
+                  return Sentinel::hasAccess('admin.image_storage.view');
               }
           ),
           array(
               'title' => "Видео",
               'link'  => '/image_storage/videos',
               'check' => function() {
-                  return true;
+                  return Sentinel::hasAccess('admin.image_storage.view');
               }
           ),
           array(
               'title' => "Видеогалереи",
               'link'  => '/image_storage/video_galleries',
               'check' => function() {
-                  return true;
+                  return Sentinel::hasAccess('admin.image_storage.view');
               }
           ),
           array(
               'title' => "Документы",
               'link'  => '/image_storage/documents',
               'check' => function() {
-                  return true;
+                  return Sentinel::hasAccess('admin.image_storage.view');
               }
           ),
           array(
               'title' => "Теги",
               'link'  => '/image_storage/tags',
               'check' => function() {
-                  return true;
+                  return Sentinel::hasAccess('admin.image_storage.view');
               }
           ),
       )
+    ),
+```
+
+Добавляем права доступа в config/builder/tb-definitions/groups.php и добавляем их к группам.
+```php
+    'Медиахранилище' => array(
+        'admin.image_storage.view'   => 'Просмотр',
+        'admin.image_storage.create' => 'Создание',
+        'admin.image_storage.update' => 'Редактирование',
+        'admin.image_storage.delete' => 'Удаление',
     ),
 ```
 
