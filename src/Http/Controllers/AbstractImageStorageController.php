@@ -21,9 +21,9 @@ abstract class AbstractImageStorageController extends Controller
     {
         $this->setSearchInput();
 
-        $perPage         = $this->model->getConfigPerPage();
-        $title           = __cms("Медиахранилище") . " - " .$this->model->getConfigTitle();
-        $prefix          = $this->model->getConfigPrefix();
+        $perPage = $this->model->getConfigPerPage();
+        $title = __cms("Медиахранилище") . " - " . $this->model->getConfigTitle();
+        $prefix = $this->model->getConfigPrefix();
         $relatedEntities = $this->model->getRelatedEntities();
 
         $data = $this->model->filterSearch()->orderBy('id', 'DESC')->paginate($perPage);
@@ -170,13 +170,9 @@ abstract class AbstractImageStorageController extends Controller
         $prefix = $this->model->getConfigPrefix();
 
         if (Input::has('image_storage_filter')) {
-
             Session::put('image_storage_filter.' . $prefix, Input::get('image_storage_filter', array()));
-
         } elseif (Input::has('forget_filters')) {
-
             Session::forget('image_storage_filter.' . $prefix);
-
         }
     }
 }

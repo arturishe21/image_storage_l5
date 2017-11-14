@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 use Vis\Builder\OptmizationImg;
+use \Image as InterventionImage;
 
 class Image extends AbstractImageStorageFile
 {
@@ -48,27 +49,10 @@ class Image extends AbstractImageStorageFile
             $this->sourceFile->imageData = [];
         }
 
-        $this->setExifDate();
-
+        $this->date_time_source = isset($this->sourceFile->imageData['EXIF']['DateTimesource']) ? $this->sourceFile->imageData['EXIF']['DateTimesource'] : "2035-01-01 00:00:00";
         $this->exif_data = json_encode($this->sourceFile->imageData);
 
         return true;
-    }
-
-    private function setExifDate()
-    {
-        if (isset($this->sourceFile->imageData['EXIF']['DateTimesource'])) {
-            $this->date_time_source = $this->sourceFile->imageData['EXIF']['DateTimesource'];
-        } else {
-            $this->date_time_source = "2035-01-01 00:00:00";
-        }
-    }
-
-    private function doOptimizeImage($imagePath)
-    {
-        if ($this->getConfigOptimization()) {
-            OptmizationImg::run("/" . $imagePath);
-        }
     }
 
     private function setExtension($size)
@@ -95,14 +79,10 @@ class Image extends AbstractImageStorageFile
 
     private function doMakeFile($size = 'source')
     {
-        $quality = $this->getConfigQuality();
-
-        $field = $this->sizePrefix . $size;
-
         $this->setExtension($size);
         $this->setSourcePath();
 
-        $img = \Image::make($this->sourcePath);
+        $img = InterventionImage::make($this->sourcePath);
 
         $sizeInfo = $this->getConfigSizeInfo($size);
 
@@ -121,9 +101,9 @@ class Image extends AbstractImageStorageFile
 
         $path = $destinationPath . $fileName;
 
-        $img->save(public_path() . '/' . $path, $quality);
+        $img->save(public_path() . '/' . $path, $this->getConfigQuality());
 
-        $this->$field = $size . "/" . $fileName;
+        $this->{$this->sizePrefix . $size} = $size . "/" . $fileName;
     }
 
     public function setNewFileData()
@@ -162,11 +142,13 @@ class Image extends AbstractImageStorageFile
 
     public function optimizeImage($size)
     {
-        $sizes = $size ? [$size => ''] : $this->getConfigSizes();
+        if (!$this->getConfigOptimization()) {
+            return;
+        }
 
+        $sizes = $size ? [$size => ''] : $this->getConfigSizes();
         foreach ($sizes as $sizeName => $sizeInfo) {
-            $imagePath = $this->getSource($sizeName);
-            $this->doOptimizeImage($imagePath);
+            OptmizationImg::run("/" . $this->getSource($sizeName));
         }
     }
 

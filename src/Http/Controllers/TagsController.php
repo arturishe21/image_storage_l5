@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Response;
 
 class TagsController extends AbstractImageStorageController
 {
-    protected $model = "Vis\\ImageStorage\\Tag";
+    protected $model = Tag::class;
 
     public function doRelateToTags($type)
     {

@@ -15,17 +15,17 @@
             </div>
             <div class="image-storage-images-sizes-control_row">
                 <div class="pull-left button-block">
-                    <a download="{{ $entity->title .'('. $info['caption'] .')' }}"
+                    <a download="{{ $entity->title ? $entity->title .'('. $info['caption'] .')' : ''}}"
                        target="_blank"
                        href="{{ asset($entity->getSource($ident)) }}"
                        class="image-storage-btn-download btn btn-default btn-sm">
                         {{ __cms("Скачать")}}
                     </a>
-                    <a class="image-storage-btn-download btn btn-default btn-sm clipboard-copy-button">{{ __cms("Копировать ссылку")}}</a>
+                    <a class="image-storage-btn-clipboard-copy btn btn-default btn-sm">{{ __cms("Копировать ссылку")}}</a>
                 </div>
 
 {{--                <div class="pull-left button-block">
-                    <a  class="image-storage-btn-download btn btn-default btn-sm">
+                    <a  class="btn btn-default btn-sm">
                         {{ __cms("Изменить")}}
                     </a>
                 </div>

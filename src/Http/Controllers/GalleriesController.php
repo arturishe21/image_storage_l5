@@ -2,6 +2,6 @@
 
 class GalleriesController extends AbstractImageStorageGalleryController
 {
-    protected $model = "Vis\\ImageStorage\\Gallery";
+    protected $model = Gallery::class;
 
 }

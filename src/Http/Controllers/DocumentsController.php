@@ -2,6 +2,6 @@
 
 class DocumentsController extends AbstractImageStorageFileController
 {
-    protected $model = "Vis\\ImageStorage\\Document";
+    protected $model = Document::class;
 
 }

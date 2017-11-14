@@ -19,22 +19,20 @@
         @if($entity->id)
         <div class="tab-pane fade" id="image-storage-video-preview">
             <div>
-                <img src="{{ $entity->getPreviewImage()}}" class="superbox-current-img">
+                <img src="{{ asset($entity->getPreviewImage())}}" class="superbox-current-img">
             </div>
             <div class="image-storage-images-sizes-control_row">
                 <div class="pull-left button-block">
-                    <a download="{{ $entity->title ." ". __cms('Превью')}}"
+                    <a download="{{ $entity->title ? $entity->title .' '. __cms('Превью') : ''}}"
                        target="_blank"
-                       href="{{ $entity->getPreviewImage()}}"
+                       href="{{ asset($entity->getPreviewImage())}}"
                        class="image-storage-btn-download btn btn-default btn-sm">
                         {{ __cms("Скачать")}}
                     </a>
-                </div>
-                <div class="pull-left button-block">
-                    <a
-                       onclick="ImageStorage.removeUploadedPreview(this,'{{$entity->id}}');"
+                    <a class="image-storage-btn-clipboard-copy btn btn-default btn-sm">{{ __cms("Копировать ссылку")}}</a>
+                    <a onclick="ImageStorage.removeUploadedPreview(this,'{{$entity->id}}');"
                        href="javascript:;"
-                       class="image-storage-btn-download btn btn-default btn-sm">
+                       class="btn btn-default btn-sm">
                         {{ __cms("Удалить загруженное превью")}}
                     </a>
                 </div>

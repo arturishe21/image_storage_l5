@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Response;
 
 class VideosController extends AbstractImageStorageController
 {
-    protected $model = "Vis\\ImageStorage\\Video";
+    protected $model = Video::class;
 
     public function doUploadPreviewImage()
     {
@@ -28,8 +28,8 @@ class VideosController extends AbstractImageStorageController
 
         $data = array(
             'status' => true,
-            'src'    => $video->getPreviewImage(),
-            'id'     => $image->id
+            'src'    => asset($video->getPreviewImage()),
+            'id'     => $video->preview->id
         );
 
         return Response::json($data);
@@ -37,7 +37,7 @@ class VideosController extends AbstractImageStorageController
 
     public function doRemovePreviewImage()
     {
-        $id    = Input::get('id');
+        $id = Input::get('id');
 
         $video = $this->model->find($id);
 
@@ -45,8 +45,7 @@ class VideosController extends AbstractImageStorageController
 
         $data = array(
             'status' => true,
-            'src'    => $video->getPreviewImage(),
-            'id'     => $video->id
+            'src'    => asset($video->getPreviewImage()),
         );
 
         return Response::json($data);

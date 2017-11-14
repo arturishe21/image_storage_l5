@@ -164,7 +164,7 @@ var ImageStorage = {
 
     initCopyToClipboard: function()
     {
-        $('.clipboard-copy-button').click(function(){
+        $('.image-storage-btn-clipboard-copy').click(function(){
             var copyText = $(this).prev(".image-storage-btn-download").attr("href"),
                 inputStub   = "<input class='copy-input-stub' type='text' value='"+copyText+"'>";
 
@@ -233,12 +233,15 @@ var ImageStorage = {
                     ImageStorage.is_loading = false;
                     ImageStorage.current_page = next_page;
                     TableBuilder.hidePreloader();
+
+                    history.pushState(null, null, '?page=' + ImageStorage.current_page);
                 } else {
                     TableBuilder.hidePreloader();
                     TableBuilder.showErrorNotification('Неудалось загрузить изображения...');
                 }
             }
         });
+
 
     },
 
@@ -656,7 +659,7 @@ var ImageStorage = {
                     if (fileCount == fileTotal) {
                         $fog.find('.image-storage-upload-finish-btn').show();
                         if (uploadedId.length && ImageStorage.entity == 'images') {
-                            ImageStorage.sendOptimizeImageRequest(uploadedId);
+                            ImageStorage.optimizeImage(uploadedId);
                         }
                     }
                 }
@@ -681,9 +684,11 @@ var ImageStorage = {
             success: function(response) {
                 if (response.status) {
                     $(context).parents(".tab-pane.active").find('.image-storage-images-sizes-content').html(response.html);
+                    $(context).parents(".tab-pane.active").find('.image-storage-btn-download').prop('href', response.src);
 
-                    if (ImageStorage.entity == 'images') {
-                        ImageStorage.sendOptimizeImageRequest(idImage, size);
+                    TableBuilder.showSuccessNotification('Файл успешно заменен');
+                    if (ImageStorage.entity === 'images') {
+                        ImageStorage.optimizeImage(idImage, size);
                     }
 
                 } else {
@@ -699,7 +704,7 @@ var ImageStorage = {
     //end files
 
     //images
-    sendOptimizeImageRequest: function (id, size)
+    optimizeImage: function (id, size)
     {
         setTimeout(function(){
             jQuery.ajax({
@@ -741,7 +746,7 @@ var ImageStorage = {
                 if (response.status) {
                     TableBuilder.showSuccessNotification('Превью установлено');
                     ImageStorage.changePreviewSrc(context,response.src);
-                    ImageStorage.sendOptimizeImageRequest(response.id);
+                    ImageStorage.optimizeImage(response.id);
 
                 } else {
                     if (response.message){
@@ -781,6 +786,7 @@ var ImageStorage = {
 
     changePreviewSrc: function (context,src){
         $(context).parents(".tab-pane.active").find('.superbox-current-img').prop('src', src);
+        $(context).parents(".tab-pane.active").find('.image-storage-btn-download').prop('href', src);
         $(".superbox-list-video.active").find('.image-storage-img').prop('src', src);
     },
     //end videos

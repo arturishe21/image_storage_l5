@@ -58,7 +58,8 @@ class AbstractImageStorageFileController extends AbstractImageStorageController
 
         $data = array(
             'status' => true,
-            'html'    => $html,
+            'html'   => $html,
+            'src'    => asset($entity->getSource($size))
         );
 
         return Response::json($data);

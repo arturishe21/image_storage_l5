@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Response;
 
 class ImagesController extends AbstractImageStorageFileController
 {
-    protected $model = "Vis\\ImageStorage\\Image";
+    protected $model = Image::class;
 
     public function doOptimizeImage()
     {
