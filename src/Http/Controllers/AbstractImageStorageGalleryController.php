@@ -8,15 +8,15 @@ abstract class AbstractImageStorageGalleryController extends AbstractImageStorag
     public function doChangeGalleryOrder()
     {
         $idGallery = Input::get('idGallery');
-        $idArray   = Input::get('idArray', array());
+        $idArray   = Input::get('idArray', []);
 
         $entity = $this->model->find($idGallery);
 
         $entity->changeGalleryOrder($idArray);
 
-        return Response::json(array(
+        return Response::json([
             'status' => true
-        ));
+        ]);
     }
 
     public function doDetachToGallery()
@@ -28,9 +28,9 @@ abstract class AbstractImageStorageGalleryController extends AbstractImageStorag
 
         $entity->detachToGallery($idRelated);
 
-        return Response::json(array(
+        return Response::json([
             'status' => true
-        ));
+        ]);
     }
 
     public function doSetGalleryPreview()
@@ -42,16 +42,15 @@ abstract class AbstractImageStorageGalleryController extends AbstractImageStorag
 
         $entity->setPreview($idPreview);
 
-        return Response::json(array(
+        return Response::json([
             'status' => true
-        ));
-
+        ]);
     }
 
     public function doCreateGalleryWith()
     {
         $galleryName = Input::get('galleryName');
-        $idArray     = Input::get('idArray', array());
+        $idArray     = Input::get('idArray', []);
 
         $fields      = ['title' => $galleryName];
 
@@ -60,29 +59,29 @@ abstract class AbstractImageStorageGalleryController extends AbstractImageStorag
         $entity->setFields($fields);
 
         if(!$entity->save()){
-            return Response::json( array( 'status' => false, 'message'   => $entity->getErrorMessage() ));
+            return Response::json(['status' => false, 'message' => $entity->getErrorMessage()]);
         }
 
         $entity->relateToGallery($idArray);
 
-        return Response::json(array(
+        return Response::json([
             'status' => true
-        ));
+        ]);
     }
 
     public function doAddArrayToGalleries()
     {
-        $idGalleries = Input::get('idGalleries', array());
-        $idArray     = Input::get('idArray', array());
+        $idGalleries = Input::get('idGalleries', []);
+        $idArray     = Input::get('idArray', []);
 
         foreach ($idGalleries as $key => $id) {
             $entity = $this->model->find($id);
             $entity->relateToGallery($idArray);
         }
 
-        return Response::json(array(
+        return Response::json([
             'status' => true
-        ));
+        ]);
     }
 
 }

@@ -51,7 +51,7 @@
             <select name="image_storage_filter[filterByTags][]" multiple="multiple" class="image-storage-select">
                 @foreach($relatedEntities['tags'] as $tag)
                     <option value="{{$tag->id}}"
-                           {{in_array($tag->id,Session::get('image_storage_filter.gallery.filterByTags', array())) ? "selected" : ""}}>
+                           {{in_array($tag->id,Session::get('image_storage_filter.gallery.filterByTags', [])) ? "selected" : ""}}>
                         {{$tag->title}}
                     </option>
                 @endforeach
@@ -60,10 +60,10 @@
         <td>
             <select name="image_storage_filter[filterByActivity][]" multiple="multiple" class="image-storage-select">
                     <option value="1"
-                            {{in_array(1,Session::get('image_storage_filter.gallery.filterByActivity', array())) ? "selected" : ""}}>
+                            {{in_array(1,Session::get('image_storage_filter.gallery.filterByActivity', [])) ? "selected" : ""}}>
                     {{__cms('Активна') }}</option>
                     <option value="0"
-                            {{in_array(0,Session::get('image_storage_filter.gallery.filterByActivity', array())) ? "selected" : ""}}>
+                            {{in_array(0,Session::get('image_storage_filter.gallery.filterByActivity', [])) ? "selected" : ""}}>
                     {{__cms('Не активна') }}</option>
             </select>
         </td>

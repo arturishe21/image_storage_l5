@@ -18,12 +18,12 @@ trait RelatableTrait
         return $this->morphToMany('Vis\ImageStorage\Tag', 'entity', 'vis_tags2entities', 'id_entity', 'id_tag');
     }
 
-    public function getRelatableList(): array
+    public function getRelatableList()
     {
         return $this->relatableList;
     }
 
-    public function relationExists($relation): bool
+    public function relationExists($relation)
     {
         return method_exists($this, $relation);
     }
@@ -33,12 +33,12 @@ trait RelatableTrait
        return $this->$relation()->getRelated();
     }
 
-    public function getRelationClassName($relation): string
+    public function getRelationClassName($relation)
     {
         return get_class($this->getRelatedClass($relation));
     }
 
-    public function getRelatedEntities(): array
+    public function getRelatedEntities()
     {
         $relatedEntities = [];
 

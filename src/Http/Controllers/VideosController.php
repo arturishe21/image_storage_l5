@@ -17,22 +17,20 @@ class VideosController extends AbstractImageStorageController
         $image = new Image;
 
         if (!$image->setSourceFile($file)) {
-            return Response::json(array('status' => false, 'message' => $image->getErrorMessage()));
+            return Response::json(['status' => false, 'message' => $image->getErrorMessage()]);
         }
 
-        if (!$image->setNewFileData()) {
-            return Response::json(array('status' => false, 'message' => $image->getErrorMessage()));
+        if (!$image->saveFile()) {
+            return Response::json(['status' => false, 'message' => $image->getErrorMessage()]);
         }
 
         $video->setPreviewImage($image->id);
 
-        $data = array(
+        return Response::json([
             'status' => true,
             'src'    => asset($video->getPreviewImage()),
             'id'     => $video->preview->id
-        );
-
-        return Response::json($data);
+        ]);
     }
 
     public function doRemovePreviewImage()
@@ -43,12 +41,10 @@ class VideosController extends AbstractImageStorageController
 
         $video->unsetPreviewImage();
 
-        $data = array(
+        return Response::json([
             'status' => true,
             'src'    => asset($video->getPreviewImage()),
-        );
-
-        return Response::json($data);
+        ]);
     }
 
 }

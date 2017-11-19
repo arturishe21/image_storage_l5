@@ -6,13 +6,13 @@ interface RelatableInterface
 {
     public function tags();
 
-    public function getRelatableList(): array;
+    public function getRelatableList();
 
-    public function relationExists($relation): bool;
+    public function relationExists($relation);
 
-    public function getRelationClassName($relation): string;
+    public function getRelationClassName($relation);
     
-    public function getRelatedEntities(): array;
+    public function getRelatedEntities();
 
 
 }

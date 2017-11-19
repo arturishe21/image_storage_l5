@@ -1,4 +1,4 @@
-<img class="superbox-img image-storage-img"
+<img class="superbox-img image-storage-img transparent-image"
      src="{{ asset($entity->getSource("cms_preview"))}}"
      data-id="{{ $entity->id }}"
      data-source="{{ asset($entity->getSource()) }}"

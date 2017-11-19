@@ -1,6 +1,9 @@
 <?php namespace Vis\ImageStorage;
 
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Exception;
 
 abstract class AbstractImageStorageFile extends AbstractImageStorage implements ChangeableSchemeFileInterface, ConfigurableFileInterface, UploadableFileInterface
 {
@@ -10,8 +13,6 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
     protected $sizePrefix = 'file_';
     protected $prefixPath = '/storage/image-storage/';
 
-    protected $extension;
-    protected $uploadedFile;
     protected $sourceFile;
 
     protected static function boot()
@@ -25,90 +26,98 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
         static::deleted(function (AbstractImageStorageFile $item) {
             $item->doDeleteFiles();
         });
-
     }
 
     public function getSource($size = 'source')
     {
-        $field = $this->sizePrefix . $size;
-        $source = $this->file_folder . $this->$field;
+        return $this->file_folder . ($this->{$this->sizePrefix . $size} ?: $this->{$this->sizePrefix . 'source'});
+    }
 
-        return $source;
+    protected function getPublicPath($size = 'source')
+    {
+        return public_path() . $this->getSource($size);
     }
 
     public function getFileExtension($size = 'source')
     {
-        $path = $this->getSource($size);
-        $extension = pathinfo($path, PATHINFO_EXTENSION);
-
-        return $extension;
+        return pathinfo($this->getPublicPath($size), PATHINFO_EXTENSION);
     }
 
     public function getFileName($size = 'source')
     {
-        $path = $this->getSource($size);
-        $fileName = pathinfo($path, PATHINFO_FILENAME);
-
-        return $fileName;
+        return pathinfo($this->getPublicPath($size), PATHINFO_FILENAME);
     }
 
     public function getFileSize($size = 'source')
     {
-        $path = public_path() . $this->getSource($size);
-        $size = filesize_format(filesize($path));
-
-        return $size;
+        return filesize_format(filesize($this->getPublicPath($size)));
     }
 
     public function getFileMimeType($size = 'source')
     {
-        $path = public_path() . $this->getSource($size);
-        $size = mime_content_type($path);
-
-        return $size;
+        return mime_content_type($this->getPublicPath($size));
     }
 
-    protected function getPathForFile()
+    private function validateFileSize()
     {
-        $postfixPath = date('Y/m/d', strtotime($this->created_at)) . '/' . $this->id . '/';
-
-        $chunks = explode("/", $postfixPath);
-
-        return array(
-            $chunks,
-            $postfixPath
-        );
-    }
-
-    protected function makeFileName()
-    {
-        return $this->getSlug() . "." . $this->extension;
-    }
-
-    public function setSourceFile($file)
-    {
-        if (!$file) {
-            return false;
+        if (!$this->getConfigSizeValidation()) {
+            return true;
         }
 
-        $this->uploadedFile = $file;
+        $uploadFileSize = $this->sourceFile->getClientSize();
+        $maxFileSize = $this->getConfigSizeMax();
 
-        if ($this->failsToValidateFile()) {
+        if ($uploadFileSize > $maxFileSize) {
+            $maxFileSizeInMB = $maxFileSize / 1000000;
+            $message = $this->getConfigSizeMaxErrorMessage();
+            $errorMessage = str_replace("[size]", $maxFileSizeInMB, $message);
+            $this->setErrorMessage($errorMessage);
             return false;
         }
-
-        $this->sourceFile = $this->uploadedFile;
-        unset($this->uploadedFile);
 
         return true;
     }
 
-    protected function setFileTitle()
+    private function validateFileExtension()
+    {
+        if (!$this->getConfigExtensionValidation()) {
+            return true;
+        }
+
+        $uploadFileExtension = strtolower($this->sourceFile->getClientOriginalExtension());
+        $allowedExtensions = $this->getConfigAllowedExtensions();
+
+        if (!in_array($uploadFileExtension, $allowedExtensions)) {
+            $allowedExtensionsList = implode(",", $allowedExtensions);
+            $errorMessage = str_replace("[extension_list]", $allowedExtensionsList, $this->getConfigExtensionsErrorMessage());
+            $this->setErrorMessage($errorMessage);
+            return false;
+        }
+
+        return true;
+    }
+
+    public function setSourceFile(UploadedFile $file)
+    {
+        if (!$this->sourceFile = $file) {
+            return false;
+        }
+
+        if (!$this->validateFileSize()) {
+            return false;
+        }
+
+        if (!$this->validateFileExtension()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function setFileTitle()
     {
         if ($this->getConfigUseSourceTitle()) {
-            $fileName = $this->sourceFile->getClientOriginalName();
-            $extension = $this->sourceFile->getClientOriginalExtension();
-            $title = strstr($fileName, "." . $extension, true);
+            $title = strstr($this->sourceFile->getClientOriginalName(), "." . $this->sourceFile->getClientOriginalExtension(), true);
         } else {
             $title = md5_file($this->sourceFile->getPathName()) . '_' . time();
         }
@@ -116,65 +125,22 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
         $this->title = $title;
     }
 
-    private function failsToValidateFile()
+    private function makeFolderPath()
     {
-        if ($this->failsToValidateFileSize()) {
-            return true;
-        }
-
-        if ($this->failsToValidateFileExtension()) {
-            return true;
-        }
-
-        return false;
+        return date('Y/m/d', strtotime($this->created_at)) . '/' . $this->id . '/';
     }
 
-    private function failsToValidateFileSize()
+    private function setFileFolder()
     {
-        if (!$this->getConfigSizeValidation()) {
-            return false;
-        }
-
-        $maxFileSize = $this->getConfigSizeMax();
-        $uploadFileSize = $this->uploadedFile->getClientSize();
-
-        if ($uploadFileSize > $maxFileSize) {
-            $maxFileSizeInMB = $maxFileSize / 1000000;
-            $message = $this->getConfigSizeMaxErrorMessage();
-            $errorMessage = str_replace("[size]", $maxFileSizeInMB, $message);
-            $this->setErrorMessage($errorMessage);
-            return true;
-        }
-
-        return false;
+        $this->file_folder = $this->prefixPath . $this->makeFolderPath();
     }
 
-    private function failsToValidateFileExtension()
-    {
-        if (!$this->getConfigExtensionValidation()) {
-            return false;
-        }
-
-        $allowedExtensions = $this->getConfigAllowedExtensions();
-        $uploadFileExtension = $this->uploadedFile->getClientOriginalExtension();
-
-        if (!in_array($uploadFileExtension, $allowedExtensions)) {
-            $allowedExtensionsList = implode(",", $allowedExtensions);
-            $message = $this->getConfigExtensionsErrorMessage();
-            $errorMessage = str_replace("[extension_list]", $allowedExtensionsList, $message);
-            $this->setErrorMessage($errorMessage);
-            return true;
-        }
-
-        return false;
-    }
-
-    protected function doMakeFoldersAndReturnPath($size = 'source')
+    protected function makeFolders($size = 'source')
     {
         $prefixPath = $this->prefixPath;
+        $postfixPath = $this->makeFolderPath();
 
-        list($chunks, $postfixPath) = $this->getPathForFile();
-
+        $chunks = explode("/", $postfixPath);
         $chunks[] = $size;
 
         $tempPath = public_path() . $prefixPath;
@@ -184,7 +150,7 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
 
             if (!file_exists($tempPath)) {
                 if (!mkdir($tempPath, 0755, true)) {
-                    throw new \RuntimeException('Unable to create the directory [' . $tempPath . ']');
+                    throw new Exception('Unable to create the directory [' . $tempPath . ']');
                 }
             }
             $tempPath = $tempPath . '/';
@@ -195,15 +161,91 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
         return $destinationPath;
     }
 
-    protected function setFileFolder()
+    protected function makeFileName()
     {
-        $this->file_folder = $this->prefixPath . $this->getPathForFile()[1];
+        return $this->getSlug() . "_" . time();
     }
 
-    protected function doDeleteFiles()
+    protected function makeExtension($size = 'source')
+    {
+        if ($this->sourceFile) {
+           return strtolower($this->sourceFile->getClientOriginalExtension());
+        }
+
+       return $this->getFileExtension($size) ?: $this->getFileExtension();
+    }
+
+    public function makeFile($size = 'source')
+    {
+        if ($this->sourceFile) {
+            $destinationPath = public_path() . $this->makeFolders($size);
+            $fileName = $this->makeFileName() . "." . $this->makeExtension($size);
+
+            $this->sourceFile->move($destinationPath, $fileName);
+            $this->{$this->sizePrefix . $size} = $size . "/" . $fileName;
+            $this->sourceFile = null;
+        } else {
+            $this->{$this->sizePrefix . $size} = $this->{$this->sizePrefix . "source"};
+        }
+
+        return true;
+    }
+    
+    private function doSizesVariations()
+    {
+        $this->doCheckSchemeSizes();
+
+        $sizes = $this->getConfigSizesModifiable();
+        foreach ($sizes as $size => $info) {
+            $this->makeFile($size);
+        }
+    }
+
+    public function saveFile()
+    {
+        DB::beginTransaction();
+
+        try {
+            $this->setFileTitle();
+            $this->save();
+
+            $this->setFileFolder();
+            $this->makeFile();
+            $this->doSizesVariations();
+            $this->save();
+
+            DB::commit();
+            return true;
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+            return false;
+        }
+    }
+
+    public function saveFileSize($size = 'source')
+    {
+        DB::beginTransaction();
+
+        try {
+            $this->makeFile($size);
+            $this->save();
+
+            DB::commit();
+            return true;
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+            return false;
+        }
+    }
+
+    private function doDeleteFiles()
     {
         if (!$this->getConfigDeleteFiles()) {
-            return true;
+            return false;
         }
 
         if (!$this->file_folder) {
@@ -221,46 +263,27 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
         return true;
     }
 
-    protected function doRenameFiles()
+    private function doRenameFiles()
     {
         if (!$this->getConfigRenameFiles()) {
-            return true;
+            return false;
         }
         if (!$this->isDirty('title')) {
-            return true;
+            return false;
         }
 
         $sizes = $this->getConfigSizes();
-
-        foreach ($sizes as $sizeName => $sizeInfo) {
-
-            $imagePath = public_path() . $this->getSource($sizeName);
-
-            $this->extension = $this->getFileExtension($sizeName);
-
-            $newName = $sizeName . "/" . $this->makeFileName();
+        foreach ($sizes as $size => $info) {
+            $imagePath = $this->getPublicPath();
+            $newName = $size . "/" . $this->makeFileName() . "." . $this->makeExtension($size);
             $newPath = public_path() . $this->file_folder . $newName;
 
-            $field = $this->sizePrefix . $sizeName;
-
             if (File::move($imagePath, $newPath)) {
-                $this->$field = $newName;
+                $this->{$this->sizePrefix . $size} = $newName;
             }
         }
 
         return true;
     }
-
-    protected function doSizesVariations()
-    {
-        $this->doCheckSchemeSizes();
-
-        $sizes = $this->getConfigSizesModifiable();
-        foreach ($sizes as $size => $sizeInfo) {
-            $this->doSizeVariation($size);
-        }
-    }
-
-    abstract protected function doSizeVariation($sizeName);
 
 }

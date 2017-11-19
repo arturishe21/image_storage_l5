@@ -54,7 +54,7 @@ trait FilterableTrait
         $from = date('Y-m-d 00:00:00', strtotime($date['from']));
         $to   = date('Y-m-d 23:59:59', strtotime($date['to']));
 
-        return $query->whereBetween('created_at', array($from, $to));
+        return $query->whereBetween('created_at', [$from, $to]);
     }
 
     public function scopeFilterByTags(Builder $query, array $tags = [])
@@ -72,7 +72,7 @@ trait FilterableTrait
 
     public function scopeFilterSearch(Builder $query)
     {
-        $filters = Session::get('image_storage_filter.' . $this->getConfigPrefix(), array());
+        $filters = Session::get('image_storage_filter.' . $this->getConfigPrefix(), []);
 
         foreach ($filters as $column => $value) {
             if (method_exists($this, $column)) {

@@ -49,10 +49,10 @@
         <td>
             <select name="image_storage_filter[filterByActivity][]" multiple="multiple" class="image-storage-select">
                 <option value="1"
-                        {{in_array(1,Session::get('image_storage_filter.tag.filterByActivity', array())) ? "selected" : ""}}>
+                        {{in_array(1,Session::get('image_storage_filter.tag.filterByActivity', [])) ? "selected" : ""}}>
                     {{__cms('Активен') }}</option>
                 <option value="0"
-                        {{in_array(0,Session::get('image_storage_filter.tag.filterByActivity', array())) ? "selected" : ""}}>
+                        {{in_array(0,Session::get('image_storage_filter.tag.filterByActivity', [])) ? "selected" : ""}}>
                     {{__cms('Не активен') }}</option>
             </select>
         </td>

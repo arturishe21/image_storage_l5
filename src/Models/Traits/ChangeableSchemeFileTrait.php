@@ -9,9 +9,9 @@ trait ChangeableSchemeFileTrait
     {
         $sizes = $this->getConfigSizes();
 
-        foreach ($sizes as $sizeName => $sizeInfo) {
+        foreach ($sizes as $size => $info) {
 
-            $columnName = $this->sizePrefix . $sizeName;
+            $columnName = $this->sizePrefix . $size;
 
             if (!Schema::hasColumn($this->table, $columnName)) {
 
@@ -26,14 +26,14 @@ trait ChangeableSchemeFileTrait
     {
         $sizes = $this->getConfigSizesModifiable();
 
-        foreach ($sizes as $sizeName => $sizeInfo) {
+        foreach ($sizes as $size => $info) {
 
-            $columnName = $this->sizePrefix . $sizeName;
+            $columnName = $this->sizePrefix . $size;
 
             $entities = $this->where($columnName, '=', '')->get();
 
             foreach ($entities as $key => $entity) {
-                $entity->doSizeVariation($sizeName);
+                $entity->makeFile($size);
                 $entity->save();
             }
         }

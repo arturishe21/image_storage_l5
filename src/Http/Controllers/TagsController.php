@@ -9,18 +9,17 @@ class TagsController extends AbstractImageStorageController
 
     public function doRelateToTags($type)
     {
-        $idTags  = Input::get('idTags', array());
-        $idArray = Input::get('idArray', array());
+        $idTags  = Input::get('idTags', []);
+        $idArray = Input::get('idArray', []);
 
         foreach ($idTags as $key => $id) {
             $tag = $this->model->find($id);
             $tag->relateToTag($idArray, $type);
         }
 
-        return Response::json(array(
+        return Response::json([
             'status' => true
-        ));
-
+        ]);
     }
 
 }

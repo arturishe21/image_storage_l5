@@ -17,8 +17,8 @@ class ImagesController extends AbstractImageStorageFileController
             $image->optimizeImage($size);
         }
 
-        return Response::json(array(
+        return Response::json([
             'status' => true,
-        ));
+        ]);
     }
 }

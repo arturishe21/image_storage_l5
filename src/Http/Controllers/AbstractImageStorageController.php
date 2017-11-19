@@ -58,11 +58,11 @@ abstract class AbstractImageStorageController extends Controller
 
         $pagination = View::make('image-storage::partials.pagination')->with('data', $data)->render();
 
-        return Response::json(array(
+        return Response::json([
             'status' => true,
             'html'   => $html,
             'pagination' => $pagination,
-        ));
+        ]);
     }
 
     public function doDelete()
@@ -72,21 +72,21 @@ abstract class AbstractImageStorageController extends Controller
         $entity = $this->model->find($id);
 
         if (!$entity->delete()) {
-            return Response::json(array(
+            return Response::json([
                 'status' => false,
                 'message' => $entity->getErrorMessage()
-            ));
+            ]);
         }
 
-        return Response::json(array(
+        return Response::json([
             'id'     => $id,
             'status' => true
-        ));
+        ]);
     }
 
     public function doDeleteMultiple()
     {
-        $idArray = Input::get('idArray', array());
+        $idArray = Input::get('idArray', []);
 
         foreach ($idArray as $key => $id) {
 
@@ -102,23 +102,23 @@ abstract class AbstractImageStorageController extends Controller
             $entity->delete();
         }
 
-        return Response::json(array(
+        return Response::json([
             'status' => true
-        ));
+        ]);
     }
 
     public function doChangeActivity()
     {
-        $idArray  = Input::get('idArray', array());
+        $idArray  = Input::get('idArray', []);
 
         $activity = Input::get('activity', 1);
 
         $this->model->whereIn('id', $idArray)
                     ->update(['is_active' => $activity]);
 
-        return Response::json(array(
+        return Response::json([
             'status' => true
-        ));
+        ]);
     }
 
     public function getForm()
@@ -136,10 +136,10 @@ abstract class AbstractImageStorageController extends Controller
             compact('entity', 'fields', 'relatedEntities')
         )->render();
 
-        return Response::json(array(
+        return Response::json([
             'status' => true,
             'html' => $html,
-        ));
+        ]);
     }
 
     public function doSaveInfo()
@@ -153,16 +153,16 @@ abstract class AbstractImageStorageController extends Controller
         $entity->setFields($fields);
 
         if (!$entity->save()) {
-            return Response::json(array('status' => false, 'message' => $entity->getErrorMessage()));
+            return Response::json(['status' => false, 'message' => $entity->getErrorMessage()]);
         }
 
         $html = View::make('image-storage::'. $prefix .'.partials.single_list')->with('entity', $entity)->render();
 
-        return Response::json(array(
+        return Response::json([
             'html'   => $html,
             'id'     => $entity->id,
             'status' => true,
-        ));
+        ]);
     }
 
     protected function setSearchInput(){
@@ -170,7 +170,7 @@ abstract class AbstractImageStorageController extends Controller
         $prefix = $this->model->getConfigPrefix();
 
         if (Input::has('image_storage_filter')) {
-            Session::put('image_storage_filter.' . $prefix, Input::get('image_storage_filter', array()));
+            Session::put('image_storage_filter.' . $prefix, Input::get('image_storage_filter', []));
         } elseif (Input::has('forget_filters')) {
             Session::forget('image_storage_filter.' . $prefix);
         }

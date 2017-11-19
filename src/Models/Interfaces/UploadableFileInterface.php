@@ -1,10 +1,15 @@
 <?php namespace Vis\ImageStorage;
 
+use Illuminate\Http\UploadedFile;
+
 interface UploadableFileInterface
 {
-    public function setSourceFile($file);
+    public function setSourceFile(UploadedFile $file);
 
-    public function setNewFileData();
+    public function makeFile($size = 'source');
 
-    public function replaceSingleFile($size);
+    public function saveFile();
+
+    public function saveFileSize($size = 'source');
+
 }

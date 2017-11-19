@@ -1,9 +1,10 @@
 <?php namespace Vis\ImageStorage;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 use Vis\Builder\OptmizationImg;
 use \Image as InterventionImage;
+use Exception;
+
 
 class Image extends AbstractImageStorageFile
 {
@@ -11,8 +12,14 @@ class Image extends AbstractImageStorageFile
     protected $configPrefix = 'image';
     protected $relatableList = ['galleries', 'tags'];
 
-    protected $imageData;
-    protected $sourcePath;
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (Image $item) {
+            $item->setImageExifData();
+        });
+    }
 
     public function galleries()
     {
@@ -32,9 +39,52 @@ class Image extends AbstractImageStorageFile
         return $query->whereIn('id', $relatedImagesIds);
     }
 
-    protected function makeFileName()
+    public function makeFile($size = 'source')
     {
-        return $this->getSlug() . "_" . time() . "." . $this->extension;
+        $extension = $this->makeExtension($size);
+
+        if ($extension == 'svg') {
+            return parent::makeFile($size);
+        }
+
+        $sourceFile = $this->sourceFile ? $this->sourceFile->getRealPath() : $this->getPublicPath();
+
+        $img = InterventionImage::make($sourceFile);
+
+        $info = $this->getConfigSizeInfo($size);
+
+        if (isset($info['modify'])) {
+            foreach ($info['modify'] as $method => $args) {
+                call_user_func_array([$img, $method], $args);
+                if ($method == 'resizeCanvas' && (isset($args[4]) && preg_match('~rgba\(\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[01]+\.?[0-9]?\)~', $args[4]))) {
+                    $extension = 'png';
+                }
+            }
+        }
+
+        $destinationPath = public_path() . $this->makeFolders($size);
+        $fileName = $this->makeFileName() . "." . $extension;
+
+        $img->save($destinationPath . $fileName, $this->getConfigQuality());
+
+        $this->{$this->sizePrefix . $size} = $size . "/" . $fileName;
+        $this->sourceFile = null;
+
+        return true;
+    }
+
+    public function optimizeImage($size)
+    {
+        if (!$this->getConfigOptimization()) {
+            return false;
+        }
+
+        $sizes = $size ? [$size => ''] : $this->getConfigSizes();
+        foreach ($sizes as $size => $info) {
+            OptmizationImg::run("/" . $this->getSource($size));
+        }
+
+        return true;
     }
 
     private function setImageExifData()
@@ -43,112 +93,18 @@ class Image extends AbstractImageStorageFile
             return false;
         }
 
-        try {
-            $this->sourceFile->imageData = exif_read_data($this->sourceFile, 0, true);
-        } catch (\Exception $e) {
-            $this->sourceFile->imageData = [];
-        }
-
-        $this->date_time_source = isset($this->sourceFile->imageData['EXIF']['DateTimesource']) ? $this->sourceFile->imageData['EXIF']['DateTimesource'] : "2035-01-01 00:00:00";
-        $this->exif_data = json_encode($this->sourceFile->imageData);
-
-        return true;
-    }
-
-    private function setExtension($size)
-    {
-        if ($this->sourceFile) {
-            $extension = $this->sourceFile->guessExtension();
-        } else {
-            $extension = $this->getFileExtension($size) ?: $this->getFileExtension();
-        }
-
-        $this->extension = $extension;
-    }
-
-    private function setSourcePath()
-    {
-        if ($this->sourceFile) {
-            $sourcePath = $this->sourceFile->getRealPath();
-        } else {
-            $sourcePath = public_path() . $this->getSource();
-        }
-
-        $this->sourcePath = $sourcePath;
-    }
-
-    private function doMakeFile($size = 'source')
-    {
-        $this->setExtension($size);
-        $this->setSourcePath();
-
-        $img = InterventionImage::make($this->sourcePath);
-
-        $sizeInfo = $this->getConfigSizeInfo($size);
-
-        if (isset($sizeInfo['modify'])) {
-            foreach ($sizeInfo['modify'] as $method => $args) {
-                call_user_func_array(array($img, $method), $args);
-                if ($method == 'resizeCanvas' && (isset($args[4]) && preg_match('~rgba\(\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[01]+\.?[0-9]?\)~', $args[4]))) {
-                    $this->extension = 'png';
-                }
-            }
-        }
-
-        $fileName = $this->makeFileName();
-
-        $destinationPath = $this->doMakeFoldersAndReturnPath($size);
-
-        $path = $destinationPath . $fileName;
-
-        $img->save(public_path() . '/' . $path, $this->getConfigQuality());
-
-        $this->{$this->sizePrefix . $size} = $size . "/" . $fileName;
-    }
-
-    public function setNewFileData()
-    {
-        DB::beginTransaction();
-
-        try {
-            $this->setImageExifData();
-            $this->setFileTitle();
-            $this->save();
-
-            $this->setFileFolder();
-            $this->doMakeFile();
-            $this->doSizesVariations();
-            $this->save();
-
-            DB::commit();
-            return true;
-
-        } catch (\Exception $e) {
-
-            DB::rollBack();
+        if (!$this->sourceFile) {
             return false;
         }
-    }
 
-    protected function doSizeVariation($sizeName)
-    {
-        $this->doMakeFile($sizeName);
-    }
+        try {
+            $imageData = exif_read_data($this->sourceFile, 0, true);
+            $this->exif_data = json_encode($imageData);
+            $this->date_time_source = isset($imageData['EXIF']['DateTimesource']) ? $imageData['EXIF']['DateTimesource'] : "2035-01-01 00:00:00";
 
-    public function replaceSingleFile($size)
-    {
-        $this->doMakeFile($size);
-    }
-
-    public function optimizeImage($size)
-    {
-        if (!$this->getConfigOptimization()) {
-            return;
-        }
-
-        $sizes = $size ? [$size => ''] : $this->getConfigSizes();
-        foreach ($sizes as $sizeName => $sizeInfo) {
-            OptmizationImg::run("/" . $this->getSource($sizeName));
+            return true;
+        } catch (Exception $e) {
+            return false;
         }
     }
 

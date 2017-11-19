@@ -15,22 +15,20 @@ class AbstractImageStorageFileController extends AbstractImageStorageController
         $entity = $this->model;
 
         if (!$entity->setSourceFile($file)) {
-            return Response::json(array('status' => false, 'message' => $entity->getErrorMessage()));
+            return Response::json(['status' => false, 'message' => $entity->getErrorMessage()]);
         }
 
-        if (!$entity->setNewFileData()) {
-            return Response::json(array('status' => false, 'message' => $entity->getErrorMessage()));
+        if (!$entity->saveFile()) {
+            return Response::json(['status' => false, 'message' => $entity->getErrorMessage()]);
         }
 
         $html = View::make('image-storage::' . $prefix . '.partials.single_list')->with('entity', $entity)->render();
 
-        $data = array(
+        return Response::json([
             'status' => true,
             'html'   => $html,
             'id'     => $entity->id
-        );
-
-        return Response::json($data);
+        ]);
     }
 
     public function doReplaceSingle()
@@ -44,26 +42,23 @@ class AbstractImageStorageFileController extends AbstractImageStorageController
         $entity = $this->model->find($id);
 
         if (!$entity->setSourceFile($file)) {
-            return Response::json(array('status' => false, 'message' => $entity->getErrorMessage()));
+            return Response::json(['status' => false, 'message' => $entity->getErrorMessage()]);
         }
 
-        $entity->replaceSingleFile($size);
-
-        $entity->save();
+        if (!$entity->saveFileSize($size)) {
+            return Response::json(['status' => false, 'message' => $entity->getErrorMessage()]);
+        }
 
         $html = View::make('image-storage::'. $prefix .'.partials.tab_content')
             ->with('entity', $entity)
             ->with('ident',$size)
             ->render();
 
-        $data = array(
+        return Response::json([
             'status' => true,
             'html'   => $html,
             'src'    => asset($entity->getSource($size))
-        );
-
-        return Response::json($data);
-
+        ]);
     }
 
     public function doUpdateNewSize()
