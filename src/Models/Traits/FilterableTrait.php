@@ -75,7 +75,7 @@ trait FilterableTrait
         $filters = Session::get('image_storage_filter.' . $this->getConfigPrefix(), []);
 
         foreach ($filters as $column => $value) {
-            if (method_exists($this, $column)) {
+            if (is_callable([$this, $column])) {
                 $query->$column($value);
             }
         }
