@@ -1,11 +1,11 @@
 {
-  "name": "vis/image_storage_l5",
+  "name": "vis/artur_image_storage_l5",
   "description": "Image storage for L5",
   "license": "proprietary",
   "authors": [
     {
       "name": "vis",
-      "email": "k.gluschenko@vis-design.com"
+      "email": "artur@vis-design.com"
     }
   ],
   "require": {
