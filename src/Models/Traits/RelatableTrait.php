@@ -56,7 +56,10 @@ trait RelatableTrait
     {
         foreach ($this->getRelatableList() as $relation) {
             if ($this->relationExists($relation)) {
-                $relatedEntities = (array)request('relations.image-storage-' . $relation);
+
+                $relationRequest = request('relations');
+
+                $relatedEntities =  isset($relationRequest['image-storage-'. $relation]) ? $relationRequest['image-storage-'. $relation] : [];
                 $this->$relation()->sync($relatedEntities);
 
                 //fixme add clear cache
