@@ -15,10 +15,6 @@ class Image extends AbstractImageStorageFile
     protected static function boot()
     {
         parent::boot();
-
-        static::creating(function (Image $item) {
-            $item->setImageExifData();
-        });
     }
 
     public function galleries()
@@ -85,27 +81,6 @@ class Image extends AbstractImageStorageFile
         }
 
         return true;
-    }
-
-    private function setImageExifData()
-    {
-        if (!$this->getConfigStoreEXIF()) {
-            return false;
-        }
-
-        if (!$this->sourceFile) {
-            return false;
-        }
-
-        try {
-            $imageData = exif_read_data($this->sourceFile, 0, true);
-            $this->exif_data = json_encode($imageData);
-            $this->date_time_source = isset($imageData['EXIF']['DateTimesource']) ? $imageData['EXIF']['DateTimesource'] : "2035-01-01 00:00:00";
-
-            return true;
-        } catch (Exception $e) {
-            return false;
-        }
     }
 
 }

@@ -2,7 +2,7 @@
 
 namespace Vis\ImageStorage;
 
-use \Jarboe;
+use Illuminate\Support\Str;
 
 trait SluggableTrait
 {
@@ -26,7 +26,7 @@ trait SluggableTrait
 
     public function makeUniqueSlug()
     {
-        $slug = Jarboe::urlify($this->title);
+        $slug = Str::slug($this->title);
 
         $slugCheck = false;
         while ($slugCheck === false) {

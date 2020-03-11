@@ -9,8 +9,8 @@ class ImagesController extends AbstractImageStorageFileController
 
     public function doOptimizeImage()
     {
-        $size = Input::get('size');
-        $id   = (array) Input::get('id');
+        $size = request('size');
+        $id   = (array) request('id');
 
         foreach ($id as $key => $value) {
             $image = $this->model->find($value);

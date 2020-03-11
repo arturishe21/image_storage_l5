@@ -8,7 +8,7 @@ class AbstractImageStorageFileController extends AbstractImageStorageController
 {
     public function doUpload()
     {
-        $file = Input::file('file');
+        $file = request('file');
 
         $prefix = $this->model->getConfigPrefix();
 
@@ -33,9 +33,9 @@ class AbstractImageStorageFileController extends AbstractImageStorageController
 
     public function doReplaceSingle()
     {
-        $file = Input::file('file');
-        $size = Input::get('size');
-        $id   = Input::get('id');
+        $file = request('file');
+        $size = request('size');
+        $id   = request('id');
 
         $prefix = $this->model->getConfigPrefix();
 

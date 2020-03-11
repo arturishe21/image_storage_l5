@@ -11,7 +11,7 @@ class ImageStorageServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    
+
     public function boot()
     {
         require __DIR__ . '/../vendor/autoload.php';

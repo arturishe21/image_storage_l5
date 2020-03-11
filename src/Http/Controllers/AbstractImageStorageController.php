@@ -1,7 +1,6 @@
 <?php namespace Vis\ImageStorage;
 
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Request;
@@ -67,7 +66,7 @@ abstract class AbstractImageStorageController extends Controller
 
     public function doDelete()
     {
-        $id = Input::get('id');
+        $id = request('id');
 
         $entity = $this->model->find($id);
 
@@ -86,7 +85,7 @@ abstract class AbstractImageStorageController extends Controller
 
     public function doDeleteMultiple()
     {
-        $idArray = Input::get('idArray', []);
+        $idArray = request('idArray', []);
 
         foreach ($idArray as $key => $id) {
 
@@ -109,9 +108,9 @@ abstract class AbstractImageStorageController extends Controller
 
     public function doChangeActivity()
     {
-        $idArray  = Input::get('idArray', []);
+        $idArray  = request('idArray', []);
 
-        $activity = Input::get('activity', 1);
+        $activity = request('activity', 1);
 
         $this->model->whereIn('id', $idArray)
                     ->update(['is_active' => $activity]);
@@ -123,7 +122,7 @@ abstract class AbstractImageStorageController extends Controller
 
     public function getForm()
     {
-        $id = Input::get('id');
+        $id = request('id');
 
         $prefix          = $this->model->getConfigPrefix();
         $fields          = $this->model->getConfigFields();
@@ -144,7 +143,7 @@ abstract class AbstractImageStorageController extends Controller
 
     public function doSaveInfo()
     {
-        $fields = Input::except('relations');
+        $fields = request()->except('relations');
 
         $prefix = $this->model->getConfigPrefix();
 
@@ -169,9 +168,9 @@ abstract class AbstractImageStorageController extends Controller
 
         $prefix = $this->model->getConfigPrefix();
 
-        if (Input::has('image_storage_filter')) {
-            Session::put('image_storage_filter.' . $prefix, Input::get('image_storage_filter', []));
-        } elseif (Input::has('forget_filters')) {
+        if (request()->has('image_storage_filter')) {
+            Session::put('image_storage_filter.' . $prefix, request('image_storage_filter', []));
+        } elseif (request()->has('forget_filters')) {
             Session::forget('image_storage_filter.' . $prefix);
         }
     }
