@@ -64,7 +64,7 @@ abstract class AbstractImageStorageFile extends AbstractImageStorage implements 
             return true;
         }
 
-        $uploadFileSize = $this->sourceFile->getClientSize();
+        $uploadFileSize = $this->sourceFile->getSize();
         $maxFileSize = $this->getConfigSizeMax();
 
         if ($uploadFileSize > $maxFileSize) {
