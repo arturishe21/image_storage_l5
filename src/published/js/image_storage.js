@@ -96,6 +96,11 @@ var ImageStorage = {
         });
     },
 
+    closePopup: function()
+    {
+        $('.image-storage-process-popup').hide();
+    },
+
     initSortable: function()
     {
         var $sortable = $('.image-storage-sortable');
@@ -641,6 +646,7 @@ var ImageStorage = {
                         $fog.find('.image-storage-upload-upload').text(fileCount);
                         $fog.find('.image-storage-upload-success').text(fileSuccessCount);
                         $fog.find('.image-storage-progress-success').css('width', successPercentage +'%');
+                        $fog.hide();
 
                     } else {
                         fileFailCount = fileFailCount + 1;
